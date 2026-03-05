@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Educator Hub | SmartScreen</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#F5F3EE;--s1:#FFFFFF;--s2:#F0EDE8;--s3:#EAE7E0;--rose:#E8614A;--teal:#2A9D8F;--gold:#E9A84C;--purple:#7B5EA7;--navy:#264653;--text:#1A1A2E;--muted:#6B7280;--dim:#9CA3AF;--border:#E5E0D8;--shadow:0 2px 16px rgba(0,0,0,.07);--ff:'Plus Jakarta Sans',sans-serif;--fh:'Fraunces',serif;}
+*{font-family:var(--ff);}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);display:flex;}
+.sidebar{width:260px;min-width:260px;height:100vh;background:var(--s1);border-right:1.5px solid var(--border);display:flex;flex-direction:column;box-shadow:4px 0 20px rgba(0,0,0,.04);}
+.sb-logo{padding:22px 20px 14px;border-bottom:1px solid var(--border);}
+.sb-logo-main{font-family:var(--fh);font-size:1.25rem;font-weight:700;color:var(--teal);font-style:italic;}
+.sb-logo-sub{font-size:.64rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-top:2px;}
+.sb-img{width:100%;height:90px;object-fit:cover;}
+.sb-nav{flex:1;padding:12px 10px;overflow-y:auto;}
+.sb-sec{font-size:.6rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);padding:14px 12px 6px;}
+.sb-it{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:14px;cursor:pointer;border:none;background:transparent;width:100%;text-align:left;color:var(--muted);font-size:.84rem;font-weight:600;transition:all .2s;margin:2px 0;position:relative;}
+.sb-it:hover{background:var(--s2);color:var(--text);}
+.sb-it.on{background:rgba(42,157,143,.08);color:var(--teal);font-weight:700;}
+.sb-it.on::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--teal);border-radius:0 3px 3px 0;}
+.sb-badge{margin-left:auto;background:var(--rose);color:#fff;font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:20px;}
+.sb-foot{padding:16px;border-top:1px solid var(--border);}
+.t-pill{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:var(--s2);margin-bottom:8px;border:1px solid var(--border);}
+.t-av{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--teal),#3BC4B5);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:700;color:#fff;font-size:.9rem;}
+.t-name{font-size:.82rem;font-weight:700;color:var(--text);}
+.t-role{font-size:.68rem;color:var(--muted);}
+.logout-btn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 14px;border-radius:12px;border:none;background:rgba(232,97,74,.06);color:var(--rose);cursor:pointer;font-size:.8rem;font-weight:700;transition:all .2s;}
+.logout-btn:hover{background:rgba(232,97,74,.12);}
+.main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.topbar{height:64px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;background:var(--s1);border-bottom:1.5px solid var(--border);flex-shrink:0;box-shadow:var(--shadow);}
+.page-ttl{font-family:var(--fh);font-size:1.15rem;font-weight:700;color:var(--navy);font-style:italic;}
+.tb-r{display:flex;align-items:center;gap:10px;}
+.lang-sw{display:flex;gap:3px;background:var(--s2);border-radius:100px;padding:3px;border:1px solid var(--border);}
+.lsw{padding:5px 12px;border-radius:100px;border:none;font-size:.68rem;font-weight:700;cursor:pointer;background:transparent;color:var(--muted);transition:all .2s;}
+.lsw.on{background:#fff;color:var(--teal);box-shadow:0 2px 6px rgba(0,0,0,.08);}
+.flash-box{display:flex;gap:8px;}
+.fm{padding:8px 14px;border-radius:10px;font-size:.78rem;font-weight:600;}
+.fm-s{background:rgba(42,157,143,.06);border:1px solid rgba(42,157,143,.2);color:var(--teal);}
+.fm-d{background:rgba(232,97,74,.06);border:1px solid rgba(232,97,74,.2);color:var(--rose);}
+.content{flex:1;overflow-y:auto;padding:24px;}
+.panel{display:none;animation:pIn .3s ease;}.panel.on{display:block;}
+@keyframes pIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat-card{background:var(--s1);border:1.5px solid var(--border);border-radius:20px;padding:20px;position:relative;overflow:hidden;transition:transform .2s;box-shadow:var(--shadow);}
+.stat-card:hover{transform:translateY(-3px);}
+.sc-img{width:100%;height:60px;object-fit:cover;border-radius:12px;margin-bottom:12px;opacity:.7;}
+.stat-val{font-family:var(--fh);font-size:2.2rem;font-weight:700;color:var(--navy);}
+.stat-lbl{font-size:.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+.stat-accent{width:40px;height:4px;border-radius:2px;margin-bottom:10px;}
+.card{background:var(--s1);border:1.5px solid var(--border);border-radius:22px;overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow);}
+.card-hdr{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--s2);}
+.card-hdr h3{font-family:var(--fh);font-size:1rem;font-weight:700;color:var(--navy);}
+.hdr-btn{padding:8px 18px;border:none;border-radius:100px;cursor:pointer;font-size:.8rem;font-weight:700;transition:all .2s;}
+.hdr-btn.teal{background:var(--teal);color:#fff;}
+.hdr-btn.rose{background:rgba(232,97,74,.1);color:var(--rose);}
+.hdr-btn.purple{background:rgba(123,94,167,.12);color:var(--purple);}
+.hdr-btn:hover{filter:brightness(1.05);}
+.stud-table{width:100%;border-collapse:collapse;}
+.stud-table th{padding:12px 18px;text-align:left;font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);border-bottom:1.5px solid var(--border);background:var(--s2);}
+.stud-table td{padding:14px 18px;border-bottom:1px solid rgba(0,0,0,.04);font-size:.84rem;vertical-align:middle;}
+.stud-table tr:last-child td{border-bottom:none;}
+.stud-table tr:hover td{background:rgba(0,0,0,.02);}
+.stud-av{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--rose),#FF8C7A);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:700;color:#fff;font-size:.82rem;flex-shrink:0;}
+.stud-info{display:flex;align-items:center;gap:10px;}
+.stud-name{font-weight:700;font-size:.88rem;color:var(--navy);}
+.stud-email{font-size:.72rem;color:var(--muted);}
+.tag{display:inline-block;padding:4px 10px;border-radius:20px;font-size:.68rem;font-weight:700;}
+.tag-hr{background:rgba(232,97,74,.1);color:var(--rose);}
+.tag-mr{background:rgba(233,168,76,.1);color:var(--gold);}
+.tag-lr{background:rgba(42,157,143,.1);color:var(--teal);}
+.tag-nd{background:var(--s2);color:var(--muted);}
+.tag-done{background:rgba(42,157,143,.1);color:var(--teal);}
+.tag-pend{background:rgba(233,168,76,.1);color:var(--gold);}
+.tag-charge{background:rgba(42,157,143,.15);color:var(--teal);border:1px solid rgba(42,157,143,.3);}
+.tag-improved{background:rgba(42,157,143,.12);color:var(--teal);border:1px solid rgba(42,157,143,.25);animation:pulse-green 2s infinite;}
+@keyframes pulse-green{0%,100%{box-shadow:0 0 0 0 rgba(42,157,143,.3)}50%{box-shadow:0 0 0 4px rgba(42,157,143,.1)}}
+.bar-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.bm-label{font-size:.6rem;color:var(--muted);font-weight:700;margin-bottom:3px;}
+.bm-track{height:5px;background:rgba(0,0,0,.06);border-radius:3px;overflow:hidden;}
+.bm-fill{height:100%;background:var(--rose);border-radius:3px;}
+.icon-btn{background:none;border:none;cursor:pointer;padding:7px;border-radius:10px;font-size:.95rem;color:var(--muted);transition:all .2s;}
+.icon-btn:hover{background:var(--s2);color:var(--text);}
+.charge-btn{padding:6px 14px;border:none;border-radius:100px;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.charge-btn.take{background:rgba(42,157,143,.12);color:var(--teal);}
+.charge-btn.take:hover{background:var(--teal);color:#fff;}
+.charge-btn.release{background:rgba(232,97,74,.12);color:var(--rose);}
+.charge-btn.release:hover{background:var(--rose);color:#fff;}
+.disorder-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.dtab{padding:8px 18px;border-radius:100px;border:1.5px solid var(--border);background:var(--s2);font-size:.78rem;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s;}
+.dtab:hover{border-color:var(--teal);color:var(--teal);}
+.dtab.on{background:var(--teal);color:#fff;border-color:var(--teal);}
+.dtab.adhd.on{background:#E9A84C;border-color:#E9A84C;color:#fff;}
+.dtab.dyslexia.on{background:var(--rose);border-color:var(--rose);color:#fff;}
+.dtab.charge-tab.on{background:var(--teal);border-color:var(--teal);color:#fff;}
+.enroll-form{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:24px;}
+.fg{display:flex;flex-direction:column;gap:6px;}
+.fg.full{grid-column:1/-1;}
+.fg label{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+.fg input,.fg select{padding:12px 14px;background:var(--s2);border:1.5px solid var(--border);border-radius:14px;font-family:var(--ff);font-size:.88rem;color:var(--text);outline:none;transition:border-color .2s;}
+.fg input:focus,.fg select:focus{border-color:var(--teal);background:#fff;}
+.fg input::placeholder{color:var(--dim);}
+.enroll-btn{width:100%;padding:14px;border:none;border-radius:14px;background:var(--teal);color:#fff;font-family:var(--ff);font-size:.95rem;font-weight:700;cursor:pointer;transition:all .3s;}
+.enroll-btn:hover{filter:brightness(1.08);transform:translateY(-2px);}
+.modal-ov{position:fixed;inset:0;z-index:200;background:rgba(26,26,46,.5);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-ov.open{display:flex;}
+.modal-box{background:var(--s1);border:1.5px solid var(--border);border-radius:24px;padding:32px;width:100%;max-width:560px;position:relative;animation:mPop .3s cubic-bezier(.34,1.56,.64,1);max-height:92vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.18);}
+.modal-box.wide{max-width:760px;}
+@keyframes mPop{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+.mc{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--s2);color:var(--muted);cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;}
+.modal-box h3{font-family:var(--fh);font-size:1.3rem;font-weight:700;margin-bottom:20px;color:var(--navy);}
+.mb-fg{margin-bottom:14px;}
+.mb-fg label{display:block;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;}
+.mb-fg select,.mb-fg textarea,.mb-fg input{width:100%;padding:12px 14px;background:var(--s2);border:1.5px solid var(--border);border-radius:14px;font-family:var(--ff);font-size:.88rem;color:var(--text);outline:none;}
+.mb-fg select:focus,.mb-fg textarea:focus{border-color:var(--teal);}
+.mb-fg textarea{resize:vertical;min-height:80px;}
+.modal-btn{width:100%;padding:13px;border:none;border-radius:14px;background:var(--teal);color:#fff;font-family:var(--ff);font-size:.95rem;font-weight:700;cursor:pointer;margin-top:4px;transition:all .2s;}
+.modal-btn:hover{filter:brightness(1.08);}
+.modal-btn.purple{background:var(--purple);}
+.modal-btn.rose{background:var(--rose);}
+.task-assignment-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+.task-opt{padding:14px;border-radius:16px;border:1.5px solid var(--border);background:var(--s2);cursor:pointer;transition:all .2s;}
+.task-opt:hover{border-color:var(--teal);}
+.task-opt.selected{border-color:var(--teal);background:rgba(42,157,143,.06);}
+.task-opt-icon{font-size:1.4rem;margin-bottom:6px;}
+.task-opt-title{font-weight:700;font-size:.84rem;color:var(--navy);margin-bottom:3px;}
+.task-opt-meta{font-size:.72rem;color:var(--muted);}
+.chat-wrap{display:flex;flex-direction:column;background:var(--s1);border:1.5px solid var(--border);border-radius:22px;overflow:hidden;height:480px;box-shadow:var(--shadow);}
+.chat-hdr{padding:16px 20px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;background:var(--s2);}
+.chat-av{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--rose),#FF8C7A);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:700;color:#fff;}
+.chat-name{font-family:var(--fh);font-weight:700;font-size:.92rem;color:var(--navy);}
+.chat-sub{font-size:.7rem;color:var(--muted);}
+.chat-msgs{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:10px;background:var(--bg);}
+.msg{max-width:75%;padding:11px 15px;border-radius:18px;font-size:.85rem;line-height:1.55;}
+.msg-in{background:var(--s1);color:var(--text);border-bottom-left-radius:4px;align-self:flex-start;border:1px solid var(--border);}
+.msg-out{background:linear-gradient(135deg,var(--teal),#3BC4B5);color:#fff;border-bottom-right-radius:4px;align-self:flex-end;}
+.msg-time{font-size:.62rem;opacity:.5;margin-top:3px;}
+.chat-inp-row{padding:14px 18px;border-top:1.5px solid var(--border);display:flex;gap:10px;flex-shrink:0;background:var(--s1);}
+.c-inp{flex:1;padding:11px 16px;background:var(--s2);border:1.5px solid var(--border);border-radius:100px;font-size:.88rem;color:var(--text);outline:none;transition:border-color .2s;}
+.c-inp:focus{border-color:var(--teal);}
+.c-send{width:40px;height:40px;border-radius:50%;background:var(--teal);border:none;color:#fff;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;}
+.no-content{display:flex;flex-direction:column;align-items:center;padding:48px;text-align:center;color:var(--muted);}
+.chart-card{background:var(--s1);border:1.5px solid var(--border);border-radius:22px;padding:22px;margin-bottom:20px;box-shadow:var(--shadow);}
+.chart-title{font-family:var(--fh);font-size:1rem;font-weight:700;margin-bottom:16px;color:var(--navy);}
+.perf-modal-img{width:100%;height:100px;object-fit:cover;border-radius:14px;margin-bottom:16px;}
+/* REPORT STYLES */
+.report-section{background:var(--s2);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:16px;}
+.report-section-title{font-family:var(--fh);font-size:.9rem;font-weight:700;color:var(--navy);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.report-metric{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.05);font-size:.83rem;}
+.report-metric:last-child{border-bottom:none;}
+.report-metric-val{font-weight:700;color:var(--navy);}
+.risk-badge-big{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:100px;font-weight:800;font-size:.88rem;margin-bottom:14px;}
+.risk-badge-big.high{background:rgba(232,97,74,.12);color:var(--rose);border:1.5px solid rgba(232,97,74,.3);}
+.risk-badge-big.moderate{background:rgba(233,168,76,.12);color:#b5811e;border:1.5px solid rgba(233,168,76,.3);}
+.risk-badge-big.low{background:rgba(42,157,143,.1);color:var(--teal);border:1.5px solid rgba(42,157,143,.25);}
+.skill-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.skill-bar-label{font-size:.73rem;font-weight:700;color:var(--muted);width:90px;flex-shrink:0;}
+.skill-bar-track{flex:1;height:8px;background:rgba(0,0,0,.06);border-radius:4px;overflow:hidden;}
+.skill-bar-fill{height:100%;border-radius:4px;transition:width .6s ease;}
+.skill-bar-val{font-size:.73rem;font-weight:700;color:var(--navy);width:32px;text-align:right;flex-shrink:0;}
+.risk-delta{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:.7rem;font-weight:700;margin-left:8px;}
+.risk-delta.improved{background:rgba(42,157,143,.1);color:var(--teal);}
+.risk-delta.worsened{background:rgba(232,97,74,.1);color:var(--rose);}
+.risk-delta.same{background:var(--s2);color:var(--muted);}
+.btn-row{display:flex;gap:10px;margin-top:14px;}
+.btn-row .modal-btn{flex:1;margin-top:0;}
+/* Report loading spinner */
+.spin{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto;}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-main">SmartScreen</div>
+    <div class="sb-logo-sub" data-i="educator_portal">Educator Portal</div>
+  </div>
+  <img class="sb-img" src="https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg" alt="Teaching">
+  <div class="sb-nav">
+    <div class="sb-sec" data-i="nav_management">Management</div>
+    <button class="sb-it on" id="sbi-overview" onclick="showP('overview')"><span>📊</span> <span data-i="nav_overview">Overview</span></button>
+    <button class="sb-it" id="sbi-pending" onclick="showP('pending')">
+      <span>🔔</span> <span data-i="nav_pending">New Students</span>
+      {% if pending_students|length > 0 %}<span class="sb-badge">{{ pending_students|length }}</span>{% endif %}
+    </button>
+    <button class="sb-it" id="sbi-students" onclick="showP('students')">
+      <span>👥</span> <span data-i="nav_students">My Students</span>
+      <span id="stud-badge" class="sb-badge">{{ students|length }}</span>
+    </button>
+    <button class="sb-it" id="sbi-tasks" onclick="showP('tasks')"><span>📋</span> <span data-i="nav_tasks">Assign Tasks</span></button>
+    <button class="sb-it" id="sbi-reports" onclick="showP('reports')"><span>📑</span> <span data-i="nav_reports">Reports</span></button>
+    <button class="sb-it" id="sbi-chat" onclick="showP('chat')">
+      <span>💬</span> <span data-i="nav_chat">Chat</span>
+      <span id="unread-total" class="sb-badge" style="display:none">0</span>
+    </button>
+  </div>
+  <div class="sb-foot">
+    <div class="t-pill">
+      <div class="t-av">{{ name[:1]|upper }}</div>
+      <div>
+        <div class="t-name">{{ name }}</div>
+        <div class="t-role" data-i="teacher_role_label">
+          {% if teacher_skill == 'dyslexia' %}Dyslexia Specialist
+          {% elif teacher_skill == 'adhd' %}ADHD Specialist
+          {% else %}All Disorders{% endif %}
+        </div>
+      </div>
+    </div>
+    <form action="/logout" method="GET"><button type="submit" class="logout-btn">🚪 <span data-i="logout">Logout</span></button></form>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="topbar">
+    <div class="page-ttl" id="page-ttl" data-i="nav_overview">Overview</div>
+    <div class="tb-r">
+      <div class="lang-sw">
+        <button class="lsw on" onclick="setL('en',this)">EN</button>
+        <button class="lsw" onclick="setL('ta',this)">தமிழ்</button>
+        <button class="lsw" onclick="setL('hi',this)">हिंदी</button>
+      </div>
+      {% with messages=get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-box">{% for c,m in messages %}<div class="fm fm-{{c}}">{{m}}</div>{% endfor %}</div>
+        {% endif %}
+      {% endwith %}
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ── OVERVIEW PANEL ── -->
+    <div class="panel on" id="panel-overview">
+      <div class="stats-row">
+        <div class="stat-card">
+          <img class="sc-img" src="https://images.pexels.com/photos/8364026/pexels-photo-8364026.jpeg" alt="">
+          <div class="stat-accent" style="background:var(--rose)"></div>
+          <div class="stat-val">{{ students|length }}</div>
+          <div class="stat-lbl" data-i="stat_students">My Students</div>
+        </div>
+        <div class="stat-card">
+          <img class="sc-img" src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg" alt="">
+          <div class="stat-accent" style="background:var(--teal)"></div>
+          <div class="stat-val">{{ students|selectattr('screened')|list|length }}</div>
+          <div class="stat-lbl" data-i="stat_screened">Screened</div>
+        </div>
+        <div class="stat-card">
+          <img class="sc-img" src="https://images.pexels.com/photos/4491461/pexels-photo-4491461.jpeg" alt="">
+          <div class="stat-accent" style="background:var(--gold)"></div>
+          <div class="stat-val">{{ students|map(attribute='tasks')|map('length')|sum }}</div>
+          <div class="stat-lbl" data-i="stat_tasks">Tasks Assigned</div>
+        </div>
+        <div class="stat-card">
+          <img class="sc-img" src="https://images.pexels.com/photos/4144923/pexels-photo-4144923.jpeg" alt="">
+          <div class="stat-accent" style="background:var(--purple)"></div>
+          <div class="stat-val">{{ students|selectattr('teacher_in_charge')|list|length }}</div>
+          <div class="stat-lbl" data-i="stat_charge">In My Charge</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <h3>📋 <span data-i="recent_students">Recent Students</span></h3>
+          <button class="hdr-btn teal" onclick="showP('students')" data-i="view_all">View All →</button>
+        </div>
+        <table class="stud-table">
+          <thead><tr>
+            <th data-i="th_student">Student</th>
+            <th data-i="th_disorder">Disorder</th>
+            <th data-i="th_status">Status</th>
+            <th data-i="th_risk">Risk Level</th>
+            <th data-i="th_tasks">Tasks</th>
+            <th data-i="th_actions">Actions</th>
+          </tr></thead>
+          <tbody>
+            {% for s in students[:5] %}
+            <tr>
+              <td>
+                <div class="stud-info">
+                  <div class="stud-av">{{ s.name[:1]|upper }}</div>
+                  <div>
+                    <div class="stud-name">{{ s.name }}
+                      {% if s.teacher_in_charge %}<span class="tag tag-charge" style="margin-left:5px;font-size:.58rem">✅</span>{% endif %}
+                    </div>
+                    <div class="stud-email">{{ s.email }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                {% if s.details and s.details.disorder %}
+                  {% if s.details.disorder == 'adhd' %}<span class="tag" style="background:rgba(233,168,76,.12);color:#b5811e">⚡ ADHD</span>
+                  {% elif s.details.disorder == 'dyslexia' %}<span class="tag tag-hr">🔤 Dyslexia</span>
+                  {% else %}<span class="tag" style="background:rgba(123,94,167,.1);color:var(--purple)">🔀 Both</span>{% endif %}
+                {% else %}<span class="tag tag-nd">—</span>{% endif %}
+              </td>
+              <td>{% if s.screened %}<span class="tag tag-lr" data-i="screened">✓ Screened</span>{% else %}<span class="tag tag-nd" data-i="pending">Pending</span>{% endif %}</td>
+              <td>
+                {% if s.details and s.details.prediction %}
+                  {% if 'High' in s.details.prediction %}<span class="tag tag-hr">{{ s.details.prediction }}</span>
+                  {% elif 'Moderate' in s.details.prediction %}<span class="tag tag-mr">{{ s.details.prediction }}</span>
+                  {% else %}<span class="tag tag-lr">{{ s.details.prediction }}</span>{% endif %}
+                  {% if s.details.risk_improved %}<span class="tag tag-improved" data-i="improved">↑ Improved</span>{% endif %}
+                {% else %}<span class="tag tag-nd" data-i="not_screened">Not Screened</span>{% endif %}
+              </td>
+              <td>{{ s.tasks|length }} <span data-i="tasks_word">tasks</span></td>
+              <td>
+                <button class="icon-btn" onclick="openPerf({{ s.id }},'{{ s.name }}')" title="Performance">📈</button>
+                <button class="icon-btn" onclick="openAssignTask({{ s.id }},'{{ s.name }}')" title="Assign Task">📋</button>
+                <button class="icon-btn" onclick="openReport({{ s.id }},'{{ s.name }}')" title="Generate Report">📑</button>
+                <button class="icon-btn" onclick="openChatWith({{ s.id }},'{{ s.name }}')" title="Chat">💬</button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" data-i="chart_dist">Student Screening Distribution</div>
+        <canvas id="overview-chart" height="60"></canvas>
+      </div>
+    </div>
+
+    <!-- ── PENDING STUDENTS PANEL ── -->
+    <div class="panel" id="panel-pending">
+      <div class="card">
+        <div class="card-hdr">
+          <h3>🔔 <span data-i="pending_title">New Students Awaiting Acceptance</span></h3>
+          <span style="font-size:.75rem;color:var(--muted);font-weight:600;" data-i="pending_sub">AI-screened students matching your specialization</span>
+        </div>
+        {% if pending_students %}
+        <table class="stud-table">
+          <thead><tr>
+            <th data-i="th_student">Student</th>
+            <th data-i="th_disorder">Disorder Detected</th>
+            <th data-i="th_risk">AI Risk Level</th>
+            <th data-i="th_scores">Scores</th>
+            <th data-i="th_requested">Requested</th>
+            <th data-i="th_action">Action</th>
+          </tr></thead>
+          <tbody>
+            {% for p in pending_students %}
+            <tr id="prow-{{ p.id }}">
+              <td>
+                <div class="stud-info">
+                  <div class="stud-av">{{ p.name[:1]|upper }}</div>
+                  <div><div class="stud-name">{{ p.name }}</div><div class="stud-email">{{ p.email }}</div></div>
+                </div>
+              </td>
+              <td>
+                {% if p.disorder == 'dyslexia' %}<span class="tag tag-hr">🔤 Dyslexia</span>
+                {% elif p.disorder == 'adhd' %}<span class="tag" style="background:rgba(233,168,76,.12);color:#b5811e">⚡ ADHD</span>
+                {% else %}<span class="tag" style="background:rgba(123,94,167,.1);color:var(--purple)">🔀 Both</span>{% endif %}
+              </td>
+              <td>
+                {% if p.details and p.details.prediction %}
+                  {% if 'High' in p.details.prediction %}<span class="tag tag-hr">{{ p.details.prediction }}</span>
+                  {% elif 'Moderate' in p.details.prediction %}<span class="tag tag-mr">{{ p.details.prediction }}</span>
+                  {% else %}<span class="tag tag-lr">{{ p.details.prediction }}</span>{% endif %}
+                {% else %}<span class="tag tag-nd">—</span>{% endif %}
+              </td>
+              <td>
+                {% if p.details %}
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+                  {% for key in ['language','memory','speed'] %}{% if p.details.get(key) is not none %}
+                  <div>
+                    <div class="bm-label">{{ key[:3]|upper }}</div>
+                    <div class="bm-track"><div class="bm-fill" style="width:{{ (p.details.get(key,0)*10)|int }}%"></div></div>
+                  </div>
+                  {% endif %}{% endfor %}
+                </div>
+                {% else %}—{% endif %}
+              </td>
+              <td style="color:var(--muted);font-size:.78rem">{{ p.req_at[:10] if p.req_at else '—' }}</td>
+              <td style="white-space:nowrap">
+                <button onclick="acceptStudent({{ p.id }},'{{ p.name }}')" style="padding:7px 16px;border:none;border-radius:100px;background:var(--teal);color:#fff;font-size:.75rem;font-weight:700;cursor:pointer;margin-right:6px;" data-i="btn_accept">✓ Accept</button>
+                <button onclick="declineStudent({{ p.id }},'{{ p.name }}')" style="padding:7px 16px;border:none;border-radius:100px;background:rgba(232,97,74,.1);color:var(--rose);font-size:.75rem;font-weight:700;cursor:pointer;" data-i="btn_decline">✗ Decline</button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <div class="no-content">
+          <div style="font-size:3rem;margin-bottom:12px">✅</div>
+          <div style="font-family:var(--fh);font-size:1rem;color:var(--navy);margin-bottom:6px" data-i="no_pending">No pending students</div>
+          <div style="font-size:.82rem;color:var(--dim)" data-i="no_pending_sub">New AI-screened students matching your specialization will appear here.</div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- ── MY STUDENTS PANEL ── -->
+    <div class="panel" id="panel-students">
+      <div class="disorder-tabs">
+        <button class="dtab on" id="dtab-all" onclick="filterDisorder('all',this)" data-i="filter_all">All Students</button>
+        <button class="dtab adhd" id="dtab-adhd" onclick="filterDisorder('adhd',this)" data-i="filter_adhd">⚡ ADHD</button>
+        <button class="dtab dyslexia" id="dtab-dyslexia" onclick="filterDisorder('dyslexia',this)" data-i="filter_dyslexia">🔤 Dyslexia</button>
+        <button class="dtab" id="dtab-both" onclick="filterDisorder('both',this)" data-i="filter_both">🔀 Both</button>
+        <button class="dtab charge-tab" id="dtab-charge" onclick="filterDisorder('charge',this)" data-i="filter_charge">✅ In My Charge</button>
+        <button class="dtab" id="dtab-improved" onclick="filterDisorder('improved',this)" data-i="filter_improved" style="border-color:rgba(42,157,143,.3);color:var(--teal)">↑ Improved</button>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <h3>👥 <span data-i="nav_students">My Students</span> (<span id="stud-count">{{ students|length }}</span>)</h3>
+          <button class="hdr-btn purple" onclick="showP('reports')" data-i="generate_report">📑 Generate Report</button>
+        </div>
+        <table class="stud-table" id="students-table">
+          <thead><tr>
+            <th data-i="th_student">Student</th>
+            <th data-i="th_disorder">Disorder</th>
+            <th data-i="th_status">Screening</th>
+            <th data-i="th_risk">Risk</th>
+            <th data-i="th_tasks">Tasks</th>
+            <th data-i="th_actions">Actions</th>
+          </tr></thead>
+          <tbody>
+            {% for s in students %}
+            <tr data-disorder="{{ s.details.disorder if s.details and s.details.disorder else 'none' }}"
+                data-charge="{{ s.teacher_in_charge }}"
+                data-improved="{{ '1' if s.details and s.details.risk_improved else '0' }}">
+              <td>
+                <div class="stud-info">
+                  <img src="https://images.pexels.com/photos/8364026/pexels-photo-8364026.jpeg" style="width:36px;height:36px;border-radius:12px;object-fit:cover;flex-shrink:0;">
+                  <div>
+                    <div class="stud-name">
+                      {{ s.name }}
+                      {% if s.teacher_in_charge %}<span class="tag tag-charge" style="margin-left:5px;font-size:.58rem">✅</span>{% endif %}
+                    </div>
+                    <div class="stud-email">{{ s.email }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                {% if s.details and s.details.disorder %}
+                  {% if s.details.disorder == 'adhd' %}<span class="tag" style="background:rgba(233,168,76,.12);color:#b5811e">⚡ ADHD</span>
+                  {% elif s.details.disorder == 'dyslexia' %}<span class="tag tag-hr">🔤 Dyslexia</span>
+                  {% else %}<span class="tag" style="background:rgba(123,94,167,.1);color:var(--purple)">🔀 Both</span>{% endif %}
+                {% else %}<span class="tag tag-nd">—</span>{% endif %}
+              </td>
+              <td>{% if s.screened %}<span class="tag tag-lr" data-i="screened">✓ Screened</span>{% else %}<span class="tag tag-nd" data-i="pending">Pending</span>{% endif %}</td>
+              <td>
+                {% if s.details and s.details.prediction %}
+                  {% if 'High' in s.details.prediction %}<span class="tag tag-hr">{{ s.details.prediction }}</span>
+                  {% elif 'Moderate' in s.details.prediction %}<span class="tag tag-mr">{{ s.details.prediction }}</span>
+                  {% else %}<span class="tag tag-lr">{{ s.details.prediction }}</span>{% endif %}
+                  {% if s.details.risk_improved %}<span class="tag tag-improved" data-i="improved">↑ <span data-i="improved">Improved</span></span>{% endif %}
+                {% elif s.details %}<span class="tag tag-nd">—</span>
+                {% else %}<span class="tag tag-nd" data-i="not_screened">—</span>{% endif %}
+              </td>
+              <td>
+                <span class="tag tag-pend">{{ s.tasks|selectattr('status','equalto','pending')|list|length }} <span data-i="pending_word">pending</span></span>
+                <span class="tag tag-done">{{ s.tasks|selectattr('status','equalto','completed')|list|length }} <span data-i="done_word">done</span></span>
+              </td>
+              <td style="white-space:nowrap">
+                <button class="icon-btn" onclick="openPerf({{ s.id }},'{{ s.name }}')" title="Performance">📈</button>
+                <button class="icon-btn" onclick="openAssignTask({{ s.id }},'{{ s.name }}')" title="Assign Task">📋</button>
+                <button class="icon-btn" onclick="openReport({{ s.id }},'{{ s.name }}')" title="Generate Report">📑</button>
+                <button class="icon-btn" onclick="openChatWith({{ s.id }},'{{ s.name }}')" title="Chat">💬</button>
+                {% if teachers %}
+                <button class="icon-btn" onclick="openReassign({{ s.id }},'{{ s.name }}')" title="Reassign">↔️</button>
+                {% endif %}
+                {% if s.teacher_in_charge %}
+                <button class="charge-btn release" id="charge-btn-{{ s.id }}" onclick="toggleCharge({{ s.id }},'release',this)">🔓 <span data-i="btn_release">Release</span></button>
+                {% else %}
+                <button class="charge-btn take" id="charge-btn-{{ s.id }}" onclick="toggleCharge({{ s.id }},'take',this)">🎯 <span data-i="btn_take_charge">Take Charge</span></button>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── ASSIGN TASKS PANEL ── -->
+    <div class="panel" id="panel-tasks">
+      <div class="card">
+        <div class="card-hdr">
+          <h3>📋 <span data-i="task_center">Task Assignment Center</span>
+            <span style="font-size:.72rem;font-weight:400;color:var(--muted);margin-left:8px;">
+              <span data-i="specialization">Specialization</span>:
+              {% if teacher_skill == 'dyslexia' %}<span style="color:var(--rose)">🔤 Dyslexia</span>
+              {% elif teacher_skill == 'adhd' %}<span style="color:var(--gold)">⚡ ADHD</span>
+              {% else %}<span style="color:var(--purple)">🔀 Both</span>{% endif %}
+            </span>
+          </h3>
+        </div>
+        <div style="padding:20px;display:grid;grid-template-columns:{% if teacher_skill == 'both' %}1fr 1fr{% else %}1fr{% endif %};gap:20px;">
+          {% if teacher_skill in ['dyslexia', 'both'] %}
+          <div>
+            <div style="font-family:var(--fh);font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:12px;">🔤 <span data-i="dyslexia_tasks">Dyslexia Tasks</span></div>
+            {% for task in all_tasks.dyslexia %}
+            <div style="padding:14px;border-radius:16px;border:1.5px solid rgba(232,97,74,.2);background:rgba(232,97,74,.03);margin-bottom:10px;">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                <span style="font-size:1.4rem">{{ task.icon }}</span>
+                <div><div style="font-weight:700;font-size:.88rem;color:var(--navy)">{{ task.title }}</div><div style="font-size:.7rem;color:var(--muted)">{{ task.duration }} · {{ task.level }}</div></div>
+              </div>
+              <div style="font-size:.78rem;color:var(--muted);margin-bottom:6px">{{ task.desc }}</div>
+              <div style="font-size:.7rem;color:var(--rose);margin-bottom:8px;padding:5px 10px;background:rgba(232,97,74,.06);border-radius:8px;">💡 {{ task.tip }}</div>
+              <button onclick="openAssignSpecific('{{ task.id }}','dyslexia','{{ task.title }}')" style="padding:7px 16px;border:none;border-radius:100px;background:rgba(232,97,74,.1);color:var(--rose);font-size:.75rem;font-weight:700;cursor:pointer;" data-i="assign_btn">Assign to Student →</button>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+          {% if teacher_skill in ['adhd', 'both'] %}
+          <div>
+            <div style="font-family:var(--fh);font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:12px;">⚡ <span data-i="adhd_tasks">ADHD Tasks</span></div>
+            {% for task in all_tasks.adhd %}
+            <div style="padding:14px;border-radius:16px;border:1.5px solid rgba(42,157,143,.2);background:rgba(42,157,143,.03);margin-bottom:10px;">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                <span style="font-size:1.4rem">{{ task.icon }}</span>
+                <div><div style="font-weight:700;font-size:.88rem;color:var(--navy)">{{ task.title }}</div><div style="font-size:.7rem;color:var(--muted)">{{ task.duration }} · {{ task.level }}</div></div>
+              </div>
+              <div style="font-size:.78rem;color:var(--muted);margin-bottom:6px">{{ task.desc }}</div>
+              <div style="font-size:.7rem;color:var(--teal);margin-bottom:8px;padding:5px 10px;background:rgba(42,157,143,.06);border-radius:8px;">💡 {{ task.tip }}</div>
+              <button onclick="openAssignSpecific('{{ task.id }}','adhd','{{ task.title }}')" style="padding:7px 16px;border:none;border-radius:100px;background:rgba(42,157,143,.1);color:var(--teal);font-size:.75rem;font-weight:700;cursor:pointer;" data-i="assign_btn">Assign to Student →</button>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── REPORTS PANEL ── -->
+    <div class="panel" id="panel-reports">
+      <div class="card">
+        <div class="card-hdr">
+          <h3>📑 <span data-i="report_center">Progress Report Center</span></h3>
+          <span style="font-size:.75rem;color:var(--muted);" data-i="report_sub">Generate detailed reports and send to parent email</span>
+        </div>
+        <div style="padding:20px;">
+          {% if students %}
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">
+            {% for s in students %}
+            <div style="background:var(--s2);border:1.5px solid var(--border);border-radius:18px;padding:18px;transition:transform .2s,box-shadow .2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+                <div class="stud-av">{{ s.name[:1]|upper }}</div>
+                <div>
+                  <div class="stud-name">{{ s.name }}</div>
+                  <div class="stud-email">{{ s.email }}</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+                {% if s.details and s.details.disorder %}
+                  {% if s.details.disorder == 'adhd' %}<span class="tag" style="background:rgba(233,168,76,.12);color:#b5811e;font-size:.64rem">⚡ ADHD</span>
+                  {% elif s.details.disorder == 'dyslexia' %}<span class="tag tag-hr" style="font-size:.64rem">🔤 Dyslexia</span>
+                  {% else %}<span class="tag" style="background:rgba(123,94,167,.1);color:var(--purple);font-size:.64rem">🔀 Both</span>{% endif %}
+                {% endif %}
+                {% if s.details and s.details.prediction %}
+                  {% if 'High' in s.details.prediction %}<span class="tag tag-hr" style="font-size:.64rem">{{ s.details.prediction }}</span>
+                  {% elif 'Moderate' in s.details.prediction %}<span class="tag tag-mr" style="font-size:.64rem">{{ s.details.prediction }}</span>
+                  {% else %}<span class="tag tag-lr" style="font-size:.64rem">{{ s.details.prediction }}</span>{% endif %}
+                  {% if s.details.risk_improved %}<span class="tag tag-improved" style="font-size:.64rem" data-i="improved">↑ Improved</span>{% endif %}
+                {% endif %}
+              </div>
+              <div style="font-size:.75rem;color:var(--muted);margin-bottom:12px;">
+                {{ s.tasks|selectattr('status','equalto','completed')|list|length }}/{{ s.tasks|length }} <span data-i="tasks_done">tasks done</span>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <button onclick="openReport({{ s.id }},'{{ s.name }}')" style="flex:1;padding:9px;border:none;border-radius:12px;background:var(--purple);color:#fff;font-size:.78rem;font-weight:700;cursor:pointer;" data-i="view_report">📑 View Report</button>
+                <button onclick="sendReport({{ s.id }},'{{ s.name }}')" style="flex:1;padding:9px;border:none;border-radius:12px;background:rgba(42,157,143,.12);color:var(--teal);font-size:.78rem;font-weight:700;cursor:pointer;" data-i="send_email">📧 Send Email</button>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="no-content">
+            <div style="font-size:3rem;margin-bottom:12px">📑</div>
+            <div style="font-family:var(--fh);font-size:1rem;color:var(--navy)" data-i="no_students_rep">No students yet</div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CHAT PANEL ── -->
+    <div class="panel" id="panel-chat">
+      <div style="display:grid;grid-template-columns:240px 1fr;gap:20px;height:calc(100vh - 140px);">
+        <div class="card" style="overflow:hidden;display:flex;flex-direction:column;">
+          <div class="card-hdr"><h3 data-i="nav_students">Students</h3></div>
+          <div style="flex:1;overflow-y:auto;padding:10px;">
+            {% for s in students %}
+            <div onclick="openChatWith({{ s.id }},'{{ s.name }}')"
+                 style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;cursor:pointer;transition:background .2s;margin-bottom:4px;background:var(--s2);border:1px solid var(--border);"
+                 onmouseover="this.style.background='var(--s3)'" onmouseout="this.style.background='var(--s2)'">
+              <div class="stud-av" style="width:34px;height:34px;font-size:.78rem;">{{ s.name[:1]|upper }}</div>
+              <div style="flex:1">
+                <div style="font-weight:700;font-size:.82rem;color:var(--navy)">{{ s.name }}</div>
+                <div style="font-size:.7rem;color:var(--muted)">{% if s.details and s.details.disorder %}{{ s.details.disorder|title }}{% else %}Student{% endif %}</div>
+              </div>
+              {% if s.unread > 0 %}<span class="sb-badge">{{ s.unread }}</span>{% endif %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="chat-wrap" id="main-chat-area">
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--muted);text-align:center;padding:40px;">
+            <div>
+              <div style="font-size:3rem;margin-bottom:12px">💬</div>
+              <div style="font-family:var(--fh);font-size:1rem;color:var(--dim)" data-i="select_student_chat">Select a student to chat</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ MODALS ═══ -->
+
+<!-- Performance modal -->
+<div class="modal-ov" id="perf-modal">
+  <div class="modal-box">
+    <button class="mc" onclick="closeMod('perf-modal')">✕</button>
+    <h3 id="perf-name" data-i="student_performance">Student Performance</h3>
+    <img class="perf-modal-img" src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg" alt="">
+    <div id="perf-content"><div style="text-align:center;padding:20px"><div class="spin"></div></div></div>
+    <canvas id="perf-chart" height="80" style="margin-top:16px"></canvas>
+  </div>
+</div>
+
+<!-- REPORT MODAL (Full Advanced Report) -->
+<div class="modal-ov" id="report-modal">
+  <div class="modal-box wide">
+    <button class="mc" onclick="closeMod('report-modal')">✕</button>
+    <div id="report-content">
+      <div style="text-align:center;padding:40px"><div class="spin"></div><div style="margin-top:14px;color:var(--muted);font-size:.84rem" data-i="generating">Generating report…</div></div>
+    </div>
+    <div class="btn-row" id="report-actions" style="display:none">
+      <button class="modal-btn purple" onclick="printReport()" data-i="print_report">🖨️ Print / Save PDF</button>
+      <button class="modal-btn" onclick="emailReport()" id="email-report-btn" data-i="send_parent">📧 Send to Parent</button>
+    </div>
+  </div>
+</div>
+
+<!-- Assign task modal -->
+<div class="modal-ov" id="assign-modal">
+  <div class="modal-box">
+    <button class="mc" onclick="closeMod('assign-modal')">✕</button>
+    <h3 id="assign-title" data-i="assign_task">Assign Task</h3>
+    <img src="https://images.pexels.com/photos/4491461/pexels-photo-4491461.jpeg" style="width:100%;height:100px;object-fit:cover;border-radius:14px;margin-bottom:16px;">
+    <div class="mb-fg">
+      <label data-i="lbl_student">Student</label>
+      <select id="assign-student-sel">
+        {% for s in students %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="mb-fg">
+      <label data-i="lbl_disorder">Disorder</label>
+      <select id="assign-disorder-sel" onchange="renderTaskOpts()">
+        {% if teacher_skill in ['dyslexia', 'both'] %}<option value="dyslexia">Dyslexia</option>{% endif %}
+        {% if teacher_skill in ['adhd', 'both'] %}<option value="adhd">ADHD</option>{% endif %}
+      </select>
+    </div>
+    <div class="mb-fg"><label data-i="lbl_select_task">Select Task</label><div id="task-opts-grid"></div></div>
+    <div class="mb-fg"><label data-i="lbl_notes">Notes (optional)</label><textarea id="assign-notes" data-i-ph="notes_placeholder" placeholder="Any specific instructions..."></textarea></div>
+    <button class="modal-btn" onclick="submitAssign()" data-i="btn_assign">Assign Task →</button>
+    <div id="assign-msg" style="margin-top:10px;font-size:.82rem;text-align:center;"></div>
+  </div>
+</div>
+
+<!-- Reassign modal -->
+<div class="modal-ov" id="reassign-modal">
+  <div class="modal-box">
+    <button class="mc" onclick="closeMod('reassign-modal')">✕</button>
+    <h3 data-i="reassign_student">Reassign Student</h3>
+    <form method="POST" action="/teacher/reassign_student">
+      <input type="hidden" name="student_id" id="rea-sid">
+      <div class="mb-fg">
+        <label data-i="lbl_new_teacher">New Teacher</label>
+        <select name="new_teacher_id">
+          {% for t in teachers %}<option value="{{ t.id }}">{{ t.name }}</option>{% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="modal-btn" style="margin-top:16px" data-i="btn_reassign">Reassign →</button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script>
+const ALL_TASKS    = {{ all_tasks|tojson }};
+const STUDENTS_RAW = {{ students|tojson }};
+let selectedTaskId = null, selectedDisorder = null, assignStudentId = null;
+let chatStudentId = null, chatStudentName = '';
+let currentReportStudentId = null, currentReportStudentName = '';
+
+// ─── FULL TRILINGUAL TRANSLATIONS ─────────────────────────────────────────────
+const TL = {
+  en:{
+    educator_portal:"Educator Portal",nav_management:"Management",nav_overview:"Overview",nav_pending:"New Students",nav_students:"My Students",nav_tasks:"Assign Tasks",nav_reports:"Reports",nav_chat:"Chat",
+    logout:"Logout",teacher_role_label:"",
+    stat_students:"My Students",stat_screened:"Screened",stat_tasks:"Tasks Assigned",stat_charge:"In My Charge",
+    recent_students:"Recent Students",view_all:"View All →",
+    th_student:"Student",th_disorder:"Disorder",th_status:"Status",th_risk:"Risk Level",th_tasks:"Tasks",th_actions:"Actions",th_scores:"Scores",th_requested:"Requested",th_action:"Action",
+    screened:"✓ Screened",pending:"Pending",not_screened:"Not Screened",improved:"Improved",
+    tasks_word:"tasks",tasks_done:"tasks done",
+    chart_dist:"Student Screening Distribution",
+    pending_title:"New Students Awaiting Acceptance",pending_sub:"AI-screened students matching your specialization",
+    no_pending:"No pending students",no_pending_sub:"New AI-screened students matching your specialization will appear here.",
+    btn_accept:"✓ Accept",btn_decline:"✗ Decline",
+    filter_all:"All Students",filter_adhd:"⚡ ADHD",filter_dyslexia:"🔤 Dyslexia",filter_both:"🔀 Both",filter_charge:"✅ In My Charge",filter_improved:"↑ Improved",
+    generate_report:"📑 Generate Report",
+    task_center:"Task Assignment Center",specialization:"Specialization",dyslexia_tasks:"Dyslexia Tasks",adhd_tasks:"ADHD Tasks",assign_btn:"Assign to Student →",
+    report_center:"Progress Report Center",report_sub:"Generate detailed reports and send to parent email",
+    view_report:"📑 View Report",send_email:"📧 Send Email",no_students_rep:"No students yet",
+    student_performance:"Student Performance",generating:"Generating report…",
+    print_report:"🖨️ Print / Save PDF",send_parent:"📧 Send to Parent",
+    assign_task:"Assign Task",lbl_student:"Student",lbl_disorder:"Disorder",lbl_select_task:"Select Task",lbl_notes:"Notes (optional)",notes_placeholder:"Any specific instructions...",btn_assign:"Assign Task →",
+    reassign_student:"Reassign Student",lbl_new_teacher:"New Teacher",btn_reassign:"Reassign →",
+    select_student_chat:"Select a student to chat",
+    pending_word:"pending",done_word:"done",
+    btn_release:"Release",btn_take_charge:"Take Charge",
+    // report strings
+    rpt_title:"Comprehensive Progress Report",rpt_generated:"Generated",rpt_by:"By",rpt_for:"For",
+    rpt_risk:"Current Risk Level",rpt_disorder:"Disorder",rpt_screening:"AI Screening Summary",rpt_initial_risk:"Initial Risk",rpt_current_risk:"Current Risk",rpt_risk_change:"Risk Change",
+    rpt_tasks:"Task Progress",rpt_completed:"Completed",rpt_pending_t:"Pending",rpt_games:"Game Scores",rpt_skills:"Cognitive Skills",
+    rpt_no_change:"No change",rpt_improved_txt:"Improved after task completion!",rpt_worsened_txt:"Needs more attention",
+    rpt_email_sent:"📧 Report sent to parent email!",rpt_email_fail:"⚠️ Email delivery failed",rpt_no_email:"⚠️ No parent email on file",
+    lang_lbl:"Language",score_lbl:"Score",best_lbl:"Best",plays_lbl:"Plays",
+    task_name_lbl:"Task",status_lbl:"Status",disorder_lbl:"Type",
+    risk_lvl_label:"Risk Level Updated",progress_note:"Progress tracked since AI screening",
+  },
+  ta:{
+    educator_portal:"ஆசிரியர் போர்டல்",nav_management:"நிர்வாகம்",nav_overview:"கண்ணோட்டம்",nav_pending:"புதிய மாணவர்கள்",nav_students:"என் மாணவர்கள்",nav_tasks:"பணிகள் ஒதுக்கு",nav_reports:"அறிக்கைகள்",nav_chat:"அரட்டை",
+    logout:"வெளியேறு",teacher_role_label:"",
+    stat_students:"என் மாணவர்கள்",stat_screened:"திரையிடல்",stat_tasks:"பணிகள் ஒதுக்கப்பட்டன",stat_charge:"என் பொறுப்பில்",
+    recent_students:"சமீபத்திய மாணவர்கள்",view_all:"அனைத்தும் பார் →",
+    th_student:"மாணவர்",th_disorder:"குறைபாடு",th_status:"நிலை",th_risk:"ஆபத்து நிலை",th_tasks:"பணிகள்",th_actions:"செயல்கள்",th_scores:"மதிப்பெண்கள்",th_requested:"கோரிய நாள்",th_action:"செயல்",
+    screened:"✓ திரையிடப்பட்டது",pending:"நிலுவையில்",not_screened:"திரையிடப்படவில்லை",improved:"மேம்பட்டது",
+    tasks_word:"பணிகள்",tasks_done:"பணிகள் முடிந்தன",
+    chart_dist:"மாணவர் திரையிடல் விநியோகம்",
+    pending_title:"ஒப்புகை காத்திருக்கும் புதிய மாணவர்கள்",pending_sub:"உங்கள் நிபுணத்துவத்திற்கு பொருந்தும் AI திரையிடப்பட்ட மாணவர்கள்",
+    no_pending:"நிலுவை மாணவர்கள் இல்லை",no_pending_sub:"உங்கள் நிபுணத்துவத்திற்கு பொருந்தும் புதிய மாணவர்கள் இங்கே தோன்றுவார்கள்.",
+    btn_accept:"✓ ஏற்று",btn_decline:"✗ நிராகரி",
+    filter_all:"அனைத்து மாணவர்கள்",filter_adhd:"⚡ ADHD",filter_dyslexia:"🔤 டிஸ்லெக்சியா",filter_both:"🔀 இரண்டும்",filter_charge:"✅ என் பொறுப்பில்",filter_improved:"↑ மேம்பட்டது",
+    generate_report:"📑 அறிக்கை உருவாக்கு",
+    task_center:"பணி ஒதுக்கீடு மையம்",specialization:"நிபுணத்துவம்",dyslexia_tasks:"டிஸ்லெக்சியா பணிகள்",adhd_tasks:"ADHD பணிகள்",assign_btn:"மாணவருக்கு ஒதுக்கு →",
+    report_center:"முன்னேற்ற அறிக்கை மையம்",report_sub:"விரிவான அறிக்கைகளை உருவாக்கி பெற்றோர் மின்னஞ்சலுக்கு அனுப்பவும்",
+    view_report:"📑 அறிக்கை பார்",send_email:"📧 மின்னஞ்சல் அனுப்பு",no_students_rep:"மாணவர்கள் இல்லை",
+    student_performance:"மாணவர் செயல்திறன்",generating:"அறிக்கை உருவாக்குகிறது…",
+    print_report:"🖨️ அச்சிடு / PDF சேமி",send_parent:"📧 பெற்றோருக்கு அனுப்பு",
+    assign_task:"பணி ஒதுக்கு",lbl_student:"மாணவர்",lbl_disorder:"குறைபாடு",lbl_select_task:"பணி தேர்வு",lbl_notes:"குறிப்புகள் (விரும்பினால்)",notes_placeholder:"குறிப்பிட்ட வழிமுறைகள்...",btn_assign:"பணி ஒதுக்கு →",
+    reassign_student:"மாணவரை மாற்றி ஒதுக்கு",lbl_new_teacher:"புதிய ஆசிரியர்",btn_reassign:"மாற்றி ஒதுக்கு →",
+    select_student_chat:"அரட்டைக்கு மாணவரை தேர்ந்தெடுக்கவும்",
+    pending_word:"நிலுவை",done_word:"முடிந்தது",
+    btn_release:"விடுவி",btn_take_charge:"பொறுப்பேற்று",
+    rpt_title:"விரிவான முன்னேற்ற அறிக்கை",rpt_generated:"உருவாக்கப்பட்டது",rpt_by:"ஆல்",rpt_for:"க்காக",
+    rpt_risk:"தற்போதைய ஆபத்து நிலை",rpt_disorder:"குறைபாடு",rpt_screening:"AI திரையிடல் சுருக்கம்",rpt_initial_risk:"ஆரம்ப ஆபத்து",rpt_current_risk:"தற்போதைய ஆபத்து",rpt_risk_change:"ஆபத்து மாற்றம்",
+    rpt_tasks:"பணி முன்னேற்றம்",rpt_completed:"முடிந்தது",rpt_pending_t:"நிலுவை",rpt_games:"விளையாட்டு மதிப்பெண்கள்",rpt_skills:"அறிவுசார் திறன்கள்",
+    rpt_no_change:"மாற்றம் இல்லை",rpt_improved_txt:"பணி முடிவுக்குப் பிறகு மேம்பட்டது!",rpt_worsened_txt:"மேலும் கவனம் தேவை",
+    rpt_email_sent:"📧 பெற்றோர் மின்னஞ்சலுக்கு அறிக்கை அனுப்பப்பட்டது!",rpt_email_fail:"⚠️ மின்னஞ்சல் அனுப்புவதில் தோல்வி",rpt_no_email:"⚠️ பெற்றோர் மின்னஞ்சல் இல்லை",
+    lang_lbl:"மொழி",score_lbl:"மதிப்பெண்",best_lbl:"சிறந்த",plays_lbl:"விளையாட்டுகள்",
+    task_name_lbl:"பணி",status_lbl:"நிலை",disorder_lbl:"வகை",
+    risk_lvl_label:"ஆபத்து நிலை புதுப்பிக்கப்பட்டது",progress_note:"AI திரையிடலிலிருந்து முன்னேற்றம் கண்காணிக்கப்படுகிறது",
+  },
+  hi:{
+    educator_portal:"शिक्षक पोर्टल",nav_management:"प्रबंधन",nav_overview:"अवलोकन",nav_pending:"नए छात्र",nav_students:"मेरे छात्र",nav_tasks:"कार्य सौंपें",nav_reports:"रिपोर्ट",nav_chat:"चैट",
+    logout:"लॉग आउट",teacher_role_label:"",
+    stat_students:"मेरे छात्र",stat_screened:"स्क्रीन किए गए",stat_tasks:"सौंपे गए कार्य",stat_charge:"मेरी जिम्मेदारी में",
+    recent_students:"हाल के छात्र",view_all:"सभी देखें →",
+    th_student:"छात्र",th_disorder:"विकार",th_status:"स्थिति",th_risk:"जोखिम स्तर",th_tasks:"कार्य",th_actions:"कार्रवाई",th_scores:"अंक",th_requested:"अनुरोध तिथि",th_action:"कार्रवाई",
+    screened:"✓ स्क्रीन किया",pending:"लंबित",not_screened:"स्क्रीन नहीं हुआ",improved:"सुधरा",
+    tasks_word:"कार्य",tasks_done:"कार्य पूर्ण",
+    chart_dist:"छात्र स्क्रीनिंग वितरण",
+    pending_title:"स्वीकृति की प्रतीक्षा में नए छात्र",pending_sub:"आपकी विशेषज्ञता से मेल खाते AI स्क्रीन किए छात्र",
+    no_pending:"कोई लंबित छात्र नहीं",no_pending_sub:"आपकी विशेषज्ञता से मेल खाते नए छात्र यहाँ दिखेंगे।",
+    btn_accept:"✓ स्वीकार करें",btn_decline:"✗ अस्वीकार",
+    filter_all:"सभी छात्र",filter_adhd:"⚡ ADHD",filter_dyslexia:"🔤 डिस्लेक्सिया",filter_both:"🔀 दोनों",filter_charge:"✅ मेरी जिम्मेदारी",filter_improved:"↑ सुधरे",
+    generate_report:"📑 रिपोर्ट बनाएं",
+    task_center:"कार्य नियुक्ति केंद्र",specialization:"विशेषज्ञता",dyslexia_tasks:"डिस्लेक्सिया कार्य",adhd_tasks:"ADHD कार्य",assign_btn:"छात्र को सौंपें →",
+    report_center:"प्रगति रिपोर्ट केंद्र",report_sub:"विस्तृत रिपोर्ट बनाएं और अभिभावक को ईमेल करें",
+    view_report:"📑 रिपोर्ट देखें",send_email:"📧 ईमेल भेजें",no_students_rep:"अभी कोई छात्र नहीं",
+    student_performance:"छात्र प्रदर्शन",generating:"रिपोर्ट बना रहे हैं…",
+    print_report:"🖨️ प्रिंट / PDF सहेजें",send_parent:"📧 अभिभावक को भेजें",
+    assign_task:"कार्य सौंपें",lbl_student:"छात्र",lbl_disorder:"विकार",lbl_select_task:"कार्य चुनें",lbl_notes:"नोट्स (वैकल्पिक)",notes_placeholder:"विशेष निर्देश...",btn_assign:"कार्य सौंपें →",
+    reassign_student:"छात्र को पुनः नियुक्त करें",lbl_new_teacher:"नए शिक्षक",btn_reassign:"पुनः नियुक्त करें →",
+    select_student_chat:"चैट के लिए छात्र चुनें",
+    pending_word:"लंबित",done_word:"पूर्ण",
+    btn_release:"छोड़ें",btn_take_charge:"जिम्मेदारी लें",
+    rpt_title:"व्यापक प्रगति रिपोर्ट",rpt_generated:"बनाई गई",rpt_by:"द्वारा",rpt_for:"के लिए",
+    rpt_risk:"वर्तमान जोखिम स्तर",rpt_disorder:"विकार",rpt_screening:"AI स्क्रीनिंग सारांश",rpt_initial_risk:"प्रारंभिक जोखिम",rpt_current_risk:"वर्तमान जोखिम",rpt_risk_change:"जोखिम परिवर्तन",
+    rpt_tasks:"कार्य प्रगति",rpt_completed:"पूर्ण",rpt_pending_t:"लंबित",rpt_games:"खेल अंक",rpt_skills:"संज्ञानात्मक कौशल",
+    rpt_no_change:"कोई बदलाव नहीं",rpt_improved_txt:"कार्य पूरा होने के बाद सुधार!",rpt_worsened_txt:"अधिक ध्यान चाहिए",
+    rpt_email_sent:"📧 रिपोर्ट अभिभावक ईमेल पर भेजी गई!",rpt_email_fail:"⚠️ ईमेल भेजने में विफल",rpt_no_email:"⚠️ अभिभावक ईमेल उपलब्ध नहीं",
+    lang_lbl:"भाषा",score_lbl:"अंक",best_lbl:"सर्वश्रेष्ठ",plays_lbl:"खेल",
+    task_name_lbl:"कार्य",status_lbl:"स्थिति",disorder_lbl:"प्रकार",
+    risk_lvl_label:"जोखिम स्तर अपडेट हुआ",progress_note:"AI स्क्रीनिंग से प्रगति ट्रैक की जा रही है",
+  }
+};
+
+let cl = 'en';
+
+// ─── LANGUAGE SWITCH ──────────────────────────────────────────────────────────
+function setL(lang, btn) {
+  cl = lang;
+  document.querySelectorAll('.lsw').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('[data-i]').forEach(el => {
+    const k = el.getAttribute('data-i');
+    if (TL[lang] && TL[lang][k] !== undefined) el.textContent = TL[lang][k];
+  });
+  document.querySelectorAll('[data-i-ph]').forEach(el => {
+    const k = el.getAttribute('data-i-ph');
+    if (TL[lang] && TL[lang][k]) el.placeholder = TL[lang][k];
+  });
+  // Update page title
+  const panels = {overview:'nav_overview',pending:'nav_pending',students:'nav_students',tasks:'nav_tasks',reports:'nav_reports',chat:'nav_chat'};
+  const active = document.querySelector('.panel.on')?.id?.replace('panel-','');
+  if (active && panels[active]) document.getElementById('page-ttl').textContent = TL[lang][panels[active]] || '';
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+function showP(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.sb-it').forEach(b => b.classList.remove('on'));
+  document.getElementById('panel-' + id)?.classList.add('on');
+  document.getElementById('sbi-' + id)?.classList.add('on');
+  const titles = {overview:'nav_overview',pending:'nav_pending',students:'nav_students',tasks:'nav_tasks',reports:'nav_reports',chat:'nav_chat'};
+  document.getElementById('page-ttl').textContent = TL[cl][titles[id]] || id;
+}
+function closeMod(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-ov').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
+
+// ─── DISORDER FILTER ──────────────────────────────────────────────────────────
+function filterDisorder(type, btn) {
+  document.querySelectorAll('.dtab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const rows = document.querySelectorAll('#students-table tbody tr');
+  let visible = 0;
+  rows.forEach(row => {
+    const dis = row.getAttribute('data-disorder') || 'none';
+    const charge = row.getAttribute('data-charge');
+    const improved = row.getAttribute('data-improved');
+    let show = false;
+    if      (type === 'all')      show = true;
+    else if (type === 'charge')   show = charge === '1';
+    else if (type === 'improved') show = improved === '1';
+    else                          show = dis === type;
+    row.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('stud-count').textContent = visible;
+}
+
+// ─── TAKE/RELEASE CHARGE ──────────────────────────────────────────────────────
+async function toggleCharge(sid, action, btn) {
+  const r = await fetch('/teacher/take_charge', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({student_id:sid,action})});
+  const d = await r.json();
+  if (d.status === 'ok') {
+    const row = btn.closest('tr');
+    if (action === 'take') {
+      btn.className = 'charge-btn release';
+      btn.innerHTML = '🔓 <span data-i="btn_release">' + (TL[cl].btn_release||'Release') + '</span>';
+      btn.setAttribute('onclick', `toggleCharge(${sid},'release',this)`);
+      row.setAttribute('data-charge', '1');
+      showToast('✅ ' + (TL[cl].btn_take_charge||'In charge!'), 'teal');
+    } else {
+      btn.className = 'charge-btn take';
+      btn.innerHTML = '🎯 <span data-i="btn_take_charge">' + (TL[cl].btn_take_charge||'Take Charge') + '</span>';
+      btn.setAttribute('onclick', `toggleCharge(${sid},'take',this)`);
+      row.setAttribute('data-charge', '0');
+      showToast('🔓 Released', 'gold');
+    }
+  } else {
+    showToast('⚠️ Action failed.', 'rose');
+  }
+}
+
+// ─── ACCEPT / DECLINE ─────────────────────────────────────────────────────────
+async function acceptStudent(sid, name) {
+  const r = await fetch('/teacher/accept_student',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({student_id:sid})});
+  const d = await r.json();
+  if (d.status === 'ok') {
+    document.getElementById('prow-'+sid)?.remove();
+    showToast('✅ ' + name + ' accepted!', 'teal');
+  } else if (d.status === 'already_assigned') {
+    document.getElementById('prow-'+sid)?.remove();
+    showToast('⚠️ Already accepted by another teacher.', 'gold');
+  }
+}
+async function declineStudent(sid, name) {
+  const r = await fetch('/teacher/decline_student',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({student_id:sid})});
+  const d = await r.json();
+  if (d.status === 'ok') { document.getElementById('prow-'+sid)?.remove(); showToast('✗ ' + name + ' declined.', 'rose'); }
+}
+
+// ─── PERFORMANCE MODAL ────────────────────────────────────────────────────────
+async function openPerf(sid, name) {
+  document.getElementById('perf-name').textContent = name + ' — ' + (TL[cl].student_performance||'Performance');
+  document.getElementById('perf-modal').classList.add('open');
+  document.getElementById('perf-content').innerHTML = '<div style="text-align:center;padding:20px"><div class="spin"></div></div>';
+  const r = await fetch('/api/student_performance/' + sid);
+  const d = await r.json();
+  let html = '';
+  if (d.screening && d.screening.prediction) {
+    const cls = d.screening.prediction.includes('High') ? 'tag-hr' : d.screening.prediction.includes('Moderate') ? 'tag-mr' : 'tag-lr';
+    const improved = d.screening.risk_improved;
+    html += `<div style="padding:12px 16px;border-radius:14px;background:var(--s2);border:1px solid var(--border);margin-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span style="font-weight:700;color:var(--navy)">AI Result:</span>
+        <span class="tag ${cls}">${d.screening.prediction}</span>
+        ${d.screening.disorder ? `<span class="tag tag-nd">${d.screening.disorder}</span>` : ''}
+        ${improved ? `<span class="tag tag-improved">↑ ${TL[cl].improved||'Improved'}</span>` : ''}
+      </div>
+      ${improved ? `<div style="margin-top:8px;font-size:.78rem;color:var(--teal);font-weight:600">🎉 ${TL[cl].rpt_improved_txt||'Risk improved after task completion!'}</div>` : ''}
+    </div>`;
+    // Skill bars
+    const skills = {language:'Language',memory:'Memory',speed:'Speed',visual:'Visual',audio:'Audio'};
+    const colors = {language:'#E8614A',memory:'#7B5EA7',speed:'#E9A84C',visual:'#2A9D8F',audio:'#264653'};
+    html += '<div style="margin-bottom:12px;">';
+    for (const [k,label] of Object.entries(skills)) {
+      const val = d.screening[k] || 0;
+      html += `<div class="skill-bar-row"><div class="skill-bar-label">${label}</div><div class="skill-bar-track"><div class="skill-bar-fill" style="width:${val*10}%;background:${colors[k]}"></div></div><div class="skill-bar-val">${val}/10</div></div>`;
+    }
+    html += '</div>';
+  }
+  if (d.tasks.length > 0) {
+    html += '<div style="margin-bottom:12px">' +
+      d.tasks.map(t => `<div style="display:flex;justify-content:space-between;padding:8px 12px;border-radius:10px;background:var(--s2);margin-bottom:6px;font-size:.82rem"><span>${t.disorder} · ${t.status}</span><strong>${t.cnt}</strong></div>`).join('') +
+    '</div>';
+  }
+  document.getElementById('perf-content').innerHTML = html || `<div style="color:var(--muted);font-size:.84rem;text-align:center">No data yet.</div>`;
+  if (d.scores.length > 0) {
+    const pc = document.getElementById('perf-chart');
+    if (window._pChart) window._pChart.destroy();
+    window._pChart = new Chart(pc, {
+      type:'line',
+      data:{labels:d.scores.map(s=>s.played_at?.slice(0,10)||''),datasets:[{label:'Score',data:d.scores.map(s=>s.score),borderColor:'var(--teal)',backgroundColor:'rgba(42,157,143,.08)',borderWidth:2,tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'var(--teal)'}]},
+      options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}}
+    });
+  } else {
+    const pc = document.getElementById('perf-chart');
+    if (window._pChart) window._pChart.destroy();
+    pc.style.display = 'none';
+  }
+}
+
+// ─── REPORT GENERATION ────────────────────────────────────────────────────────
+async function openReport(sid, name) {
+  currentReportStudentId   = sid;
+  currentReportStudentName = name;
+  document.getElementById('report-modal').classList.add('open');
+  document.getElementById('report-actions').style.display = 'none';
+  const t = TL[cl];
+  document.getElementById('report-content').innerHTML = `<div style="text-align:center;padding:40px"><div class="spin"></div><div style="margin-top:14px;color:var(--muted);font-size:.84rem">${t.generating||'Generating report…'}</div></div>`;
+
+  const r = await fetch('/api/student_performance/' + sid);
+  const d = await r.json();
+  const now = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+
+  const scr = d.screening || {};
+  const disorder = scr.disorder || '—';
+  const prediction = scr.prediction || '—';
+  const initialRisk = scr.initial_risk || prediction;
+  const currentRisk = scr.prediction || '—';
+  const riskImproved = scr.risk_improved;
+  const completedTasks = d.tasks.filter(t => t.status === 'completed').reduce((a,t)=>a+t.cnt,0);
+  const pendingTasks = d.tasks.filter(t => t.status !== 'completed').reduce((a,t)=>a+t.cnt,0);
+
+  // Determine risk class
+  const riskClass = currentRisk.includes('High') ? 'high' : currentRisk.includes('Moderate') ? 'moderate' : 'low';
+  const riskColor = currentRisk.includes('High') ? '#E8614A' : currentRisk.includes('Moderate') ? '#E9A84C' : '#2A9D8F';
+  const riskIcon  = currentRisk.includes('High') ? '⚠️' : currentRisk.includes('Moderate') ? '🔶' : '✅';
+
+  // Delta
+  let deltaHtml = '';
+  if (riskImproved) {
+    deltaHtml = `<span class="risk-delta improved">↑ ${t.rpt_improved_txt||'Improved!'}</span>`;
+  } else if (initialRisk === currentRisk) {
+    deltaHtml = `<span class="risk-delta same">→ ${t.rpt_no_change||'No change'}</span>`;
+  } else {
+    deltaHtml = `<span class="risk-delta worsened">↓ ${t.rpt_worsened_txt||'Needs attention'}</span>`;
+  }
+
+  // Skills
+  const skills = {language:{l:'Language',c:'#E8614A'},memory:{l:'Memory',c:'#7B5EA7'},speed:{l:'Speed',c:'#E9A84C'},visual:{l:'Visual',c:'#2A9D8F'},audio:{l:'Audio',c:'#264653'}};
+  let skillsHtml = '';
+  for (const [k,s] of Object.entries(skills)) {
+    const val = scr[k] || 0;
+    skillsHtml += `<div class="skill-bar-row"><div class="skill-bar-label">${s.l}</div><div class="skill-bar-track"><div class="skill-bar-fill" style="width:${val*10}%;background:${s.c}"></div></div><div class="skill-bar-val">${val}/10</div></div>`;
+  }
+
+  // Tasks table
+  let taskRows = '';
+  if (d.tasks.length > 0) {
+    taskRows = d.tasks.map(t => `<tr><td style="padding:9px 14px;border-bottom:1px solid rgba(0,0,0,.04);font-size:.82rem">${t.disorder||'—'}</td><td style="padding:9px 14px;border-bottom:1px solid rgba(0,0,0,.04);font-size:.82rem">${t.status}</td><td style="padding:9px 14px;border-bottom:1px solid rgba(0,0,0,.04);font-size:.82rem;font-weight:700">${t.cnt}</td></tr>`).join('');
+  } else {
+    taskRows = `<tr><td colspan="3" style="padding:16px;text-align:center;color:var(--muted);font-size:.82rem">No tasks assigned yet</td></tr>`;
+  }
+
+  // Game scores
+  let gameRows = '';
+  if (d.scores.length > 0) {
+    d.scores.slice(-8).forEach(s => {
+      gameRows += `<tr><td style="padding:9px 14px;border-bottom:1px solid rgba(0,0,0,.04);font-size:.82rem">${s.game_id?.replace(/_/g,' ')||'—'}</td><td style="padding:9px 14px;border-bottom:1px solid rgba(0,0,0,.04);font-size:.82rem;font-weight:700;color:var(--rose)">${s.score||0}</td></tr>`;
+    });
+  } else {
+    gameRows = `<tr><td colspan="2" style="padding:16px;text-align:center;color:var(--muted);font-size:.82rem">No game data yet</td></tr>`;
+  }
+
+  const thStyle = `padding:10px 14px;text-align:left;font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--s2);`;
+
+  document.getElementById('report-content').innerHTML = `
+    <div id="printable-report">
+      <!-- Header -->
+      <div style="background:linear-gradient(135deg,#1a3c5e,var(--navy));border-radius:18px;padding:28px;text-align:center;margin-bottom:22px;color:#fff;">
+        <div style="font-size:2.5rem;margin-bottom:8px">📑</div>
+        <div style="font-family:var(--fh);font-size:1.4rem;font-weight:700;margin-bottom:4px">${t.rpt_title||'Comprehensive Progress Report'}</div>
+        <div style="font-size:.8rem;opacity:.8;margin-bottom:6px">${t.rpt_for||'For'}: <strong>${name}</strong> &nbsp;·&nbsp; ${t.rpt_generated||'Generated'}: ${now}</div>
+        <div style="font-size:.78rem;opacity:.7">${t.rpt_by||'By'}: SmartScreen AI Platform &nbsp;·&nbsp; ${t.progress_note||'Progress tracked since AI screening'}</div>
+      </div>
+
+      <!-- Current Risk Level (Updated) -->
+      <div class="report-section">
+        <div class="report-section-title">🎯 ${t.rpt_risk||'Current Risk Level'} ${deltaHtml}</div>
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <div style="text-align:center;flex-shrink:0">
+            <div style="width:80px;height:80px;border-radius:50%;background:${riskColor}20;border:3px solid ${riskColor};display:flex;align-items:center;justify-content:center;margin:0 auto 6px;font-size:1.8rem">${riskIcon}</div>
+            <div style="font-family:var(--fh);font-size:.92rem;font-weight:700;color:${riskColor}">${currentRisk}</div>
+          </div>
+          <div style="flex:1">
+            <div class="report-metric"><span>${t.rpt_initial_risk||'Initial Risk'}</span><span class="report-metric-val">${initialRisk}</span></div>
+            <div class="report-metric"><span>${t.rpt_current_risk||'Current Risk'}</span><span class="report-metric-val" style="color:${riskColor}">${currentRisk}</span></div>
+            <div class="report-metric"><span>${t.rpt_disorder||'Disorder'}</span><span class="report-metric-val">${disorder}</span></div>
+            <div class="report-metric"><span>${t.rpt_risk_change||'Risk Change'}</span><span class="report-metric-val">${riskImproved ? '✅ '+t.rpt_improved_txt : '→ '+t.rpt_no_change}</span></div>
+          </div>
+        </div>
+        ${riskImproved ? `<div style="margin-top:12px;padding:10px 14px;background:rgba(42,157,143,.08);border-radius:12px;border:1px solid rgba(42,157,143,.2);font-size:.8rem;color:var(--teal);font-weight:600">🎉 ${t.rpt_improved_txt}</div>` : ''}
+      </div>
+
+      <!-- Cognitive Skills -->
+      <div class="report-section">
+        <div class="report-section-title">🧠 ${t.rpt_skills||'Cognitive Skills'}</div>
+        ${skillsHtml || '<div style="color:var(--muted);font-size:.82rem">No skill data available</div>'}
+      </div>
+
+      <!-- Task Progress -->
+      <div class="report-section">
+        <div class="report-section-title">📋 ${t.rpt_tasks||'Task Progress'}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+          <div style="background:rgba(42,157,143,.06);border:1px solid rgba(42,157,143,.2);border-radius:12px;padding:14px;text-align:center;">
+            <div style="font-family:var(--fh);font-size:1.8rem;font-weight:700;color:var(--teal)">${completedTasks}</div>
+            <div style="font-size:.72rem;color:var(--muted);font-weight:600;text-transform:uppercase">${t.rpt_completed||'Completed'}</div>
+          </div>
+          <div style="background:rgba(233,168,76,.06);border:1px solid rgba(233,168,76,.2);border-radius:12px;padding:14px;text-align:center;">
+            <div style="font-family:var(--fh);font-size:1.8rem;font-weight:700;color:var(--gold)">${pendingTasks}</div>
+            <div style="font-size:.72rem;color:var(--muted);font-weight:600;text-transform:uppercase">${t.rpt_pending_t||'Pending'}</div>
+          </div>
+        </div>
+        ${completedTasks > 0 ? `
+        <div style="margin-bottom:8px;height:10px;background:rgba(0,0,0,.06);border-radius:5px;overflow:hidden;">
+          <div style="height:100%;width:${Math.round(completedTasks/(completedTasks+pendingTasks||1)*100)}%;background:linear-gradient(90deg,var(--teal),#3BC4B5);border-radius:5px;transition:width .6s ease;"></div>
+        </div>
+        <div style="font-size:.72rem;color:var(--muted);text-align:right">${Math.round(completedTasks/(completedTasks+pendingTasks||1)*100)}% ${t.rpt_completed||'complete'}</div>
+        ` : ''}
+        <table style="width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:12px;">
+          <thead><tr>
+            <th style="${thStyle}">${t.disorder_lbl||'Type'}</th>
+            <th style="${thStyle}">${t.status_lbl||'Status'}</th>
+            <th style="${thStyle}">Count</th>
+          </tr></thead>
+          <tbody>${taskRows}</tbody>
+        </table>
+      </div>
+
+      <!-- Game Scores -->
+      <div class="report-section">
+        <div class="report-section-title">🎮 ${t.rpt_games||'Game Scores'}</div>
+        <table style="width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+          <thead><tr>
+            <th style="${thStyle}">Game</th>
+            <th style="${thStyle}">${t.score_lbl||'Score'}</th>
+          </tr></thead>
+          <tbody>${gameRows}</tbody>
+        </table>
+      </div>
+
+      <!-- Footer note -->
+      <div style="text-align:center;font-size:.72rem;color:var(--muted);margin-top:8px;padding:12px;background:var(--s2);border-radius:12px;">
+        📊 SmartScreen AI Platform &nbsp;·&nbsp; ${t.rpt_generated||'Generated'} ${now} &nbsp;·&nbsp; <strong>${t.rpt_by||'By'} {{ name }}</strong>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('report-actions').style.display = 'flex';
+  document.getElementById('email-report-btn').dataset.sid = sid;
+}
+
+function printReport() {
+  const content = document.getElementById('printable-report')?.innerHTML;
+  if (!content) return;
+  const w = window.open('', '_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>SmartScreen Report</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans',sans-serif;}
+    body{background:#fff;padding:32px;color:#1A1A2E;max-width:760px;margin:0 auto;}
+    :root{--teal:#2A9D8F;--rose:#E8614A;--gold:#E9A84C;--purple:#7B5EA7;--navy:#264653;--muted:#6B7280;--s2:#F0EDE8;--border:#E5E0D8;}
+    .skill-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+    .skill-bar-label{font-size:.73rem;font-weight:700;color:var(--muted);width:90px;flex-shrink:0;}
+    .skill-bar-track{flex:1;height:8px;background:rgba(0,0,0,.06);border-radius:4px;overflow:hidden;}
+    .skill-bar-fill{height:100%;border-radius:4px;}
+    .skill-bar-val{font-size:.73rem;font-weight:700;color:var(--navy);width:32px;text-align:right;flex-shrink:0;}
+    .report-section{background:var(--s2);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:16px;}
+    .report-section-title{font-family:'Fraunces',serif;font-size:.9rem;font-weight:700;color:var(--navy);margin-bottom:12px;}
+    .report-metric{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.05);font-size:.83rem;}
+    .report-metric:last-child{border-bottom:none;}
+    .report-metric-val{font-weight:700;color:var(--navy);}
+    .risk-delta{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:.7rem;font-weight:700;margin-left:8px;}
+    .risk-delta.improved{background:rgba(42,157,143,.1);color:var(--teal);}
+    .risk-delta.same{background:#eee;color:var(--muted);}
+    .risk-delta.worsened{background:rgba(232,97,74,.1);color:var(--rose);}
+    @media print{body{padding:16px;}button{display:none!important;}}
+  </style></head><body>${content}<script>window.onload=()=>window.print();<\/script></body></html>`);
+  w.document.close();
+}
+
+async function emailReport(sid) {
+  const btn = document.getElementById('email-report-btn');
+  sid = sid || btn.dataset.sid;
+  if (!sid) return;
+  btn.disabled = true;
+  btn.textContent = '⏳ Sending…';
+  try {
+    const r = await fetch('/api/send_report_email/' + sid, {method:'POST', headers:{'Content-Type':'application/json'}});
+    const d = await r.json();
+    if (d.status === 'ok') {
+      showToast(TL[cl].rpt_email_sent || '📧 Report sent!', 'teal');
+      btn.textContent = TL[cl].send_parent || '📧 Send to Parent';
+    } else if (d.status === 'no_email') {
+      showToast(TL[cl].rpt_no_email || '⚠️ No parent email', 'gold');
+    } else {
+      showToast(TL[cl].rpt_email_fail || '⚠️ Email failed', 'rose');
+    }
+  } catch(e) {
+    showToast(TL[cl].rpt_email_fail || '⚠️ Email failed', 'rose');
+  }
+  btn.disabled = false;
+  btn.textContent = TL[cl].send_parent || '📧 Send to Parent';
+}
+
+function sendReport(sid, name) {
+  // Quick send without opening report view
+  fetch('/api/send_report_email/' + sid, {method:'POST',headers:{'Content-Type':'application/json'}})
+    .then(r=>r.json()).then(d=>{
+      if (d.status === 'ok') showToast((TL[cl].rpt_email_sent||'📧 Report sent to parent!'), 'teal');
+      else if (d.status === 'no_email') showToast(TL[cl].rpt_no_email||'⚠️ No parent email', 'gold');
+      else showToast(TL[cl].rpt_email_fail||'⚠️ Email failed', 'rose');
+    });
+}
+
+// ─── ASSIGN TASK ──────────────────────────────────────────────────────────────
+function openAssignTask(sid, name) {
+  assignStudentId = sid; selectedTaskId = null;
+  document.getElementById('assign-title').textContent = (TL[cl].assign_task||'Assign Task') + ': ' + name;
+  document.getElementById('assign-student-sel').value = sid;
+  document.getElementById('assign-notes').value = '';
+  document.getElementById('assign-msg').textContent = '';
+  renderTaskOpts();
+  document.getElementById('assign-modal').classList.add('open');
+}
+function openAssignSpecific(taskId, disorder, title) {
+  selectedTaskId = taskId; selectedDisorder = disorder;
+  document.getElementById('assign-title').textContent = (TL[cl].assign_task||'Assign') + ': ' + title;
+  document.getElementById('assign-disorder-sel').value = disorder;
+  renderTaskOpts();
+  document.getElementById('assign-modal').classList.add('open');
+}
+function renderTaskOpts() {
+  const dis   = document.getElementById('assign-disorder-sel').value;
+  const tasks = ALL_TASKS[dis] || [];
+  document.getElementById('task-opts-grid').innerHTML = '<div class="task-assignment-grid">' +
+    tasks.map(t => `<div class="task-opt ${t.id === selectedTaskId ? 'selected' : ''}" onclick="selectTask('${t.id}','${dis}',this)">
+      <div class="task-opt-icon">${t.icon}</div>
+      <div class="task-opt-title">${t.title}</div>
+      <div class="task-opt-meta">${t.duration} · ${t.level}</div>
+    </div>`).join('') + '</div>';
+}
+function selectTask(id, dis, el) {
+  selectedTaskId = id; selectedDisorder = dis;
+  document.querySelectorAll('.task-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+async function submitAssign() {
+  if (!selectedTaskId) return;
+  const sid   = assignStudentId || document.getElementById('assign-student-sel').value;
+  const dis   = document.getElementById('assign-disorder-sel').value;
+  const notes = document.getElementById('assign-notes').value;
+  const r = await fetch('/teacher/assign_task',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({student_id:parseInt(sid),task_id:selectedTaskId,disorder:dis,notes})});
+  const d = await r.json();
+  const msg = document.getElementById('assign-msg');
+  if (d.status === 'ok') {
+    msg.style.color = 'var(--teal)';
+    msg.textContent = '✅ ' + (TL[cl].btn_assign||'Task assigned successfully!');
+    setTimeout(() => closeMod('assign-modal'), 1500);
+  } else {
+    msg.style.color = 'var(--rose)';
+    msg.textContent = 'Already assigned or error occurred.';
+  }
+}
+
+// ─── REASSIGN ─────────────────────────────────────────────────────────────────
+function openReassign(sid, name) {
+  document.getElementById('rea-sid').value = sid;
+  document.getElementById('reassign-modal').classList.add('open');
+}
+
+// ─── CHAT ─────────────────────────────────────────────────────────────────────
+function openChatWith(sid, name) {
+  chatStudentId = sid; chatStudentName = name;
+  showP('chat');
+  document.getElementById('main-chat-area').innerHTML = `
+    <div class="chat-hdr">
+      <div class="chat-av">${name[0]}</div>
+      <div><div class="chat-name">${name}</div><div class="chat-sub">Student</div></div>
+    </div>
+    <div class="chat-msgs" id="chat-msgs"></div>
+    <div class="chat-inp-row">
+      <input class="c-inp" id="chat-inp" placeholder="Message ${name}..." onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="c-send" onclick="sendMsg()">↑</button>
+    </div>`;
+  loadMsgs();
+}
+async function loadMsgs() {
+  if (!chatStudentId) return;
+  const r = await fetch('/api/chat/messages/' + chatStudentId);
+  const msgs = await r.json();
+  const box = document.getElementById('chat-msgs');
+  if (!box) return;
+  box.innerHTML = '';
+  msgs.forEach(m => {
+    const div = document.createElement('div');
+    div.className = 'msg ' + (m.sender_id === chatStudentId ? 'msg-in' : 'msg-out');
+    div.innerHTML = m.message + '<div class="msg-time">' + (m.timestamp||'') + '</div>';
+    box.appendChild(div);
+  });
+  box.scrollTop = box.scrollHeight;
+}
+async function sendMsg() {
+  const inp = document.getElementById('chat-inp');
+  const msg = inp.value.trim();
+  if (!msg || !chatStudentId) return;
+  inp.value = '';
+  await fetch('/api/chat/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({receiver_id:chatStudentId,message:msg})});
+  loadMsgs();
+}
+setInterval(() => { if (chatStudentId) loadMsgs(); }, 4000);
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+function showToast(msg, color) {
+  const colors = {teal:'#2A9D8F',rose:'#E8614A',gold:'#E9A84C'};
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;bottom:28px;right:28px;z-index:9999;padding:14px 22px;border-radius:16px;font-size:.88rem;font-weight:700;color:#fff;box-shadow:0 8px 30px rgba(0,0,0,.2);transition:all .4s;opacity:0;transform:translateY(12px);background:${colors[color]||colors.teal};`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(() => { t.style.opacity='1'; t.style.transform='translateY(0)'; });
+  setTimeout(() => { t.style.opacity='0'; t.style.transform='translateY(12px)'; setTimeout(() => t.remove(), 400); }, 3500);
+}
+
+// ─── OVERVIEW CHART ───────────────────────────────────────────────────────────
+if (document.getElementById('overview-chart')) {
+  const screened   = STUDENTS_RAW.filter(s => s.screened).length;
+  const highRisk   = STUDENTS_RAW.filter(s => s.details?.prediction?.includes('High')).length;
+  const modRisk    = STUDENTS_RAW.filter(s => s.details?.prediction?.includes('Moderate')).length;
+  const improved   = STUDENTS_RAW.filter(s => s.details?.risk_improved).length;
+  const inCharge   = STUDENTS_RAW.filter(s => s.teacher_in_charge).length;
+  new Chart(document.getElementById('overview-chart'), {
+    type:'bar',
+    data:{
+      labels:['Total','Screened','High Risk','Moderate','Improved','In Charge'],
+      datasets:[{
+        data:[STUDENTS_RAW.length,screened,highRisk,modRisk,improved,inCharge],
+        backgroundColor:['rgba(42,157,143,.15)','rgba(42,157,143,.2)','rgba(232,97,74,.15)','rgba(233,168,76,.15)','rgba(42,157,143,.25)','rgba(123,94,167,.15)'],
+        borderColor:['var(--teal)','var(--teal)','var(--rose)','var(--gold)','var(--teal)','var(--purple)'],
+        borderWidth:2,borderRadius:10
+      }]
+    },
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}}
+  });
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderTaskOpts();
+const totalUnread = STUDENTS_RAW.reduce((a,s) => a + (s.unread||0), 0);
+if (totalUnread > 0) {
+  document.getElementById('unread-total').textContent = totalUnread;
+  document.getElementById('unread-total').style.display = '';
+}
+</script>
+</body>
+</html>
