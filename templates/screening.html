@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SmartScreen | Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F3EE;--s1:#FFFFFF;--s2:#F0EDE8;
+  --rose:#E8614A;--teal:#2A9D8F;--gold:#E9A84C;--navy:#264653;--purple:#7B5EA7;
+  --text:#1A1A2E;--muted:#6B7280;--dim:#9CA3AF;--border:#E5E0D8;
+  --shadow:0 4px 24px rgba(0,0,0,.08);--ff:'Plus Jakarta Sans',sans-serif;--fh:'Fraunces',serif;
+}
+body{font-family:var(--ff);background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:90px 20px 40px;}
+
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 28px;height:68px;display:flex;align-items:center;justify-content:space-between;background:rgba(245,243,238,.94);backdrop-filter:blur(20px);border-bottom:1.5px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.04);}
+.logo{font-family:var(--fh);font-size:1.25rem;font-weight:700;color:var(--rose);font-style:italic;}
+.lang-bar{display:flex;gap:3px;background:var(--s2);border-radius:100px;padding:3px;border:1px solid var(--border);}
+.lb{padding:5px 12px;border-radius:100px;border:none;font-size:.68rem;font-weight:700;cursor:pointer;background:transparent;color:var(--muted);transition:all .2s;}
+.lb.on{background:#fff;color:var(--rose);box-shadow:0 2px 6px rgba(0,0,0,.08);}
+
+.hero-strip{position:fixed;top:68px;left:0;right:0;height:160px;z-index:0;overflow:hidden;}
+.hero-strip img{width:100%;height:100%;object-fit:cover;opacity:.08;}
+.hero-strip-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent,var(--bg));}
+
+.wrapper{position:relative;z-index:1;width:100%;max-width:560px;}
+
+.prog-wrap{margin-bottom:20px;}
+.prog-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:10px;}
+#prog-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--gold));border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.prog-info{display:flex;justify-content:space-between;align-items:center;}
+.step-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+.timer-pill{display:flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(232,97,74,.06);border:1.5px solid rgba(232,97,74,.2);border-radius:100px;font-size:.75rem;font-weight:700;color:var(--rose);}
+.td{width:6px;height:6px;border-radius:50%;background:var(--rose);animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+
+.step-type-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 12px;border-radius:100px;font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;}
+.badge-adhd{background:rgba(233,168,76,.12);color:var(--gold);border:1.5px solid rgba(233,168,76,.3);}
+.badge-dyslexia{background:rgba(232,97,74,.10);color:var(--rose);border:1.5px solid rgba(232,97,74,.3);}
+.badge-both{background:rgba(123,94,167,.10);color:var(--purple);border:1.5px solid rgba(123,94,167,.3);}
+
+.card{background:var(--s1);border:1.5px solid var(--border);border-radius:28px;padding:40px;box-shadow:0 20px 60px rgba(0,0,0,.1);}
+.sec{display:none;animation:secIn .4s cubic-bezier(.34,1.56,.64,1);}
+.sec.on{display:block;}
+@keyframes secIn{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.sec-banner{width:100%;height:120px;object-fit:cover;border-radius:18px;margin-bottom:20px;}
+.sec h2{font-family:var(--fh);font-size:1.7rem;font-weight:700;color:var(--navy);margin-bottom:8px;text-align:center;}
+.sec p{font-size:.88rem;color:var(--muted);line-height:1.75;margin-bottom:20px;text-align:center;}
+
+.btn{display:inline-block;padding:12px 28px;border-radius:100px;border:none;cursor:pointer;font-family:var(--ff);font-size:.9rem;font-weight:700;transition:all .3s cubic-bezier(.34,1.56,.64,1);margin:5px;}
+.btn-rose{background:var(--rose);color:#fff;box-shadow:0 8px 20px rgba(232,97,74,.25);}
+.btn-rose:hover{transform:translateY(-3px);filter:brightness(1.08);}
+
+/* Step 1 - drag drop */
+.drop-zone{border:2px dashed rgba(232,97,74,.35);border-radius:18px;padding:20px 28px;margin:14px auto;max-width:200px;display:flex;align-items:center;justify-content:center;font-weight:700;color:rgba(232,97,74,.5);font-size:.9rem;background:rgba(232,97,74,.03);transition:all .2s;}
+.drop-zone.over{border-color:var(--rose);background:rgba(232,97,74,.06);color:var(--rose);}
+.drop-zone.ok{border-color:var(--teal);background:rgba(42,157,143,.06);color:var(--teal);border-style:solid;}
+.letter-tiles{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:14px 0;}
+.lt{padding:12px 20px;border-radius:14px;background:var(--s2);border:2px solid rgba(232,97,74,.2);font-family:var(--fh);font-size:1rem;font-weight:600;color:var(--rose);cursor:pointer;transition:all .15s;user-select:none;display:inline-block;}
+.lt:hover{background:rgba(232,97,74,.06);transform:translateY(-3px);}
+.lt.used{opacity:.25;pointer-events:none;}
+
+/* Step 2 - memory */
+.mem-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:220px;margin:14px auto;}
+.mc{height:80px;border-radius:16px;background:var(--s2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.8rem;transition:all .15s;border:2px solid var(--border);user-select:none;}
+.mc:hover{transform:scale(1.04);}
+.mc.lit{background:rgba(232,97,74,.12);border-color:var(--rose);transform:scale(1.06);}
+
+/* Step 3 - speed */
+#click-area{height:180px;border-radius:20px;position:relative;background:var(--s2);border:1.5px solid var(--border);margin:14px 0;overflow:hidden;}
+.target{width:52px;height:52px;border-radius:50%;position:absolute;cursor:pointer;background:radial-gradient(circle,var(--rose),#c0392b);box-shadow:0 4px 20px rgba(232,97,74,.35);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;transition:top .15s,left .15s;animation:tPop .2s cubic-bezier(.34,1.56,.64,1);}
+@keyframes tPop{from{transform:scale(0)}to{transform:scale(1)}}
+.hits-big{font-family:var(--fh);font-size:2.5rem;font-weight:700;color:var(--rose);text-align:center;}
+.hits-sub{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;text-align:center;}
+
+/* Step 4 - letter recognition */
+.letter-choice-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:340px;margin:14px auto;}
+.lc-btn{padding:16px 10px;border-radius:16px;background:var(--s2);border:2px solid var(--border);font-family:var(--fh);font-size:1.6rem;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;color:var(--navy);}
+.lc-btn:hover{border-color:var(--rose);background:rgba(232,97,74,.06);transform:translateY(-3px);}
+.lc-btn.correct{border-color:var(--teal);background:rgba(42,157,143,.1);color:var(--teal);}
+.lc-btn.wrong{border-color:var(--rose);background:rgba(232,97,74,.1);color:var(--rose);}
+.lc-target{font-family:var(--fh);font-size:3.5rem;font-weight:700;color:var(--navy);text-align:center;margin:10px 0;line-height:1;}
+.lc-prompt{font-size:.78rem;color:var(--muted);text-align:center;margin-bottom:12px;}
+
+/* Step 5 - word reading */
+.word-read-box{background:var(--s2);border:1.5px solid var(--border);border-radius:20px;padding:24px;margin:14px 0;text-align:center;}
+.big-word{font-family:var(--fh);font-size:2.8rem;font-weight:700;color:var(--navy);margin-bottom:8px;transition:all .3s;}
+.word-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:320px;margin:16px auto 0;}
+.word-opt{padding:14px;border-radius:14px;background:var(--s1);border:2px solid var(--border);font-size:.9rem;font-weight:700;cursor:pointer;color:var(--text);transition:all .2s;}
+.word-opt:hover{border-color:var(--rose);transform:translateY(-2px);}
+.word-opt.correct{border-color:var(--teal);background:rgba(42,157,143,.08);color:var(--teal);}
+.word-opt.wrong{border-color:var(--rose);background:rgba(232,97,74,.08);color:var(--rose);}
+.word-progress{display:flex;gap:6px;justify-content:center;margin-bottom:12px;}
+.wp-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .3s;}
+.wp-dot.done{background:var(--teal);}
+.wp-dot.active{background:var(--rose);transform:scale(1.3);}
+
+/* Step 6 - stop signal */
+.inhibit-area{height:200px;border-radius:20px;position:relative;background:var(--s2);border:1.5px solid var(--border);margin:14px 0;overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.inhibit-signal{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:800;transition:all .3s;border:3px solid transparent;text-align:center;}
+.inhibit-go{background:rgba(42,157,143,.15);border-color:var(--teal);color:var(--teal);}
+.inhibit-stop{background:rgba(232,97,74,.15);border-color:var(--rose);color:var(--rose);}
+.inhibit-stats{display:flex;gap:16px;justify-content:center;margin-top:12px;}
+.istat{text-align:center;}
+.istat-val{font-family:var(--fh);font-size:1.6rem;font-weight:700;}
+.istat-lbl{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+
+/* Step 7 - survey */
+.survey-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:340px;margin:14px auto;}
+.survey-btn{padding:20px;border-radius:18px;background:var(--s2);border:2px solid var(--border);font-size:1.2rem;cursor:pointer;transition:all .2s;color:var(--text);display:flex;flex-direction:column;align-items:center;gap:6px;}
+.survey-btn:hover{border-color:var(--rose);background:rgba(232,97,74,.05);transform:translateY(-4px);}
+.survey-label{font-size:.78rem;font-weight:700;color:var(--muted);}
+
+.loader-ring{width:52px;height:52px;border:4px solid var(--border);border-top-color:var(--rose);border-radius:50%;animation:spin 1s linear infinite;display:inline-block;margin:20px auto;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Result */
+.result-card{padding:20px;border-radius:18px;margin-top:16px;border:1.5px solid var(--border);background:var(--s2);}
+.result-label{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:4px;}
+.result-val{font-family:var(--fh);font-size:1.4rem;font-weight:700;color:var(--navy);}
+.result-tag{display:inline-block;padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:700;margin-top:4px;}
+.score-breakdown{margin-top:16px;text-align:left;}
+.score-row{margin-bottom:10px;}
+.score-row-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.score-row-label{font-size:.74rem;font-weight:700;color:var(--navy);}
+.score-row-val{font-size:.72rem;font-weight:800;color:var(--muted);}
+.score-bar-bg{height:7px;border-radius:4px;background:var(--border);overflow:hidden;}
+.score-bar-fill{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.4,0,.2,1);}
+
+/* Activities */
+.activity-panel{margin-top:24px;text-align:left;}
+.act-header{text-align:center;margin-bottom:18px;}
+.act-item{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:18px;border:1.5px solid var(--border);background:var(--bg);margin-bottom:12px;}
+.act-icon{font-size:1.8rem;flex-shrink:0;line-height:1;}
+.act-title{font-weight:700;font-size:.92rem;color:var(--navy);margin-bottom:4px;}
+.act-desc{font-size:.8rem;color:var(--muted);line-height:1.65;margin-bottom:6px;}
+.act-tip{display:inline-block;font-size:.72rem;padding:4px 12px;border-radius:8px;font-weight:600;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">SmartScreen</div>
+  <div class="lang-bar">
+    <button class="lb on" onclick="setL('en',this)">EN</button>
+    <button class="lb"    onclick="setL('ta',this)">தமிழ்</button>
+    <button class="lb"    onclick="setL('hi',this)">हिंदी</button>
+  </div>
+</div>
+
+<div class="hero-strip">
+  <img src="https://images.pexels.com/photos/8613095/pexels-photo-8613095.jpeg" alt="">
+  <div class="hero-strip-overlay"></div>
+</div>
+
+<div class="wrapper">
+  <div class="prog-wrap">
+    <div class="prog-track"><div id="prog-fill" style="width:0%"></div></div>
+    <div class="prog-info">
+      <span class="step-lbl" id="step-lbl">Step 1 of 7</span>
+      <span class="timer-pill"><span class="td"></span><span id="timer-txt">15s</span></span>
+    </div>
+  </div>
+
+  <div class="card">
+
+    <!-- Step 1 — Vocabulary Match (Both) -->
+    <div class="sec on" id="sec-language">
+      <img class="sec-banner" src="https://images.pexels.com/photos/4491461/pexels-photo-4491461.jpeg" alt="Language">
+      <div style="text-align:center"><span class="step-type-badge badge-both">🔀 ADHD + Dyslexia</span></div>
+      <h2 data-i="l_title">🔤 Vocabulary Match</h2>
+      <p data-i="l_desc">Drag the word <strong style="color:var(--rose)">"Apple"</strong> into the drop box!</p>
+      <div class="drop-zone" id="drop-zone"
+           ondrop="doDrop(event)"
+           ondragover="event.preventDefault();this.classList.add('over')"
+           ondragleave="this.classList.remove('over')"
+           data-i="drop_here">Drop here →</div>
+      <div class="letter-tiles" id="lang-opts">
+        <div class="lt" draggable="true" ondragstart="drag(event)" id="word-apple">Apple</div>
+        <div class="lt" draggable="true" ondragstart="drag(event)" id="word-cat" style="color:var(--navy)">Cat</div>
+        <div class="lt" draggable="true" ondragstart="drag(event)" id="word-sun" style="color:var(--teal)">Sun</div>
+      </div>
+    </div>
+
+    <!-- Step 2 — Working Memory (ADHD) -->
+    <div class="sec" id="sec-memory">
+      <img class="sec-banner" src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg" alt="Memory">
+      <div style="text-align:center"><span class="step-type-badge badge-adhd">⚡ ADHD Feature</span></div>
+      <h2 data-i="m_title">🧠 Memory Pattern</h2>
+      <p data-i="m_desc">Watch the sequence light up, then tap it back!</p>
+      <div class="mem-grid">
+        <div class="mc" onclick="checkMem(0)" id="mc0">🌟</div>
+        <div class="mc" onclick="checkMem(1)" id="mc1">🎯</div>
+        <div class="mc" onclick="checkMem(2)" id="mc2">🔶</div>
+        <div class="mc" onclick="checkMem(3)" id="mc3">🎪</div>
+      </div>
+      <div id="mem-msg" style="text-align:center;height:28px;font-weight:700;margin-top:8px;color:var(--navy)"></div>
+    </div>
+
+    <!-- Step 3 — Reaction Speed (ADHD) -->
+    <div class="sec" id="sec-speed">
+      <img class="sec-banner" src="https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg" alt="Speed">
+      <div style="text-align:center"><span class="step-type-badge badge-adhd">⚡ ADHD Feature</span></div>
+      <h2 data-i="s_title">⚡ Reaction Speed</h2>
+      <p data-i="s_desc">Tap the red circle as fast as you can!</p>
+      <div id="click-area"><div id="target" class="target" onclick="hitTarget()">⚡</div></div>
+      <div class="hits-big"><span id="hit-count">0</span></div>
+      <div class="hits-sub" data-i="hits">Hits</div>
+    </div>
+
+    <!-- Step 4 — Letter Recognition (Dyslexia) -->
+    <div class="sec" id="sec-letters">
+      <img class="sec-banner" src="https://images.pexels.com/photos/4144923/pexels-photo-4144923.jpeg" alt="Letters">
+      <div style="text-align:center"><span class="step-type-badge badge-dyslexia">🔤 Dyslexia Feature</span></div>
+      <h2 data-i="lr_title">🔍 Letter Recognition</h2>
+      <p data-i="lr_desc">Which letter matches the one shown?</p>
+      <div class="lc-target" id="lc-target">b</div>
+      <div class="lc-prompt" data-i="lr_pick">Tap the matching letter below</div>
+      <div class="letter-choice-grid" id="lc-grid"></div>
+      <div id="lr-score" style="text-align:center;font-size:.8rem;font-weight:700;color:var(--muted);margin-top:8px">Score: 0 / 0</div>
+    </div>
+
+    <!-- Step 5 — Word Reading / Meaning (Dyslexia) -->
+    <div class="sec" id="sec-reading">
+      <img class="sec-banner" src="https://images.pexels.com/photos/256431/pexels-photo-256431.jpeg" alt="Reading">
+      <div style="text-align:center"><span class="step-type-badge badge-dyslexia">🔤 Dyslexia Feature</span></div>
+      <h2 data-i="rd_title">📖 Word Reading</h2>
+      <p data-i="rd_desc">Read the word and choose its meaning!</p>
+      <div class="word-progress" id="word-dots"></div>
+      <div class="word-read-box">
+        <div class="big-word" id="big-word">cat</div>
+      </div>
+      <div class="word-opts" id="word-opts"></div>
+    </div>
+
+    <!-- Step 6 — Stop Signal / Impulse Control (ADHD) -->
+    <div class="sec" id="sec-inhibit">
+      <img class="sec-banner" src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg" alt="Focus">
+      <div style="text-align:center"><span class="step-type-badge badge-adhd">⚡ ADHD Feature</span></div>
+      <h2 data-i="ih_title">🚦 Stop or Go?</h2>
+      <p data-i="ih_desc">Tap <strong style="color:var(--teal)">GO ✅</strong> when you see green — but <strong style="color:var(--rose)">DON'T tap</strong> red STOP!</p>
+      <div class="inhibit-area" onclick="tapInhibit()">
+        <div class="inhibit-signal" id="inhibit-signal" style="opacity:0">GO</div>
+      </div>
+      <div class="inhibit-stats">
+        <div class="istat"><div class="istat-val" id="ih-hits"  style="color:var(--teal)">0</div><div class="istat-lbl">Correct Taps</div></div>
+        <div class="istat"><div class="istat-val" id="ih-false" style="color:var(--rose)">0</div><div class="istat-lbl">False Starts</div></div>
+        <div class="istat"><div class="istat-val" id="ih-miss"  style="color:var(--gold)">0</div><div class="istat-lbl">Missed</div></div>
+      </div>
+    </div>
+
+    <!-- Step 7 — Survey -->
+    <div class="sec" id="sec-survey">
+      <img class="sec-banner" src="https://images.pexels.com/photos/4144923/pexels-photo-4144923.jpeg" alt="Survey">
+      <div style="text-align:center"><span class="step-type-badge badge-both">🔀 ADHD + Dyslexia</span></div>
+      <h2 data-i="sv_title">💭 Learning Preference</h2>
+      <p data-i="sv_desc">Which do you prefer for learning?</p>
+      <div class="survey-opts">
+        <div class="survey-btn" onclick="saveSurvey(10)">📖<div class="survey-label" data-i="sv_read">Reading</div></div>
+        <div class="survey-btn" onclick="saveSurvey(7)">✍️<div class="survey-label" data-i="sv_write">Writing</div></div>
+        <div class="survey-btn" onclick="saveSurvey(5)">🎧<div class="survey-label" data-i="sv_listen">Listening</div></div>
+        <div class="survey-btn" onclick="saveSurvey(3)">🎬<div class="survey-label" data-i="sv_watch">Watching</div></div>
+      </div>
+    </div>
+
+    <!-- Step 8 — Finish / Result -->
+    <div class="sec" id="sec-finish">
+      <img class="sec-banner" src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg" alt="Analysis">
+      <div style="text-align:center">
+        <h2 data-i="f_title">Analysing Results</h2>
+        <p data-i="f_desc">Our AI is processing your assessment data...</p>
+        <div class="loader-ring" id="loader"></div>
+        <div id="finish-result"></div>
+      </div>
+      <div id="activity-panel" style="display:none"></div>
+    </div>
+
+  </div><!-- /card -->
+</div><!-- /wrapper -->
+
+<!-- ═══ ACTIVITY DATA ═══ -->
+<script>
+const DISORDER_ACTIVITIES = {
+  adhd: [
+    { icon:'🧘', title:'5-4-3-2-1 Grounding', desc:'Name 5 things you see, 4 you can touch, 3 you hear, 2 you smell, 1 you taste. Write each item in a notebook to anchor your attention in the present.', tip:'Do this before starting any study session to calm your mind.', color:'#2A9D8F' },
+    { icon:'⏱️', title:'Pomodoro Focus Block', desc:'Work on one single task for 15 minutes with zero distractions — phone face-down, notifications off. Take a 3-minute movement break, then repeat.', tip:'A physical sand timer works better than a phone timer.', color:'#E9A84C' },
+    { icon:'📋', title:'Task Sequencing Chart', desc:"Each evening, write tomorrow's top 5 tasks and number them by priority. Draw checkboxes and tick each one when complete. Review at bedtime.", tip:'Colour-code tasks by subject or urgency level.', color:'#7B5EA7' },
+    { icon:'🚦', title:'Stop Signal Practice', desc:'Clap to a steady rhythm. Stop immediately when someone says STOP and restart only on GO. Play 3 rounds of 2 minutes each to build impulse control.', tip:"Trains the brain's inhibitory system — very effective for ADHD.", color:'#E8614A' },
+    { icon:'🧠', title:'Working Memory Journal', desc:'Read one short paragraph, close the book, then write 5 key facts purely from memory. Compare your notes with the original and highlight gaps.', tip:'Use this with textbook sections when studying for exams.', color:'#264653' },
+  ],
+  dyslexia: [
+    { icon:'🔤', title:'Letter Mirror Practice', desc:'Write b, d, p, q five times each. Focus carefully on direction. Draw a small arrow on each letter showing which way it faces to build visual memory.', tip:'Use different ink colours for each letter pair (b/d and p/q).', color:'#E8614A' },
+    { icon:'🎵', title:'Phonics Sound Mapping', desc:'Say a word aloud and tap once for each distinct sound you hear, then write it. Focus on common blends: sh, ch, th, wh — make example word cards.', tip:'Record yourself saying each sound and play it back to check.', color:'#2A9D8F' },
+    { icon:'👏', title:'Syllable Clapping', desc:'Clap and count syllables for 15 multi-syllable words. Write each word broken into chunks (e.g. but-ter-fly). Clapping helps your brain segment sounds.', tip:'Start with 2-syllable words, then build up to 4-syllable ones.', color:'#E9A84C' },
+    { icon:'🔨', title:'Word Family Builder', desc:'Build 5 word families starting from a base word (cat → bat → mat → rat). Write 4 rhyming words per base word on separate index cards for revision.', tip:'Keep all your cards in a box and test yourself daily.', color:'#7B5EA7' },
+    { icon:'📚', title:'Tracked Reading Sprint', desc:'Read aloud for 2 minutes while running a ruler or finger under each line to guide your eye. Count correct words per minute and aim to beat your score.', tip:'A coloured transparent overlay can reduce visual crowding on the page.', color:'#264653' },
+  ],
+};
+DISORDER_ACTIVITIES.both = [
+  ...DISORDER_ACTIVITIES.adhd.slice(0,3),
+  ...DISORDER_ACTIVITIES.dyslexia.slice(0,3),
+];
+
+function renderActivities(disorder) {
+  const panel = document.getElementById('activity-panel');
+  const acts  = DISORDER_ACTIVITIES[disorder] || [];
+  if (!acts.length) return;
+  const labels   = {adhd:'⚡ ADHD', dyslexia:'🔤 Dyslexia', both:'🔀 Both'};
+  const hdrColor = {adhd:'#E9A84C', dyslexia:'#E8614A', both:'#7B5EA7'}[disorder] || '#2A9D8F';
+  panel.style.display = 'block';
+  panel.innerHTML = `
+    <div class="act-header">
+      <span style="display:inline-block;padding:5px 16px;border-radius:100px;background:${hdrColor}22;border:1.5px solid ${hdrColor}44;font-size:.82rem;font-weight:800;color:${hdrColor}">${labels[disorder]||disorder} Detected</span>
+      <div style="font-family:var(--fh);font-size:1.15rem;font-weight:700;color:var(--navy);margin-top:12px">Recommended Activities for You</div>
+      <div style="font-size:.8rem;color:var(--muted);margin-top:5px">Your teacher will assign these tasks. Here's a preview.</div>
+    </div>
+    ${acts.map(a=>`
+    <div class="act-item">
+      <div class="act-icon">${a.icon}</div>
+      <div>
+        <div class="act-title">${a.title}</div>
+        <div class="act-desc">${a.desc}</div>
+        <span class="act-tip" style="background:${a.color}18;color:${a.color};border:1px solid ${a.color}30;">💡 ${a.tip}</span>
+      </div>
+    </div>`).join('')}`;
+}
+</script>
+
+<!-- ═══ SCREENING LOGIC ═══ -->
+<script>
+/* ── Translations ── */
+const T = {
+  en:{
+    l_title:"🔤 Vocabulary Match",
+    l_desc:'Drag the word <strong style="color:var(--rose)">"Apple"</strong> into the drop box!',
+    drop_here:"Drop here →",
+    m_title:"🧠 Memory Pattern", m_desc:"Watch the sequence light up, then tap it back!",
+    s_title:"⚡ Reaction Speed", s_desc:"Tap the red circle as fast as you can!", hits:"Hits",
+    lr_title:"🔍 Letter Recognition", lr_desc:"Which letter matches the one shown?", lr_pick:"Tap the matching letter below",
+    rd_title:"📖 Word Reading", rd_desc:"Read the word and choose its meaning!",
+    ih_title:"🚦 Stop or Go?", ih_desc:'Tap <strong style="color:var(--teal)">GO ✅</strong> when you see green — but <strong style="color:var(--rose)">DON\'T tap</strong> red STOP!',
+    sv_title:"💭 Learning Preference", sv_desc:"Which do you prefer for learning?",
+    sv_read:"Reading", sv_write:"Writing", sv_listen:"Listening", sv_watch:"Watching",
+    f_title:"Analysing Results", f_desc:"Our AI is processing your assessment data...", r_btn:"Go to Dashboard"
+  },
+  ta:{
+    l_title:"🔤 சொல்லகராதி பொருத்தம்",
+    l_desc:'<strong style="color:var(--rose)">"Apple"</strong> என்ற சொல்லை பெட்டியில் இழுக்கவும்!',
+    drop_here:"இங்கே போடு →",
+    m_title:"🧠 நினைவு முறை", m_desc:"வரிசையை கவனியுங்கள், பிறகு திரும்ப தட்டவும்!",
+    s_title:"⚡ எதிர்வினை வேகம்", s_desc:"சிவப்பு வட்டத்தை கூடிய விரைவில் தட்டவும்!", hits:"தாக்கல்கள்",
+    lr_title:"🔍 எழுத்து அடையாளம்", lr_desc:"காட்டப்பட்ட எழுத்துடன் எது பொருந்துகிறது?", lr_pick:"கீழே உள்ள எழுத்தை தட்டவும்",
+    rd_title:"📖 சொல் வாசிப்பு", rd_desc:"சொல்லை படித்து அதன் பொருளை தேர்ந்தெடுக்கவும்!",
+    ih_title:"🚦 நிறுத்து அல்லது போ?", ih_desc:'பச்சை கண்டால் <strong style="color:var(--teal)">GO ✅</strong> தட்டவும் — சிவப்பு STOP கண்டால் <strong style="color:var(--rose)">தட்டாதீர்கள்!</strong>',
+    sv_title:"💭 கற்றல் விருப்பம்", sv_desc:"எதை விரும்புகிறீர்கள்?",
+    sv_read:"படிக்கவும்", sv_write:"எழுதவும்", sv_listen:"கேட்கவும்", sv_watch:"பார்க்கவும்",
+    f_title:"முடிவுகளை பகுப்பாய்வு", f_desc:"AI உங்கள் தரவை செயலாக்குகிறது...", r_btn:"டாஷ்போர்டுக்கு செல்"
+  },
+  hi:{
+    l_title:"🔤 शब्द मिलान",
+    l_desc:'<strong style="color:var(--rose)">"Apple"</strong> शब्द को बॉक्स में खींचें!',
+    drop_here:"यहाँ छोड़ें →",
+    m_title:"🧠 स्मृति पैटर्न", m_desc:"अनुक्रम देखें, फिर दोहराएं!",
+    s_title:"⚡ प्रतिक्रिया गति", s_desc:"लाल घेरे को जल्दी टैप करें!", hits:"हिट्स",
+    lr_title:"🔍 अक्षर पहचान", lr_desc:"दिखाए गए अक्षर से कौन मेल खाता है?", lr_pick:"नीचे सही अक्षर टैप करें",
+    rd_title:"📖 शब्द पठन", rd_desc:"शब्द पढ़ें और उसका अर्थ चुनें!",
+    ih_title:"🚦 रोको या जाओ?", ih_desc:'हरा दिखे तो <strong style="color:var(--teal)">GO ✅</strong> दबाएं — लाल STOP पर <strong style="color:var(--rose)">मत दबाएं!</strong>',
+    sv_title:"💭 सीखने की प्राथमिकता", sv_desc:"क्या पसंद है?",
+    sv_read:"पढ़ना", sv_write:"लिखना", sv_listen:"सुनना", sv_watch:"देखना",
+    f_title:"परिणाम विश्लेषण", f_desc:"AI डेटा संसाधित कर रहा है...", r_btn:"डैशबोर्ड पर जाएं"
+  }
+};
+let cl = 'en';
+function setL(l, btn) {
+  cl = l;
+  document.querySelectorAll('.lb').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('[data-i]').forEach(e => {
+    const k = e.getAttribute('data-i');
+    if (T[l][k]) e.innerHTML = T[l][k];
+  });
+}
+
+/*
+  FEATURE MAP sent to /predict_real_time:
+  ┌─────────────────────────┬───────────────┬──────────────────────────────────────┐
+  │ Feature                 │ Disorder      │ What it measures                     │
+  ├─────────────────────────┼───────────────┼──────────────────────────────────────┤
+  │ language                │ Both          │ Vocabulary / word recognition         │
+  │ memory                  │ ADHD          │ Working memory (sequence recall)      │
+  │ speed                   │ ADHD          │ Reaction time / motor speed           │
+  │ letter_score            │ Dyslexia      │ Letter confusability (b/d/p/q)        │
+  │ reading_score           │ Dyslexia      │ Word-meaning mapping accuracy         │
+  │ inhibit_hits            │ ADHD          │ Correct GO responses (inhibitory ctrl)│
+  │ inhibit_false_alarms    │ ADHD          │ Tapped on STOP (impulsivity)          │
+  │ inhibit_misses          │ ADHD          │ Missed GO signals (inattention)       │
+  │ survey                  │ Both          │ Learning style preference             │
+  └─────────────────────────┴───────────────┴──────────────────────────────────────┘
+*/
+const steps = ['language','memory','speed','letters','reading','inhibit','survey','finish'];
+let idx = 0, timer = 15, interval = null;
+let scores = {
+  language:0, memory:0, speed:0,
+  letter_score:0, reading_score:0,
+  inhibit_hits:0, inhibit_false_alarms:0, inhibit_misses:0,
+  visual:0, audio:0, survey:0
+};
+
+function startTimer(sec=15) {
+  clearInterval(interval);
+  timer = sec;
+  updateTimer();
+  interval = setInterval(() => { timer--; updateTimer(); if(timer<=0) nextStep(); }, 1000);
+}
+function updateTimer() { document.getElementById('timer-txt').textContent = timer + 's'; }
+
+function nextStep() {
+  clearInterval(interval);
+  document.getElementById('sec-' + steps[idx]).classList.remove('on');
+  idx++;
+  const total = steps.length - 1;
+  document.getElementById('prog-fill').style.width = ((idx/total)*100) + '%';
+  document.getElementById('step-lbl').textContent  = 'Step ' + idx + ' of ' + total;
+  if (idx < steps.length) {
+    document.getElementById('sec-' + steps[idx]).classList.add('on');
+    if      (steps[idx]==='memory')  initMem();
+    else if (steps[idx]==='speed')   initSpeed();
+    else if (steps[idx]==='letters') initLetters();
+    else if (steps[idx]==='reading') initReading();
+    else if (steps[idx]==='inhibit') initInhibit();
+    else if (steps[idx]==='survey')  startTimer(30);
+    else if (steps[idx]==='finish')  { document.getElementById('timer-txt').textContent='—'; submitScores(); }
+    else startTimer();
+  }
+}
+
+/* ══ Step 1: Vocabulary drag-drop ══ */
+function drag(e) { e.dataTransfer.setData('text', e.target.id); }
+function doDrop(e) {
+  e.preventDefault();
+  const id = e.dataTransfer.getData('text');
+  const dz = document.getElementById('drop-zone');
+  dz.classList.remove('over');
+  if (id === 'word-apple') {
+    scores.language = 10;
+    dz.textContent  = '✅ Apple!';
+    dz.classList.add('ok');
+    document.getElementById('word-apple').classList.add('used');
+    clearInterval(interval);
+    setTimeout(nextStep, 800);
+  } else {
+    dz.textContent = '❌ Try again!';
+    setTimeout(() => { dz.textContent = T[cl].drop_here || 'Drop here →'; }, 700);
+  }
+}
+startTimer();
+
+/* ══ Step 2: Working Memory (ADHD) ══ */
+let memSeq = [], memPlayer = [], memPhase = 'show';
+function initMem() {
+  startTimer(20);
+  memSeq = [Math.floor(Math.random()*4)];
+  memPlayer = [];
+  showMemSeq();
+}
+function showMemSeq() {
+  memPhase = 'show';
+  document.getElementById('mem-msg').textContent = 'Watch...';
+  document.querySelectorAll('.mc').forEach(c => c.style.pointerEvents='none');
+  let i = 0;
+  function next() {
+    if (i < memSeq.length) {
+      const el = document.getElementById('mc'+memSeq[i]);
+      el.classList.add('lit');
+      setTimeout(() => { el.classList.remove('lit'); i++; setTimeout(next,300); }, 500);
+    } else {
+      memPhase='input'; memPlayer=[];
+      document.querySelectorAll('.mc').forEach(c => c.style.pointerEvents='');
+      document.getElementById('mem-msg').textContent = 'Your turn!';
+    }
+  }
+  next();
+}
+function checkMem(i) {
+  if (memPhase!=='input') return;
+  const el = document.getElementById('mc'+i);
+  el.classList.add('lit');
+  setTimeout(()=>el.classList.remove('lit'),200);
+  memPlayer.push(i);
+  if (memPlayer[memPlayer.length-1] !== memSeq[memPlayer.length-1]) {
+    scores.memory = Math.min(10,(memSeq.length-1)*2);
+    document.getElementById('mem-msg').textContent = '❌ Incorrect!';
+    clearInterval(interval);
+    setTimeout(nextStep, 600);
+  } else if (memPlayer.length === memSeq.length) {
+    memSeq.push(Math.floor(Math.random()*4));
+    scores.memory = Math.min(10, memSeq.length*2);
+    document.getElementById('mem-msg').textContent = '✅ Correct! Watch again...';
+    setTimeout(showMemSeq, 700);
+  }
+}
+
+/* ══ Step 3: Reaction Speed (ADHD) ══ */
+let hitCount=0, speedInterval;
+function initSpeed() {
+  hitCount=0;
+  document.getElementById('hit-count').textContent='0';
+  startTimer(10);
+  speedInterval = setInterval(moveTarget,1200);
+  setTimeout(()=>{ clearInterval(speedInterval); scores.speed=hitCount; if(idx===2) nextStep(); },10000);
+}
+function moveTarget() {
+  const ca=document.getElementById('click-area'), t=document.getElementById('target');
+  if(!ca||!t) return;
+  t.style.left=Math.random()*(ca.clientWidth-52)+'px';
+  t.style.top =Math.random()*(ca.clientHeight-52)+'px';
+}
+function hitTarget() {
+  hitCount++;
+  document.getElementById('hit-count').textContent=hitCount;
+  scores.speed=hitCount;
+  moveTarget();
+}
+
+/* ══ Step 4: Letter Recognition — confusable letters b/d/p/q (Dyslexia) ══ */
+const LETTER_ROUNDS = [
+  {target:'b', choices:['b','d','p','q'], correct:'b'},
+  {target:'d', choices:['d','b','p','q'], correct:'d'},
+  {target:'p', choices:['p','q','b','d'], correct:'p'},
+  {target:'q', choices:['q','p','d','b'], correct:'q'},
+  {target:'m', choices:['m','n','w','u'], correct:'m'},
+];
+let lcIdx=0, lcCorrect=0;
+function initLetters() {
+  lcIdx=0; lcCorrect=0;
+  startTimer(20);
+  showLetterRound();
+}
+function showLetterRound() {
+  if (lcIdx>=LETTER_ROUNDS.length) {
+    scores.letter_score = Math.round((lcCorrect/LETTER_ROUNDS.length)*10);
+    scores.visual = scores.letter_score;
+    clearInterval(interval);
+    setTimeout(nextStep,400);
+    return;
+  }
+  const r = LETTER_ROUNDS[lcIdx];
+  document.getElementById('lc-target').textContent = r.target;
+  document.getElementById('lr-score').textContent  = 'Score: '+lcCorrect+' / '+lcIdx;
+  const shuffled = [...r.choices].sort(()=>Math.random()-.5);
+  document.getElementById('lc-grid').innerHTML = shuffled.map(ch=>
+    `<div class="lc-btn" onclick="checkLetter('${ch}','${r.correct}',this)">${ch}</div>`
+  ).join('');
+}
+function checkLetter(chosen, correct, el) {
+  document.querySelectorAll('.lc-btn').forEach(b=>{
+    b.style.pointerEvents='none';
+    if(b.textContent===correct) b.classList.add('correct');
+  });
+  if(chosen===correct) { el.classList.add('correct'); lcCorrect++; }
+  else el.classList.add('wrong');
+  lcIdx++;
+  document.getElementById('lr-score').textContent='Score: '+lcCorrect+' / '+lcIdx;
+  setTimeout(showLetterRound,700);
+}
+
+/* ══ Step 5: Word Reading / Meaning Match (Dyslexia) ══ */
+const WORD_ROUNDS = [
+  {word:'cat',  opts:['A pet animal 🐱','A type of hat 🎩','A flying insect 🦋','A food item 🍎'], correct:0},
+  {word:'dog',  opts:['A tall tree 🌲','A loyal pet 🐶','A type of fish 🐟','A building 🏠'],   correct:1},
+  {word:'sun',  opts:['A cold planet 🪐','A type of fruit 🍊','The bright star ☀️','A bird 🐦'], correct:2},
+  {word:'hat',  opts:['A sea creature 🐠','Something worn on head 🎩','A colour 🎨','A toy 🧸'],correct:1},
+  {word:'book', opts:['Pages to read 📖','A musical note 🎵','A garden tool 🌿','A sport 🏃'],  correct:0},
+];
+let rdIdx=0, rdCorrect=0;
+function initReading() {
+  rdIdx=0; rdCorrect=0;
+  startTimer(25);
+  document.getElementById('word-dots').innerHTML = WORD_ROUNDS.map((_,i)=>
+    `<div class="wp-dot ${i===0?'active':''}" id="wdot-${i}"></div>`
+  ).join('');
+  showWordRound();
+}
+function showWordRound() {
+  if (rdIdx>=WORD_ROUNDS.length) {
+    scores.reading_score = Math.round((rdCorrect/WORD_ROUNDS.length)*10);
+    scores.audio = scores.reading_score;
+    clearInterval(interval);
+    setTimeout(nextStep,400);
+    return;
+  }
+  const r = WORD_ROUNDS[rdIdx];
+  document.querySelectorAll('.wp-dot').forEach((d,i)=>{
+    d.className='wp-dot'+(i<rdIdx?' done':i===rdIdx?' active':'');
+  });
+  document.getElementById('big-word').textContent = r.word;
+  const indexed = r.opts.map((o,i)=>({o,correct:i===r.correct})).sort(()=>Math.random()-.5);
+  document.getElementById('word-opts').innerHTML = indexed.map(item=>
+    `<div class="word-opt" onclick="checkWord(${item.correct},this)">${item.o}</div>`
+  ).join('');
+}
+function checkWord(isCorrect, el) {
+  document.querySelectorAll('.word-opt').forEach(b=>b.style.pointerEvents='none');
+  el.classList.add(isCorrect?'correct':'wrong');
+  if(isCorrect) rdCorrect++;
+  rdIdx++;
+  setTimeout(showWordRound,700);
+}
+
+/* ══ Step 6: Stop Signal / Impulse Control (ADHD) ══ */
+let ihHits=0, ihFalse=0, ihMiss=0;
+let ihCurrentSignal=null, ihTimeout=null, ihInterval=null;
+function initInhibit() {
+  ihHits=0; ihFalse=0; ihMiss=0;
+  updateInhibitStats();
+  startTimer(15);
+  ihInterval = setInterval(showInhibitSignal, 1800);
+  setTimeout(()=>{
+    clearInterval(ihInterval);
+    clearTimeout(ihTimeout);
+    if(ihCurrentSignal==='go') { ihMiss++; updateInhibitStats(); }
+    scores.inhibit_hits         = ihHits;
+    scores.inhibit_false_alarms = ihFalse;
+    scores.inhibit_misses       = ihMiss;
+    if(idx===5) nextStep();
+  },14000);
+}
+function showInhibitSignal() {
+  const isGo = Math.random()>0.35;
+  ihCurrentSignal = isGo?'go':'stop';
+  const sig = document.getElementById('inhibit-signal');
+  sig.className = 'inhibit-signal '+(isGo?'inhibit-go':'inhibit-stop');
+  sig.textContent = isGo?'GO ✅':'STOP 🛑';
+  sig.style.opacity='1';
+  ihTimeout = setTimeout(()=>{
+    if(isGo && ihCurrentSignal==='go') { ihMiss++; updateInhibitStats(); }
+    ihCurrentSignal=null;
+    document.getElementById('inhibit-signal').style.opacity='0';
+  },900);
+}
+function tapInhibit() {
+  if(ihCurrentSignal==='go') {
+    clearTimeout(ihTimeout);
+    ihHits++;
+    ihCurrentSignal=null;
+    document.getElementById('inhibit-signal').style.opacity='0';
+  } else if(ihCurrentSignal==='stop') {
+    ihFalse++;
+  }
+  updateInhibitStats();
+}
+function updateInhibitStats() {
+  document.getElementById('ih-hits').textContent  = ihHits;
+  document.getElementById('ih-false').textContent = ihFalse;
+  document.getElementById('ih-miss').textContent  = ihMiss;
+}
+
+/* ══ Step 7: Survey ══ */
+function saveSurvey(val) {
+  scores.survey = val;
+  clearInterval(interval);
+  nextStep();
+}
+
+async function submitScores() {
+  const maxInhibitGo = 8;
+  const inhibitScore = Math.min(10, Math.round(
+    (ihHits / Math.max(1, ihHits + ihMiss)) * 10
+  ));
+  scores.inhibit_hits        = ihHits;
+  scores.inhibit_false_alarms = ihFalse;
+  scores.inhibit_misses      = ihMiss;
+
+  try {
+    const resp = await fetch('/predict_real_time', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(scores)
+    });
+    const d = await resp.json();
+    document.getElementById('loader').style.display='none';
+    const res = document.getElementById('finish-result');
+
+      if (d.status==='success') {
+      const disorderLabel = {adhd:'⚡ ADHD', dyslexia:'🔤 Dyslexia', both:'🔀 Both'}[d.disorder]||d.disorder;
+      const riskColor = d.prediction&&d.prediction.includes('High')     ? 'var(--rose)'
+                      : d.prediction&&d.prediction.includes('Moderate') ? 'var(--gold)'
+                      : 'var(--teal)';
+      const disColor  = d.disorder==='adhd'     ? '#b5811e'
+                      : d.disorder==='dyslexia'  ? 'var(--rose)'
+                      : 'var(--purple)';
+
+      const adhdScore = Math.min(100, Math.round(
+        (scores.memory/10)*40 + (scores.speed/10)*30 + (inhibitScore/10)*30
+      ));
+      const dyslScore = Math.min(100, Math.round(
+        (scores.language/10)*33 + (scores.letter_score/10)*34 + (scores.reading_score/10)*33
+      ));
+
+      res.innerHTML = `
+        <div class="result-card">
+          <div class="result-label">Assessment Result</div>
+          <div class="result-val">Screening Complete ✅</div>
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0">
+            <span class="result-tag" style="background:${riskColor}18;color:${riskColor};border:1px solid ${riskColor}30">${d.prediction}</span>
+            <span class="result-tag" style="background:${disColor}18;color:${disColor};border:1px solid ${disColor}30">${disorderLabel}</span>
+          </div>
+
+          <div class="score-breakdown">
+            <div class="score-row">
+              <div class="score-row-header">
+                <span class="score-row-label">⚡ ADHD Indicators <span style="font-size:.65rem;font-weight:400;color:var(--dim)">(memory · speed · impulse control)</span></span>
+                <span class="score-row-val">${adhdScore}%</span>
+              </div>
+              <div class="score-bar-bg"><div class="score-bar-fill" style="width:${adhdScore}%;background:var(--gold)"></div></div>
+            </div>
+            <div class="score-row">
+              <div class="score-row-header">
+                <span class="score-row-label">🔤 Dyslexia Indicators <span style="font-size:.65rem;font-weight:400;color:var(--dim)">(vocab · letters · reading)</span></span>
+                <span class="score-row-val">${dyslScore}%</span>
+              </div>
+              <div class="score-bar-bg"><div class="score-bar-fill" style="width:${dyslScore}%;background:var(--rose)"></div></div>
+            </div>
+            <div style="font-size:.7rem;color:var(--dim);margin-top:8px;text-align:center">Indicators shown for educational reference. Final assessment by AI model.</div>
+          </div>
+
+          <div style="font-size:.82rem;color:var(--muted);margin:14px 0">
+            Your results have been securely shared with your teacher.<br>
+            Your specialist will assign personalised activities for you.
+          </div>
+          <a href="/student_dashboard" style="display:inline-block;padding:12px 28px;border-radius:100px;background:var(--teal);color:#fff;font-weight:700;text-decoration:none;font-size:.9rem">
+            ${T[cl].r_btn||'Go to Dashboard'} →
+          </a>
+        </div>`;
+      if (d.disorder) { /* activities shown in student dashboard */ }
+    } else {
+      res.innerHTML='<div style="color:var(--rose);font-size:.9rem">Error submitting results. <a href="/student_dashboard" style="color:var(--teal)">Continue →</a></div>';
+    }
+  } catch(err) {
+    document.getElementById('loader').style.display='none';
+    document.getElementById('finish-result').innerHTML='<div style="color:var(--rose);font-size:.9rem">Could not connect to server. <a href="/student_dashboard" style="color:var(--teal)">Continue →</a></div>';
+  }
+}
+</script>
+</body>
+</html>

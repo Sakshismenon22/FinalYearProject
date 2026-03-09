@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>My Dashboard | SmartScreen</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#F5F3EE;--s1:#FFFFFF;--s2:#F0EDE8;--s3:#EAE7E0;--rose:#E8614A;--teal:#2A9D8F;--gold:#E9A84C;--purple:#7B5EA7;--navy:#264653;--text:#1A1A2E;--muted:#6B7280;--dim:#9CA3AF;--border:#E5E0D8;--shadow:0 2px 16px rgba(0,0,0,.07);--ff:'Plus Jakarta Sans',sans-serif;--fh:'Fraunces',serif;}
+*{font-family:var(--ff);}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);display:flex;}
+.sidebar{width:252px;min-width:252px;height:100vh;background:var(--s1);border-right:1.5px solid var(--border);display:flex;flex-direction:column;box-shadow:4px 0 20px rgba(0,0,0,.04);}
+.sb-logo{padding:22px 20px 14px;border-bottom:1px solid var(--border);}
+.sb-logo-main{font-family:var(--fh);font-size:1.25rem;font-weight:700;color:var(--rose);font-style:italic;}
+.sb-logo-sub{font-size:.62rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-top:2px;}
+.sb-hero{width:100%;height:90px;object-fit:cover;}
+.sb-nav{flex:1;padding:10px 8px;overflow-y:auto;}
+.sb-sec{font-size:.58rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);padding:12px 12px 5px;}
+.sb-it{display:flex;align-items:center;gap:11px;padding:10px 13px;border-radius:13px;cursor:pointer;border:none;background:transparent;width:100%;text-align:left;color:var(--muted);font-size:.83rem;font-weight:600;transition:all .2s;margin:2px 0;position:relative;}
+.sb-it:hover:not(.locked){background:var(--s2);color:var(--text);}
+.sb-it.on{background:rgba(232,97,74,.08);color:var(--rose);font-weight:700;}
+.sb-it.on::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--rose);border-radius:0 3px 3px 0;}
+.sb-it.locked{opacity:.45;cursor:not-allowed;}
+.sb-badge{margin-left:auto;background:var(--gold);color:#fff;font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:20px;}
+.lock-icon{margin-left:auto;font-size:.75rem;opacity:.6;}
+.sb-foot{padding:14px;border-top:1px solid var(--border);}
+.user-pill{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:var(--s2);margin-bottom:8px;border:1px solid var(--border);}
+.u-av{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--rose),#FF8C7A);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:700;color:#fff;font-size:.88rem;}
+.u-name{font-size:.8rem;font-weight:700;color:var(--text);}
+.u-role{font-size:.65rem;color:var(--muted);}
+.logout-btn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 14px;border-radius:12px;border:none;background:rgba(232,97,74,.06);color:var(--rose);cursor:pointer;font-size:.79rem;font-weight:700;transition:all .2s;}
+.logout-btn:hover{background:rgba(232,97,74,.12);}
+.main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.topbar{height:62px;padding:0 26px;display:flex;align-items:center;justify-content:space-between;background:var(--s1);border-bottom:1.5px solid var(--border);flex-shrink:0;box-shadow:var(--shadow);}
+.page-ttl{font-family:var(--fh);font-size:1.05rem;font-weight:700;color:var(--navy);font-style:italic;}
+.tb-r{display:flex;align-items:center;gap:10px;}
+.lang-sw{display:flex;gap:3px;background:var(--s2);border-radius:100px;padding:3px;border:1px solid var(--border);}
+.lsw{padding:5px 11px;border-radius:100px;border:none;font-size:.67rem;font-weight:700;cursor:pointer;background:transparent;color:var(--muted);transition:all .2s;}
+.lsw.on{background:#fff;color:var(--rose);box-shadow:0 2px 6px rgba(0,0,0,.08);}
+.toggle-btn{display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:100px;border:1.5px solid var(--border);background:var(--s1);color:var(--muted);cursor:pointer;font-size:.77rem;font-weight:700;transition:all .2s;}
+.toggle-btn:hover,.toggle-btn.on{background:rgba(232,97,74,.06);color:var(--rose);border-color:rgba(232,97,74,.3);}
+.toggle-pill{width:30px;height:17px;border-radius:9px;background:var(--dim);position:relative;transition:background .2s;flex-shrink:0;}
+.toggle-pill.on{background:var(--rose);}
+.toggle-pill::after{content:'';position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.toggle-pill.on::after{left:15px;}
+.content{flex:1;overflow-y:auto;padding:22px;}
+.panel{display:none;animation:pIn .3s ease;}.panel.on{display:block;}
+@keyframes pIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.banner{border-radius:22px;padding:24px 28px;display:flex;align-items:center;gap:20px;margin-bottom:20px;position:relative;overflow:hidden;border:1.5px solid;}
+.banner.done{background:linear-gradient(135deg,rgba(42,157,143,.06),rgba(42,157,143,.02));border-color:rgba(42,157,143,.2);}
+.banner.pending{background:linear-gradient(135deg,rgba(233,168,76,.08),rgba(233,168,76,.02));border-color:rgba(233,168,76,.25);}
+.banner-icon{font-size:2.6rem;flex-shrink:0;}
+.banner h2{font-family:var(--fh);font-size:1.2rem;font-weight:700;margin-bottom:5px;color:var(--navy);}
+.banner p{font-size:.82rem;color:var(--muted);line-height:1.7;}
+.banner-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:.7rem;font-weight:700;margin-top:8px;}
+.banner-badge.teal{background:rgba(42,157,143,.1);color:var(--teal);}
+.banner-badge.amber{background:rgba(233,168,76,.12);color:#c17f14;}
+.disorder-card{border-radius:18px;padding:18px 22px;margin-bottom:20px;border:1.5px solid;display:flex;align-items:center;gap:16px;}
+.disorder-card.dyslexia{background:rgba(232,97,74,.05);border-color:rgba(232,97,74,.2);}
+.disorder-card.adhd{background:rgba(42,157,143,.05);border-color:rgba(42,157,143,.2);}
+.disorder-card.both{background:rgba(123,94,167,.05);border-color:rgba(123,94,167,.2);}
+.dc-icon{font-size:2rem;}
+.dc-title{font-family:var(--fh);font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:3px;}
+.dc-desc{font-size:.78rem;color:var(--muted);line-height:1.5;}
+.dc-badge{font-size:.68rem;font-weight:800;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:5px;}
+.dc-badge.dyslexia{background:rgba(232,97,74,.12);color:var(--rose);}
+.dc-badge.adhd{background:rgba(42,157,143,.12);color:var(--teal);}
+.dc-badge.both{background:rgba(123,94,167,.12);color:var(--purple);}
+.teacher-card{margin-bottom:20px;padding:16px 20px;background:rgba(42,157,143,.05);border:1.5px solid rgba(42,157,143,.2);border-radius:18px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);}
+.tc-av{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,var(--teal),#3BC4B5);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:700;color:#fff;font-size:1.1rem;}
+.tc-name{font-weight:700;font-size:.9rem;color:var(--navy);}
+.tc-role{font-size:.73rem;color:var(--muted);}
+.tc-chat-btn{margin-left:auto;padding:8px 16px;border:none;border-radius:100px;background:var(--teal);color:#fff;font-size:.77rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.tc-chat-btn:hover{filter:brightness(1.08);}
+.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:20px;}
+.quick-tile{background:var(--s1);border:1.5px solid var(--border);border-radius:20px;overflow:hidden;transition:transform .3s;box-shadow:var(--shadow);}
+.quick-tile:hover{transform:translateY(-3px);}
+.qt-img{width:100%;height:100px;object-fit:cover;}
+.qt-body{padding:16px;}
+.qt-icon{font-size:1.5rem;margin-bottom:7px;}
+.qt-title{font-family:var(--fh);font-size:.92rem;font-weight:700;margin-bottom:4px;color:var(--navy);}
+.qt-desc{font-size:.76rem;color:var(--muted);line-height:1.6;margin-bottom:10px;}
+.qt-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border:none;border-radius:100px;font-size:.76rem;font-weight:700;cursor:pointer;text-decoration:none;transition:all .2s;}
+.qt-btn.rose{background:rgba(232,97,74,.1);color:var(--rose);}
+.qt-btn.teal{background:rgba(42,157,143,.1);color:var(--teal);}
+.qt-btn.locked-btn{background:var(--s2);color:var(--dim);border:1px solid var(--border);cursor:not-allowed;pointer-events:none;}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.section-title{font-family:var(--fh);font-size:1.1rem;font-weight:700;color:var(--navy);}
+.section-count{font-size:.73rem;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--s2);color:var(--muted);}
+.locked-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 32px;text-align:center;background:var(--s1);border:1.5px dashed var(--border);border-radius:22px;}
+.lp-icon{font-size:3.5rem;margin-bottom:16px;opacity:.35;}
+.lp-title{font-family:var(--fh);font-size:1.1rem;font-weight:700;color:var(--dim);margin-bottom:8px;}
+.lp-desc{font-size:.82rem;color:var(--dim);line-height:1.7;max-width:320px;}
+/* TASKS */
+.task-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.task-card{background:var(--s1);border:1.5px solid var(--border);border-radius:18px;overflow:hidden;transition:all .2s;box-shadow:var(--shadow);}
+.task-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.1);}
+.task-card.done{border-color:rgba(42,157,143,.25);}
+.task-card.pending{border-color:rgba(232,97,74,.2);}
+.tc-top{display:flex;align-items:stretch;}
+.tc-stripe{width:4px;flex-shrink:0;}
+.task-card.done .tc-stripe{background:var(--teal);}
+.task-card.pending .tc-stripe{background:var(--rose);}
+.tc-img{width:72px;object-fit:cover;flex-shrink:0;}
+.tc-main{flex:1;padding:16px;}
+.tc-row{display:flex;align-items:flex-start;gap:10px;}
+.tc-icon{font-size:1.7rem;flex-shrink:0;}
+.tc-body{flex:1;}
+.tc-title{font-family:var(--fh);font-size:.97rem;font-weight:700;margin-bottom:4px;color:var(--navy);}
+.tc-desc{font-size:.78rem;color:var(--muted);line-height:1.6;margin-bottom:8px;}
+.tc-metas{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px;}
+.tc-pill{font-size:.67rem;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--s2);color:var(--muted);border:1px solid var(--border);}
+.tc-teacher-pill{font-size:.67rem;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(42,157,143,.08);color:var(--teal);border:1px solid rgba(42,157,143,.2);}
+.complete-btn{padding:7px 18px;border:none;border-radius:100px;background:linear-gradient(135deg,var(--teal),#3BC4B5);color:#fff;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.complete-btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.done-tag{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;background:rgba(42,157,143,.1);color:var(--teal);font-size:.73rem;font-weight:700;border:1px solid rgba(42,157,143,.2);}
+.start-task-btn{padding:7px 18px;border:none;border-radius:100px;background:linear-gradient(135deg,var(--rose),#FF8C7A);color:#fff;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;margin-right:8px;}
+.start-task-btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+/* GAMES */
+.games-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:20px;}
+.game-card{background:var(--s1);border:1.5px solid var(--border);border-radius:18px;overflow:hidden;cursor:pointer;transition:all .3s;box-shadow:var(--shadow);}
+.game-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.12);}
+.gc-img{width:100%;height:110px;object-fit:cover;display:block;}
+.gc-body{padding:14px;}
+.gc-disorder{font-size:.61rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:3px 8px;border-radius:20px;display:inline-block;margin-bottom:7px;}
+.gc-disorder.dyslexia{background:rgba(232,97,74,.1);color:var(--rose);}
+.gc-disorder.adhd{background:rgba(42,157,143,.1);color:var(--teal);}
+.gc-title{font-family:var(--fh);font-size:.92rem;font-weight:700;margin-bottom:3px;color:var(--navy);}
+.gc-desc{font-size:.73rem;color:var(--muted);margin-bottom:10px;line-height:1.5;}
+.gc-play{display:flex;align-items:center;justify-content:space-between;}
+.gc-score{font-size:.73rem;color:var(--dim);font-weight:600;}
+.gc-btn{padding:5px 14px;border:none;border-radius:100px;font-size:.73rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.gc-btn.rose{background:var(--rose);color:#fff;}
+.gc-btn.teal{background:var(--teal);color:#fff;}
+/* GAME MODAL */
+.game-modal-ov{position:fixed;inset:0;z-index:300;background:rgba(26,26,46,.6);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:20px;}
+.game-modal-ov.open{display:flex;}
+.game-modal{background:var(--s1);border:1.5px solid var(--border);border-radius:26px;padding:28px;width:100%;max-width:540px;position:relative;animation:gPop .4s cubic-bezier(.34,1.56,.64,1);max-height:90vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.18);}
+@keyframes gPop{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+.gm-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--s2);border:1px solid var(--border);cursor:pointer;color:var(--muted);font-size:.95rem;display:flex;align-items:center;justify-content:center;}
+.gm-hdr{text-align:center;margin-bottom:20px;}
+.gm-icon{font-size:2.6rem;margin-bottom:8px;}
+.gm-title{font-family:var(--fh);font-size:1.4rem;font-weight:700;color:var(--navy);}
+.gm-sub{font-size:.82rem;color:var(--muted);margin-top:4px;}
+.gm-area{background:var(--s2);border-radius:18px;padding:22px;min-height:180px;display:flex;align-items:center;justify-content:center;flex-direction:column;margin-bottom:18px;border:1.5px solid var(--border);}
+.gm-score-bar{display:flex;align-items:center;justify-content:space-between;padding:11px 15px;background:var(--s2);border-radius:12px;margin-bottom:14px;border:1px solid var(--border);}
+.gs-label{font-size:.75rem;font-weight:700;color:var(--muted);}
+.gs-val{font-family:var(--fh);font-size:1.3rem;font-weight:700;color:var(--navy);}
+.gm-btn{width:100%;padding:13px;border:none;border-radius:13px;font-family:var(--ff);font-size:.92rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px;}
+.gm-btn.rose{background:var(--rose);color:#fff;}
+.gm-btn.teal{background:var(--teal);color:#fff;}
+.gm-btn:hover{filter:brightness(1.08);}
+.gm-audio-btn{padding:8px 18px;border:none;border-radius:100px;background:rgba(123,94,167,.12);color:var(--purple);font-size:.8rem;font-weight:700;cursor:pointer;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+/* game elements */
+.word-tiles{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;}
+.lt{padding:11px 18px;border-radius:13px;background:var(--s1);border:2px solid rgba(232,97,74,.2);font-family:var(--fh);font-size:.98rem;color:var(--rose);cursor:pointer;transition:all .15s;user-select:none;display:inline-block;margin:5px;}
+.lt:hover{background:rgba(232,97,74,.06);transform:translateY(-3px);}
+.drop-zone{width:180px;height:52px;border:2px dashed rgba(232,97,74,.4);border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:700;color:rgba(232,97,74,.5);font-size:.86rem;transition:all .2s;background:rgba(232,97,74,.03);margin:10px auto;}
+.drop-zone.over{border-color:var(--rose);background:rgba(232,97,74,.08);color:var(--rose);}
+.drop-zone.ok{border-color:var(--teal);background:rgba(42,157,143,.06);color:var(--teal);border-style:solid;}
+.puzzle-letters{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-bottom:10px;}
+.p-letter{width:42px;height:50px;border-radius:11px;background:var(--s1);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:1.25rem;font-weight:600;cursor:pointer;transition:all .15s;user-select:none;color:var(--navy);}
+.p-letter:hover{border-color:var(--teal);background:rgba(42,157,143,.05);}
+.p-letter.placed{opacity:.3;pointer-events:none;}
+.answer-boxes{display:flex;gap:7px;justify-content:center;margin-bottom:14px;}
+.a-box{width:42px;height:50px;border-radius:11px;border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:1.25rem;font-weight:600;color:var(--navy);transition:all .2s;}
+.a-box.filled{border-style:solid;border-color:var(--teal);background:rgba(42,157,143,.06);}
+.rhyme-options{display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;}
+.rhyme-opt{padding:13px;border-radius:13px;border:2px solid var(--border);background:var(--s1);font-family:var(--fh);font-size:.97rem;font-weight:600;cursor:pointer;transition:all .2s;color:var(--navy);text-align:center;}
+.rhyme-opt:hover{border-color:var(--purple);background:rgba(123,94,167,.05);}
+.rhyme-opt.correct{border-color:var(--teal);background:rgba(42,157,143,.08);color:var(--teal);}
+.rhyme-opt.wrong{border-color:var(--rose);background:rgba(232,97,74,.06);color:var(--rose);}
+.stop-signal{width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:1.3rem;font-weight:700;color:#fff;margin:0 auto 14px;transition:all .3s;}
+.stop-signal.go{background:var(--teal);}
+.stop-signal.stop{background:var(--rose);}
+.grounding-step{font-size:.88rem;color:var(--text);text-align:center;padding:11px 18px;background:var(--s1);border-radius:14px;border:1.5px solid var(--border);margin-bottom:9px;width:100%;font-weight:600;}
+.grounding-step.active{border-color:var(--teal);background:rgba(42,157,143,.05);}
+/* SCORES */
+.scores-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:20px;}
+.score-tile{background:var(--s1);border:1.5px solid var(--border);border-radius:16px;padding:16px;text-align:center;box-shadow:var(--shadow);transition:transform .2s;}
+.score-tile:hover{transform:translateY(-2px);}
+.score-game{font-size:.67rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;font-weight:700;}
+.score-val{font-family:var(--fh);font-size:1.8rem;font-weight:700;color:var(--rose);}
+.score-plays{font-size:.66rem;color:var(--dim);margin-top:2px;}
+.score-trend{font-size:.68rem;font-weight:700;margin-top:4px;padding:2px 8px;border-radius:20px;display:inline-block;}
+.score-trend.up{background:rgba(42,157,143,.1);color:var(--teal);}
+.score-trend.neutral{background:rgba(155,155,155,.1);color:var(--dim);}
+.chart-card{background:var(--s1);border:1.5px solid var(--border);border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:var(--shadow);}
+.chart-title{font-family:var(--fh);font-size:.97rem;font-weight:700;margin-bottom:14px;color:var(--navy);}
+.scores-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.summary-card{background:var(--s1);border:1.5px solid var(--border);border-radius:16px;padding:16px 14px;text-align:center;box-shadow:var(--shadow);}
+.summary-val{font-family:var(--fh);font-size:1.6rem;font-weight:700;color:var(--navy);margin-bottom:2px;}
+.summary-lbl{font-size:.7rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;}
+/* CHAT */
+.chat-wrap{display:flex;flex-direction:column;background:var(--s1);border:1.5px solid var(--border);border-radius:22px;overflow:hidden;height:calc(100vh - 160px);min-height:420px;box-shadow:var(--shadow);}
+.chat-hdr{padding:14px 18px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:11px;flex-shrink:0;background:var(--s2);}
+.chat-av{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--teal),#3BC4B5);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:700;color:#fff;font-size:.9rem;}
+.chat-name{font-family:var(--fh);font-weight:700;font-size:.9rem;color:var(--navy);}
+.chat-sub{font-size:.68rem;color:var(--muted);}
+.online-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:3px;background:var(--bg);scroll-behavior:smooth;}
+.chat-msgs::-webkit-scrollbar{width:4px;}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.chat-date-sep{text-align:center;margin:10px 0;}
+.chat-date-sep span{background:var(--s2);border:1px solid var(--border);color:var(--dim);font-size:.65rem;font-weight:700;padding:3px 12px;border-radius:20px;}
+.msg-row{display:flex;margin:3px 0;}
+.msg-row.out{justify-content:flex-end;}
+.msg-row.in{justify-content:flex-start;}
+.msg-bubble{max-width:72%;padding:10px 14px;border-radius:18px;font-size:.84rem;line-height:1.55;}
+.msg-row.in .msg-bubble{background:var(--s1);color:var(--text);border-bottom-left-radius:4px;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.msg-row.out .msg-bubble{background:linear-gradient(135deg,var(--rose),#FF8C7A);color:#fff;border-bottom-right-radius:4px;box-shadow:0 2px 8px rgba(232,97,74,.2);}
+.msg-time{font-size:.6rem;margin-top:3px;display:block;opacity:.5;text-align:right;}
+.chat-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:var(--dim);}
+.chat-empty-icon{font-size:2.5rem;opacity:.3;}
+.chat-empty-text{font-size:.82rem;font-weight:600;}
+.chat-inp-row{padding:12px 16px;border-top:1.5px solid var(--border);display:flex;gap:9px;flex-shrink:0;background:var(--s1);align-items:center;}
+.c-inp{flex:1;padding:11px 15px;background:var(--s2);border:1.5px solid var(--border);border-radius:100px;font-size:.86rem;color:var(--text);outline:none;transition:border-color .2s;}
+.c-inp:focus{border-color:var(--rose);}
+.c-send{width:40px;height:40px;border-radius:50%;background:var(--rose);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s;flex-shrink:0;}
+.c-send:hover{transform:scale(1.08);}
+.c-send:disabled{opacity:.5;cursor:not-allowed;}
+.c-send svg{width:16px;height:16px;fill:currentColor;}
+.no-content{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:44px;text-align:center;color:var(--muted);}
+.no-content-icon{font-size:2.8rem;margin-bottom:14px;opacity:.45;}
+.no-content-text{font-family:var(--fh);font-size:1rem;font-weight:600;color:var(--dim);}
+.fb-toast{position:fixed;bottom:22px;right:22px;padding:11px 18px;border-radius:13px;background:var(--navy);color:#fff;font-size:.82rem;font-weight:700;z-index:999;animation:toastIn .3s ease;box-shadow:0 8px 24px rgba(0,0,0,.2);}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+/* TASK ACTIVITY MODAL */
+.task-modal-ov{position:fixed;inset:0;z-index:400;background:rgba(26,26,46,.65);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;padding:20px;}
+.task-modal-ov.open{display:flex;}
+.task-modal{background:var(--s1);border:1.5px solid var(--border);border-radius:26px;padding:28px;width:100%;max-width:560px;position:relative;animation:gPop .35s cubic-bezier(.34,1.56,.64,1);max-height:92vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.2);}
+.ta-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:var(--s2);border:1px solid var(--border);cursor:pointer;color:var(--muted);font-size:.95rem;display:flex;align-items:center;justify-content:center;}
+.ta-step{background:var(--s2);border:1.5px solid var(--border);border-radius:16px;padding:18px;margin-bottom:14px;}
+.ta-step-num{font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.ta-step-q{font-family:var(--fh);font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:10px;}
+.ta-inp{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:12px;background:var(--s1);font-size:.88rem;color:var(--text);outline:none;resize:vertical;min-height:60px;transition:border-color .2s;}
+.ta-inp:focus{border-color:var(--teal);}
+.ta-opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.ta-opt{padding:10px 14px;border-radius:12px;border:2px solid var(--border);background:var(--s1);cursor:pointer;font-size:.85rem;font-weight:600;color:var(--text);transition:all .2s;text-align:center;}
+.ta-opt:hover{border-color:var(--teal);background:rgba(42,157,143,.04);}
+.ta-opt.selected{border-color:var(--teal);background:rgba(42,157,143,.08);color:var(--teal);}
+.ta-opt.correct{border-color:#22c55e;background:rgba(34,197,94,.08);color:#16a34a;}
+.ta-opt.wrong{border-color:var(--rose);background:rgba(232,97,74,.06);color:var(--rose);}
+.ta-audio-btn{display:flex;align-items:center;gap:7px;padding:8px 16px;border:none;border-radius:100px;background:rgba(123,94,167,.1);color:var(--purple);font-size:.8rem;font-weight:700;cursor:pointer;margin-bottom:12px;}
+.ta-audio-btn:hover{background:rgba(123,94,167,.18);}
+.ta-progress{height:5px;background:var(--s3);border-radius:3px;margin-bottom:20px;overflow:hidden;}
+.ta-progress-fill{height:100%;background:linear-gradient(90deg,var(--teal),#3BC4B5);border-radius:3px;transition:width .4s ease;}
+.ta-score-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 14px;border-radius:20px;background:rgba(42,157,143,.1);color:var(--teal);font-size:.78rem;font-weight:700;border:1px solid rgba(42,157,143,.2);}
+.mem-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;max-width:210px;margin:14px auto;}
+.mc{height:76px;border-radius:14px;background:var(--s2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.7rem;transition:all .15s;border:2px solid var(--border);}
+.mc:hover{transform:scale(1.04);}
+.mc.lit{background:rgba(232,97,74,.15);border-color:var(--rose);transform:scale(1.06);}
+.click-area{height:170px;border-radius:18px;position:relative;background:var(--s2);border:1.5px solid var(--border);overflow:hidden;width:100%;}
+.target{width:50px;height:50px;border-radius:50%;position:absolute;cursor:pointer;background:radial-gradient(circle,var(--rose),#c0392b);box-shadow:0 4px 20px rgba(232,97,74,.35);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.15rem;animation:tPop .2s cubic-bezier(.34,1.56,.64,1);}
+@keyframes tPop{from{transform:scale(0)}to{transform:scale(1)}}
+.hits-big{font-family:var(--fh);font-size:2.4rem;font-weight:700;color:var(--rose);text-align:center;margin:10px 0 4px;}
+.hits-sub{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;text-align:center;}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-main">SmartScreen</div>
+    <div class="sb-logo-sub" data-i="student_portal">Student Portal</div>
+  </div>
+  <img class="sb-hero" src="https://images.pexels.com/photos/8364026/pexels-photo-8364026.jpeg" alt="Learning">
+  <div class="sb-nav">
+    <div class="sb-sec" data-i="nav_dashboard">Dashboard</div>
+    <button class="sb-it on" id="sbi-home" onclick="showP('home')"><span>🏠</span> <span data-i="nav_home">Home</span></button>
+    {% if teacher_name %}
+    <button class="sb-it" id="sbi-tasks" onclick="showP('tasks')"><span>📋</span> <span data-i="nav_tasks">My Tasks</span> <span id="task-badge" class="sb-badge" style="display:none">0</span></button>
+    <button class="sb-it" id="sbi-games" onclick="showP('games')"><span>🎮</span> <span data-i="nav_games">Games</span></button>
+    <button class="sb-it" id="sbi-scores" onclick="showP('scores');buildScores()"><span>📊</span> <span data-i="nav_scores">My Scores</span></button>
+    <button class="sb-it" id="sbi-chat" onclick="showP('chat');initChat()"><span>💬</span> <span data-i="nav_chat">Chat</span></button>
+    {% else %}
+    <button class="sb-it locked"><span>📋</span> <span data-i="nav_tasks">My Tasks</span> <span class="lock-icon">🔒</span></button>
+    <button class="sb-it locked"><span>🎮</span> <span data-i="nav_games">Games</span> <span class="lock-icon">🔒</span></button>
+    <button class="sb-it locked"><span>📊</span> <span data-i="nav_scores">My Scores</span> <span class="lock-icon">🔒</span></button>
+    <button class="sb-it locked"><span>💬</span> <span data-i="nav_chat">Chat</span> <span class="lock-icon">🔒</span></button>
+    {% endif %}
+  </div>
+  <div class="sb-foot">
+    <div class="user-pill">
+      <div class="u-av">{{ name[:1]|upper }}</div>
+      <div><div class="u-name">{{ name }}</div><div class="u-role" data-i="role_student">Student</div></div>
+    </div>
+    <form action="/logout" method="GET"><button type="submit" class="logout-btn">🚪 <span data-i="logout">Logout</span></button></form>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="page-ttl" id="page-ttl" data-i="nav_home">Home</div>
+    <div class="tb-r">
+      <div class="lang-sw">
+        <button class="lsw on" onclick="setL('en',this)">EN</button>
+        <button class="lsw" onclick="setL('ta',this)">தமிழ்</button>
+        <button class="lsw" onclick="setL('hi',this)">हिंदी</button>
+      </div>
+      <button class="toggle-btn" id="tts-toggle" onclick="toggleTTS()">🔊 <span data-i="read_aloud">Read Aloud</span><div class="toggle-pill" id="tts-pill"></div></button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- HOME -->
+    <div class="panel on" id="panel-home">
+      {% if screened %}
+        {% if disorder == 'dyslexia' %}
+        <div class="disorder-card dyslexia"><div class="dc-icon">📖</div><div><div class="dc-title" data-i="scr_dys_title">Screening: Dyslexia Indicators Found</div><div class="dc-desc" data-i="scr_dys_desc">Our AI detected signs of dyslexia. A specialist teacher has been notified and will guide your reading journey.</div><span class="dc-badge dyslexia" data-i="badge_dys">Dyslexia</span></div></div>
+        {% elif disorder == 'adhd' %}
+        <div class="disorder-card adhd"><div class="dc-icon">⚡</div><div><div class="dc-title" data-i="scr_adhd_title">Screening: ADHD Indicators Found</div><div class="dc-desc" data-i="scr_adhd_desc">Our AI detected signs of ADHD. A specialist teacher has been notified to help with focus and attention strategies.</div><span class="dc-badge adhd" data-i="badge_adhd">ADHD</span></div></div>
+        {% elif disorder == 'both' %}
+        <div class="disorder-card both"><div class="dc-icon">🧠</div><div><div class="dc-title" data-i="scr_both_title">Screening: Dyslexia &amp; ADHD Indicators Found</div><div class="dc-desc" data-i="scr_both_desc">Both dyslexia and ADHD indicators were detected. A specialist teacher has been notified to arrange tailored support.</div><span class="dc-badge both" data-i="badge_both">Dyslexia + ADHD</span></div></div>
+        {% endif %}
+      {% endif %}
+
+      {% if teacher_name %}
+      <div class="banner done">
+        <div class="banner-icon">🎓</div>
+        <div>
+          <h2 data-i="done_title">You're All Set!</h2>
+          <p data-i="done_desc">Your teacher has accepted your case. Tasks, games and chat are now unlocked.</p>
+          <div class="banner-badge teal">✓ <span data-i="done_badge">Teacher Assigned &amp; Active</span></div>
+        </div>
+      </div>
+      <div class="teacher-card">
+        <div class="tc-av">{{ teacher_name[:1]|upper }}</div>
+        <div><div class="tc-name">{{ teacher_name }}</div><div class="tc-role" data-i="teacher_role">Your Assigned Educator</div></div>
+        <button class="tc-chat-btn" onclick="showP('chat');initChat()" data-i="chat_now">Chat Now →</button>
+      </div>
+      {% else %}
+      <div class="banner pending">
+        <div class="banner-icon">⏳</div>
+        <div>
+          <h2 data-i="wait_title">Awaiting Teacher Assignment</h2>
+          <p data-i="wait_desc">Your screening is complete! We're matching you with the right specialist. Tasks, games and chat will unlock once your teacher accepts.</p>
+          <div class="banner-badge amber">🔍 <span data-i="finding">Finding your specialist…</span></div>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="quick-grid">
+        <div class="quick-tile">
+          <img class="qt-img" src="https://images.pexels.com/photos/4144923/pexels-photo-4144923.jpeg" alt="">
+          <div class="qt-body"><div class="qt-icon">🎮</div><div class="qt-title" data-i="f1t">Play &amp; Learn</div><div class="qt-desc" data-i="f1d">8 therapeutic games targeting reading, memory, focus and impulse control.</div>
+          {% if teacher_name %}<button class="qt-btn rose" onclick="showP('games')" data-i="play_games">Play Games →</button>{% else %}<span class="qt-btn locked-btn">🔒 <span data-i="locked">Locked</span></span>{% endif %}</div>
+        </div>
+        <div class="quick-tile">
+          <img class="qt-img" src="https://images.pexels.com/photos/4491461/pexels-photo-4491461.jpeg" alt="">
+          <div class="qt-body"><div class="qt-icon">📋</div><div class="qt-title" data-i="f2t">My Tasks</div><div class="qt-desc" data-i="f2d">Your teacher will assign personalised improvement activities for you to complete.</div>
+          {% if teacher_name %}<button class="qt-btn teal" onclick="showP('tasks')" data-i="view_tasks">View Tasks →</button>{% else %}<span class="qt-btn locked-btn">🔒 <span data-i="locked">Locked</span></span>{% endif %}</div>
+        </div>
+        <div class="quick-tile">
+          <img class="qt-img" src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg" alt="">
+          <div class="qt-body"><div class="qt-icon">🛡️</div><div class="qt-title" data-i="f3t">Privacy First</div><div class="qt-desc" data-i="f3d">Your results are only shared with your designated teacher. Encrypted and secure.</div></div>
+        </div>
+        <div class="quick-tile">
+          <img class="qt-img" src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg" alt="">
+          <div class="qt-body"><div class="qt-icon">🌐</div><div class="qt-title" data-i="f4t">Multilingual</div><div class="qt-desc" data-i="f4d">Switch freely between English, Tamil and Hindi. Your language is respected here.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASKS -->
+    <div class="panel" id="panel-tasks">
+      {% if teacher_name %}
+      <div class="section-hdr">
+        <div class="section-title">📋 <span data-i="tasks_from">Tasks from</span> <span style="color:var(--teal)">{{ teacher_name }}</span></div>
+        <div class="section-count" id="task-count-label">0 <span data-i="tasks_word">tasks</span></div>
+      </div>
+      {% if tasks %}
+      <div class="task-list">
+        {% for t in tasks %}
+        <div class="task-card {{ 'done' if t.status == 'completed' else 'pending' }}" id="tc-{{ t.db_id }}">
+          <div class="tc-top">
+            <div class="tc-stripe"></div>
+            <img class="tc-img" src="{{ 'https://images.pexels.com/photos/8364026/pexels-photo-8364026.jpeg' if t.disorder == 'dyslexia' else 'https://images.pexels.com/photos/4144923/pexels-photo-4144923.jpeg' }}" alt="">
+            <div class="tc-main"><div class="tc-row"><div class="tc-icon">{{ t.icon }}</div><div class="tc-body">
+              <div class="tc-title">{{ t.title }}</div>
+              <div class="tc-desc">{{ t.desc }}</div>
+              <div class="tc-metas">
+                <span class="tc-pill">⏱ {{ t.duration }}</span>
+                <span class="tc-pill">📈 {{ t.level }}</span>
+                <span class="tc-pill">🏷 {{ t.disorder|capitalize }}</span>
+                <span class="tc-teacher-pill">👩‍🏫 {{ teacher_name }}</span>
+              </div>
+              <div style="font-size:.7rem;color:var(--dim);margin-bottom:6px;font-style:italic">{{ t.skills }}</div>
+              {% if t.tip %}<div style="font-size:.73rem;color:var(--teal);background:rgba(42,157,143,.06);padding:6px 11px;border-radius:9px;margin-bottom:8px;border:1px solid rgba(42,157,143,.15)">💡 {{ t.tip }}</div>{% endif %}
+              {% if t.notes %}<div style="font-size:.76rem;color:var(--muted);background:var(--s2);padding:7px 11px;border-radius:9px;margin-bottom:8px;border:1px solid var(--border)">📝 {{ t.notes }}</div>{% endif %}
+              {% if t.status != 'completed' %}
+              <button class="start-task-btn" onclick="openTaskActivity('{{ t.db_id }}','{{ t.id }}','{{ t.disorder }}',this)">▶ <span data-i="start_activity">Start Activity</span></button>
+              {% else %}<div class="done-tag">✅ <span data-i="completed">Completed</span></div>{% endif %}
+            </div></div></div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="no-content"><div class="no-content-icon">📋</div><div class="no-content-text" data-i="no_tasks">No tasks yet. Your teacher will assign tasks soon!</div></div>
+      {% endif %}
+      {% else %}
+      <div class="locked-panel"><div class="lp-icon">🔒</div><div class="lp-title" data-i="tasks_locked_title">Tasks Locked</div><div class="lp-desc" data-i="tasks_locked_desc">Tasks will appear here once your teacher accepts your case. You're on the waitlist — hang tight!</div></div>
+      {% endif %}
+    </div>
+
+    <!-- GAMES -->
+    <div class="panel" id="panel-games">
+      {% if teacher_name %}
+      <div class="section-hdr">
+        <div class="section-title">🎮 <span data-i="therapeutic_games">Therapeutic Games</span></div>
+        <div class="section-count">
+          {% if disorder == 'dyslexia' %}4 <span data-i="dyslexia_games">dyslexia games</span>
+          {% elif disorder == 'adhd' %}4 <span data-i="adhd_games">ADHD games</span>
+          {% else %}8 <span data-i="all_games">games</span>{% endif %}
+        </div>
+      </div>
+      {% if disorder == 'both' or not disorder %}
+      <div style="display:flex;gap:8px;margin-bottom:18px;">
+        <button onclick="filterGames('all',this)" class="gc-btn rose" style="padding:7px 15px;border-radius:100px;" data-i="btn_all">All</button>
+        <button onclick="filterGames('dyslexia',this)" class="gc-btn" style="padding:7px 15px;border-radius:100px;background:rgba(232,97,74,.1);color:var(--rose);border:none;font-weight:700;cursor:pointer;" data-i="btn_dyslexia">Dyslexia</button>
+        <button onclick="filterGames('adhd',this)" class="gc-btn teal" style="padding:7px 15px;border-radius:100px;opacity:.7;" data-i="btn_adhd">ADHD</button>
+      </div>
+      {% endif %}
+      <div class="games-grid" id="games-grid">
+        {% if disorder in ['dyslexia', 'both'] or not disorder %}
+        <div class="game-card" data-disorder="dyslexia" onclick="openGame('word_flash')">
+          <img class="gc-img" src="https://images.pexels.com/photos/8613095/pexels-photo-8613095.jpeg" alt="">
+          <div class="gc-body"><div class="gc-disorder dyslexia" data-i="badge_dys">Dyslexia</div><div class="gc-title" data-i="g_word_flash_title">Word Flash</div><div class="gc-desc" data-i="g_word_flash_desc">Watch words flash on screen like a video, then answer questions to build reading memory.</div><div class="gc-play"><span class="gc-score" id="gs-word_flash">Best: —</span><button class="gc-btn rose" data-i="play_btn">▶ Play</button></div></div>
+        </div>
+        <div class="game-card" data-disorder="dyslexia" onclick="openGame('letter_sort')">
+          <img class="gc-img" src="https://images.pexels.com/photos/4491461/pexels-photo-4491461.jpeg" alt="">
+          <div class="gc-body"><div class="gc-disorder dyslexia" data-i="badge_dys">Dyslexia</div><div class="gc-title" data-i="g_letter_sort_title">Letter Puzzle</div><div class="gc-desc" data-i="g_letter_sort_desc">Arrange scrambled letters. Listen to audio clues for help.</div><div class="gc-play"><span class="gc-score" id="gs-letter_sort">Best: —</span><button class="gc-btn rose" data-i="play_btn">▶ Play</button></div></div>
+        </div>
+        <div class="game-card" data-disorder="dyslexia" onclick="openGame('rhyme_match')">
+          <img class="gc-img" src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg" alt="">
+          <div class="gc-body"><div class="gc-disorder dyslexia" data-i="badge_dys">Dyslexia</div><div class="gc-title" data-i="g_rhyme_title">Rhyme Finder</div><div class="gc-desc" data-i="g_rhyme_desc">Find the rhyming word. Audio reads each word for you.</div><div class="gc-play"><span class="gc-score" id="gs-rhyme_match">Best: —</span><button class="gc-btn rose" data-i="play_btn">▶ Play</button></div></div>
+        </div>
+        <div class="game-card" data-disorder="dyslexia" onclick="openGame('fluency')">
+          <img class="gc-img" src="https://images.pexels.com/photos/4144923/pexels-photo-4144923.jpeg" alt="">
+          <div class="gc-body"><div class="gc-disorder dyslexia" data-i="badge_dys">Dyslexia</div><div class="gc-title" data-i="g_fluency_title">Reading Sprint</div><div class="gc-desc" data-i="g_fluency_desc">Read aloud and answer comprehension questions after.</div><div class="gc-play"><span class="gc-score" id="gs-fluency">Best: —</span><button class="gc-btn rose" data-i="play_btn">▶ Play</button></div></div>
+        </div>
+        {% endif %}
+        {% if disorder in ['adhd', 'both'] or not disorder %}
+        <div class="game-card" data-disorder="adhd" onclick="openGame('grounding')">
+          <img class="gc-img" src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg" alt="">
+          <div class="gc-body"><div class="gc-disorder adhd" data-i="badge_adhd">ADHD</div><div class="gc-title" data-i="g_ground_title">5-4-3-2-1 Grounding</div><div class="gc-desc" data-i="g_ground_desc">Audio-guided mindfulness exercise to regulate attention.</div><div class="gc-play"><span class="gc-score" id="gs-grounding">Best: —</span><button class="gc-btn teal" data-i="play_btn">▶ Play</button></div></div>
+        </div>
+        <div class="game-card" data-disorder="adhd" onclick="openGame('reaction')">
+          <img class="gc-img" src="https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg" alt="">
+          <div class="gc-body"><div class="gc-disorder adhd" data-i="badge_adhd">ADHD</div><div class="gc-title" data-i="g_reaction_title">Reaction Tap</div><div class="gc-desc" data-i="g_reaction_desc">Tap the target as fast as possible. Audio announces each round.</div><div class="gc-play"><span class="gc-score" id="gs-reaction">Best: —</span><button class="gc-btn teal" data-i="play_btn">▶ Play</button></div></div>
+        </div>
+        <div class="game-card" data-disorder="adhd" onclick="openGame('stop_signal')">
+          <img class="gc-img" src="https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg" alt="">
+          <div class="gc-body"><div class="gc-disorder adhd" data-i="badge_adhd">ADHD</div><div class="gc-title" data-i="g_stop_title">Stop Signal</div><div class="gc-desc" data-i="g_stop_desc">Tap GO — stop on STOP! Audio signals build inhibitory control.</div><div class="gc-play"><span class="gc-score" id="gs-stop_signal">Best: —</span><button class="gc-btn teal" data-i="play_btn">▶ Play</button></div></div>
+        </div>
+        <div class="game-card" data-disorder="adhd" onclick="openGame('memory_game')">
+          <img class="gc-img" src="https://images.pexels.com/photos/8613095/pexels-photo-8613095.jpeg" alt="">
+          <div class="gc-body"><div class="gc-disorder adhd" data-i="badge_adhd">ADHD</div><div class="gc-title" data-i="g_memory_title">Memory Pattern</div><div class="gc-desc" data-i="g_memory_desc">Watch the sequence and reproduce it. Strengthens working memory.</div><div class="gc-play"><span class="gc-score" id="gs-memory_game">Best: —</span><button class="gc-btn teal" data-i="play_btn">▶ Play</button></div></div>
+        </div>
+        {% endif %}
+      </div>
+      {% else %}
+      <div class="locked-panel"><div class="lp-icon">🎮</div><div class="lp-title" data-i="games_locked_title">Games Locked</div><div class="lp-desc" data-i="games_locked_desc">Therapeutic games will unlock once your specialist teacher accepts your case.</div></div>
+      {% endif %}
+    </div>
+
+    <!-- SCORES -->
+    <div class="panel" id="panel-scores">
+      {% if teacher_name %}
+      <div class="section-hdr"><div class="section-title">📊 <span data-i="my_scores">My Game Scores</span></div></div>
+      <div class="scores-summary">
+        <div class="summary-card"><div class="summary-val" id="sum-total">0</div><div class="summary-lbl" data-i="sum_games_played">Games Played</div></div>
+        <div class="summary-card"><div class="summary-val" id="sum-best">—</div><div class="summary-lbl" data-i="sum_best_score">Best Score</div></div>
+        <div class="summary-card"><div class="summary-val" id="sum-avg">—</div><div class="summary-lbl" data-i="sum_avg_score">Avg Score</div></div>
+      </div>
+      {% if game_scores %}
+      <div class="scores-grid" id="scores-grid">
+        {% for s in game_scores %}
+        <div class="score-tile">
+          <div class="score-game">{{ s.game_id.replace('_',' ') }}</div>
+          <div class="score-val">{{ s.best }}</div>
+          <div class="score-plays">{{ s.plays }} {{ 'play' if s.plays == 1 else 'plays' }}</div>
+          <div class="score-trend {% if s.plays > 1 %}up{% else %}neutral{% endif %}">{% if s.plays > 1 %}↑ <span data-i="improving">Improving</span>{% else %}<span data-i="first_play">First play</span>{% endif %}</div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="chart-card"><div class="chart-title" data-i="best_scores_chart">Best Scores by Game</div><canvas id="score-chart" height="80"></canvas></div>
+      <div class="chart-card"><div class="chart-title" data-i="progress_time">Progress Over Time</div><canvas id="progress-chart" height="80"></canvas></div>
+      <div class="chart-card"><div class="chart-title" data-i="disorder_breakdown">Score by Disorder Type</div><canvas id="disorder-chart" height="80"></canvas></div>
+      {% else %}
+      <div class="no-content"><div class="no-content-icon">🎮</div><div class="no-content-text" data-i="no_scores">No scores yet. Play some games to see your progress!</div></div>
+      {% endif %}
+      {% else %}
+      <div class="locked-panel"><div class="lp-icon">📊</div><div class="lp-title" data-i="scores_locked_title">Scores Locked</div><div class="lp-desc" data-i="scores_locked_desc">Your scores and progress charts appear here once your teacher is assigned.</div></div>
+      {% endif %}
+    </div>
+
+    <!-- CHAT -->
+    <div class="panel" id="panel-chat">
+      {% if teacher_name %}
+      <div class="chat-wrap">
+        <div class="chat-hdr">
+          <div class="chat-av">{{ teacher_name[:1]|upper }}</div>
+          <div><div class="chat-name">{{ teacher_name }}</div><div class="chat-sub" data-i="chat_role">Your Specialist Teacher</div></div>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:.7rem;color:#22c55e;font-weight:600;"><div class="online-dot"></div> <span data-i="active">Active</span></div>
+        </div>
+        <div class="chat-msgs" id="chat-msgs">
+          <div class="chat-empty"><div class="chat-empty-icon">💬</div><div class="chat-empty-text" data-i="no_msgs">No messages yet. Say hello!</div></div>
+        </div>
+        <div class="chat-inp-row">
+          <input class="c-inp" id="chat-inp" data-i-ph="chat_placeholder" placeholder="Type a message…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}" autocomplete="off">
+          <button class="c-send" id="chat-send-btn" onclick="sendMsg()" title="Send">
+            <svg viewBox="0 0 24 24"><path d="M2 21L23 12 2 3v7l15 2-15 2z"/></svg>
+          </button>
+        </div>
+      </div>
+      {% else %}
+      <div class="locked-panel"><div class="lp-icon">💬</div><div class="lp-title" data-i="chat_locked_title">Chat Locked</div><div class="lp-desc" data-i="chat_locked_desc">Once your teacher accepts your case, you'll be able to chat with them directly here for guidance and support.</div></div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<!-- GAME MODAL -->
+<div class="game-modal-ov" id="game-modal">
+  <div class="game-modal">
+    <button class="gm-close" onclick="closeGame()">✕</button>
+    <div class="gm-hdr"><div class="gm-icon" id="gm-icon">🎮</div><div class="gm-title" id="gm-title">Game</div><div class="gm-sub" id="gm-sub">Instructions</div></div>
+    <div class="gm-score-bar">
+      <div><div class="gs-label" data-i="score_label">Score</div><div class="gs-val" id="gm-score">0</div></div>
+      <div><div class="gs-label" data-i="round_label">Round</div><div class="gs-val" id="gm-round">1 / 5</div></div>
+      <div><div class="gs-label" data-i="time_label">Time</div><div class="gs-val" id="gm-timer">—</div></div>
+    </div>
+    <div class="gm-area" id="gm-area"></div>
+    <button class="gm-btn rose" id="gm-action" onclick="gameAction()">Start Game</button>
+  </div>
+</div>
+
+<!-- TASK ACTIVITY MODAL -->
+<div class="task-modal-ov" id="task-modal">
+  <div class="task-modal">
+    <button class="ta-close" onclick="closeTaskModal()">✕</button>
+    <div id="ta-content"></div>
+  </div>
+</div>
+
+<script>
+// ─── FULL TRILINGUAL TRANSLATIONS ─────────────────────────────────────────────
+const T={
+  en:{
+    student_portal:"Student Portal",nav_dashboard:"Dashboard",nav_home:"Home",nav_tasks:"My Tasks",nav_games:"Games",nav_scores:"My Scores",nav_chat:"Chat",
+    role_student:"Student",logout:"Logout",read_aloud:"Read Aloud",
+    scr_dys_title:"Screening: Dyslexia Indicators Found",scr_dys_desc:"Our AI detected signs of dyslexia. A specialist teacher has been notified and will guide your reading journey.",
+    scr_adhd_title:"Screening: ADHD Indicators Found",scr_adhd_desc:"Our AI detected signs of ADHD. A specialist teacher has been notified to help with focus and attention strategies.",
+    scr_both_title:"Screening: Dyslexia & ADHD Indicators Found",scr_both_desc:"Both dyslexia and ADHD indicators were detected. A specialist teacher has been notified to arrange tailored support.",
+    badge_dys:"Dyslexia",badge_adhd:"ADHD",badge_both:"Dyslexia + ADHD",
+    done_title:"You're All Set!",done_desc:"Your teacher has accepted your case. Tasks, games and chat are now unlocked.",done_badge:"Teacher Assigned & Active",
+    teacher_role:"Your Assigned Educator",chat_now:"Chat Now →",
+    wait_title:"Awaiting Teacher Assignment",wait_desc:"Your screening is complete! We're matching you with the right specialist. Tasks, games and chat will unlock once your teacher accepts.",finding:"Finding your specialist…",
+    f1t:"Play & Learn",f1d:"8 therapeutic games targeting reading, memory, focus and impulse control.",
+    f2t:"My Tasks",f2d:"Your teacher will assign personalised improvement activities for you to complete.",
+    f3t:"Privacy First",f3d:"Your results are only shared with your designated teacher. Encrypted and secure.",
+    f4t:"Multilingual",f4d:"Switch freely between English, Tamil and Hindi. Your language is respected here.",
+    play_games:"Play Games →",view_tasks:"View Tasks →",locked:"Locked",
+    tasks_from:"Tasks from",tasks_word:"tasks",start_activity:"Start Activity",completed:"Completed",no_tasks:"No tasks yet. Your teacher will assign tasks soon!",
+    tasks_locked_title:"Tasks Locked",tasks_locked_desc:"Tasks will appear here once your teacher accepts your case.",
+    therapeutic_games:"Therapeutic Games",dyslexia_games:"dyslexia games",adhd_games:"ADHD games",all_games:"games",btn_all:"All",btn_dyslexia:"Dyslexia",btn_adhd:"ADHD",play_btn:"▶ Play",
+    g_word_drag_title:"Word Drag Match",g_word_drag_desc:"Drag the correct word to the zone. Includes audio pronunciation.",
+    g_letter_sort_title:"Letter Puzzle",g_letter_sort_desc:"Arrange scrambled letters. Listen to audio clues for help.",
+    g_rhyme_title:"Rhyme Finder",g_rhyme_desc:"Find the rhyming word. Audio reads each word for you.",
+    g_fluency_title:"Reading Sprint",g_fluency_desc:"Read aloud and answer comprehension questions after.",
+    g_ground_title:"5-4-3-2-1 Grounding",g_ground_desc:"Audio-guided mindfulness exercise to regulate attention.",
+    g_reaction_title:"Reaction Tap",g_reaction_desc:"Tap the target as fast as possible. Audio announces each round.",
+    g_stop_title:"Stop Signal",g_stop_desc:"Tap GO — stop on STOP! Audio signals build inhibitory control.",
+    g_memory_title:"Memory Pattern",g_memory_desc:"Watch the sequence and reproduce it. Strengthens working memory.",
+    games_locked_title:"Games Locked",games_locked_desc:"Therapeutic games will unlock once your specialist teacher accepts your case.",
+    my_scores:"My Game Scores",sum_games_played:"Games Played",sum_best_score:"Best Score",sum_avg_score:"Avg Score",
+    best_scores_chart:"Best Scores by Game",progress_time:"Progress Over Time",disorder_breakdown:"Score by Disorder Type",
+    improving:"Improving",first_play:"First play",no_scores:"No scores yet. Play some games to see your progress!",
+    scores_locked_title:"Scores Locked",scores_locked_desc:"Your scores and progress charts appear here once your teacher is assigned.",
+    chat_role:"Your Specialist Teacher",active:"Active",no_msgs:"No messages yet. Say hello!",chat_placeholder:"Type a message…",
+    chat_locked_title:"Chat Locked",chat_locked_desc:"Once your teacher accepts your case, you'll be able to chat with them directly here.",
+    score_label:"Score",round_label:"Round",time_label:"Time",
+    act_title:"Task Activity",act_step:"Step",act_of:"of",act_check:"Check Answer",act_next:"Next Step",act_finish:"Finish Task ✓",act_listen:"🔊 Listen",act_score:"Your score",act_correct:"Correct!",act_wrong:"Try again",act_well_done:"Well done! Task complete!",
+  },
+  ta:{
+    student_portal:"மாணவர் போர்டல்",nav_dashboard:"டாஷ்போர்டு",nav_home:"முகப்பு",nav_tasks:"என் பணிகள்",nav_games:"விளையாட்டுகள்",nav_scores:"என் மதிப்பெண்கள்",nav_chat:"அரட்டை",
+    role_student:"மாணவர்",logout:"வெளியேறு",read_aloud:"சத்தமாக படி",
+    scr_dys_title:"திரையிடல்: டிஸ்லெக்சியா அறிகுறிகள் கண்டறியப்பட்டன",scr_dys_desc:"AI டிஸ்லெக்சியா அறிகுறிகளைக் கண்டறிந்தது. ஒரு நிபுணர் ஆசிரியர் உதவுவார்.",
+    scr_adhd_title:"திரையிடல்: ADHD அறிகுறிகள் கண்டறியப்பட்டன",scr_adhd_desc:"AI ADHD அறிகுறிகளைக் கண்டறிந்தது. கவனக்குறைவை தடுக்க உதவுவோம்.",
+    scr_both_title:"திரையிடல்: டிஸ்லெக்சியா & ADHD கண்டறியப்பட்டன",scr_both_desc:"இரண்டு அறிகுறிகளும் கண்டறியப்பட்டன. தனிப்பயன் ஆதரவு வழங்கப்படும்.",
+    badge_dys:"டிஸ்லெக்சியா",badge_adhd:"ADHD",badge_both:"டிஸ்லெக்சியா + ADHD",
+    done_title:"அனைத்தும் தயார்!",done_desc:"ஆசிரியர் உங்கள் வழக்கை ஏற்றார். பணிகள், விளையாட்டுகள் திறக்கப்பட்டன.",done_badge:"ஆசிரியர் நியமிக்கப்பட்டார்",
+    teacher_role:"உங்கள் ஆசிரியர்",chat_now:"அரட்டை செய் →",
+    wait_title:"ஆசிரியர் நியமனம் காத்திருக்கிறது",wait_desc:"திரையிடல் முடிந்தது! நிபுணரை தேடுகிறோம். ஆசிரியர் ஒப்புக்கொண்ட பிறகு அனைத்தும் திறக்கப்படும்.",finding:"நிபுணரை தேடுகிறோம்…",
+    f1t:"விளையாடி கற்க",f1d:"8 சிகிச்சை விளையாட்டுகள் - வாசிப்பு, நினைவு, கவனம் மற்றும் தடுப்பு திறன்.",
+    f2t:"என் பணிகள்",f2d:"ஆசிரியர் தனிப்பயன் பணிகளை ஒதுக்குவார்.",
+    f3t:"தனியுரிமை முக்கியம்",f3d:"முடிவுகள் உங்கள் ஆசிரியரிடம் மட்டுமே பகிரப்படும்.",
+    f4t:"பலமொழி",f4d:"தமிழ், ஆங்கிலம், இந்தியில் தடையின்றி மாறுங்கள்.",
+    play_games:"விளையாட →",view_tasks:"பணிகளை பார் →",locked:"பூட்டப்பட்டது",
+    tasks_from:"பணிகள் - ஆசிரியர்:",tasks_word:"பணிகள்",start_activity:"தொடங்கு",completed:"முடிந்தது",no_tasks:"இன்னும் பணிகள் இல்லை. ஆசிரியர் விரைவில் ஒதுக்குவார்!",
+    tasks_locked_title:"பணிகள் பூட்டப்பட்டன",tasks_locked_desc:"ஆசிரியர் ஏற்றால் பணிகள் தோன்றும்.",
+    therapeutic_games:"சிகிச்சை விளையாட்டுகள்",dyslexia_games:"டிஸ்லெக்சியா விளையாட்டுகள்",adhd_games:"ADHD விளையாட்டுகள்",all_games:"விளையாட்டுகள்",btn_all:"அனைத்தும்",btn_dyslexia:"டிஸ்லெக்சியா",btn_adhd:"ADHD",play_btn:"▶ விளை",
+    g_word_drag_title:"வார்த்தை இழு பொருத்துதல்",g_word_drag_desc:"சரியான வார்த்தையை இழுக்கவும். ஆடியோ உச்சரிப்பு உள்ளது.",
+    g_letter_sort_title:"எழுத்து புதிர்",g_letter_sort_desc:"கலைந்த எழுத்துக்களை சரிசெய். ஆடியோ குறிப்புகள் கிடைக்கும்.",
+    g_rhyme_title:"ஒலி ஒற்றுமை",g_rhyme_desc:"ஒலி ஒற்றுமையான வார்த்தையை கண்டுபிடி. ஆடியோ படிக்கும்.",
+    g_fluency_title:"வாசிப்பு வேகம்",g_fluency_desc:"சத்தமாக படித்து புரிதல் கேள்விகளுக்கு பதில் சொல்லுங்கள்.",
+    g_ground_title:"5-4-3-2-1 நிலைப்படுத்தல்",g_ground_desc:"ஆடியோ வழிகாட்டும் மன நிலைப்படுத்தல் பயிற்சி.",
+    g_reaction_title:"விரைவு தட்டு",g_reaction_desc:"இலக்கை வேகமாக தட்டுங்கள். ஆடியோ சுற்றை அறிவிக்கும்.",
+    g_stop_title:"நிறுத்த சமிக்ஞை",g_stop_desc:"GO கிளிக், STOP வந்தால் நிறுத்து! ஆடியோ சமிக்ஞைகள்.",
+    g_memory_title:"நினைவு வடிவம்",g_memory_desc:"வரிசையை கவனித்து திரும்பவும். நினைவாற்றலை வலுப்படுத்துகிறது.",
+    games_locked_title:"விளையாட்டுகள் பூட்டப்பட்டன",games_locked_desc:"ஆசிரியர் ஒப்புக்கொண்ட பிறகு திறக்கப்படும்.",
+    my_scores:"என் மதிப்பெண்கள்",sum_games_played:"விளைந்த விளையாட்டுகள்",sum_best_score:"சிறந்த மதிப்பெண்",sum_avg_score:"சராசரி மதிப்பெண்",
+    best_scores_chart:"விளையாட்டு வாரியான மதிப்பெண்கள்",progress_time:"காலப்போக்கில் முன்னேற்றம்",disorder_breakdown:"வகை வாரியான மதிப்பெண்",
+    improving:"மேம்படுகிறது",first_play:"முதல் முறை",no_scores:"இன்னும் மதிப்பெண்கள் இல்லை. விளையாடுங்கள்!",
+    scores_locked_title:"மதிப்பெண்கள் பூட்டப்பட்டன",scores_locked_desc:"ஆசிரியர் நியமிக்கப்பட்ட பிறகு காட்டப்படும்.",
+    chat_role:"உங்கள் நிபுணர் ஆசிரியர்",active:"செயலில்",no_msgs:"இன்னும் செய்திகள் இல்லை. வணக்கம் சொல்லுங்கள்!",chat_placeholder:"ஒரு செய்தி தட்டச்சு செய்யுங்கள்…",
+    chat_locked_title:"அரட்டை பூட்டப்பட்டது",chat_locked_desc:"ஆசிரியர் ஏற்றால் நேரடி அரட்டை திறக்கப்படும்.",
+    score_label:"மதிப்பெண்",round_label:"சுற்று",time_label:"நேரம்",
+    act_title:"பணி செயல்பாடு",act_step:"படி",act_of:"இல்",act_check:"பதிலை சரிபார்",act_next:"அடுத்த படி",act_finish:"பணியை முடி ✓",act_listen:"🔊 கேள்",act_score:"உங்கள் மதிப்பெண்",act_correct:"சரியானது!",act_wrong:"மீண்டும் முயற்சி",act_well_done:"நன்றாக செய்தீர்கள்!",
+  },
+  hi:{
+    student_portal:"छात्र पोर्टल",nav_dashboard:"डैशबोर्ड",nav_home:"होम",nav_tasks:"मेरे कार्य",nav_games:"खेल",nav_scores:"मेरे अंक",nav_chat:"चैट",
+    role_student:"छात्र",logout:"लॉग आउट",read_aloud:"जोर से पढ़ें",
+    scr_dys_title:"स्क्रीनिंग: डिस्लेक्सिया के संकेत मिले",scr_dys_desc:"AI ने डिस्लेक्सिया के संकेत पाए। एक विशेषज्ञ शिक्षक आपकी पढ़ाई में मदद करेंगे।",
+    scr_adhd_title:"स्क्रीनिंग: ADHD के संकेत मिले",scr_adhd_desc:"AI ने ADHD के संकेत पाए। ध्यान और एकाग्रता के लिए एक विशेषज्ञ मदद करेगा।",
+    scr_both_title:"स्क्रीनिंग: डिस्लेक्सिया और ADHD दोनों मिले",scr_both_desc:"दोनों के संकेत पाए गए। व्यक्तिगत सहायता के लिए शिक्षक सूचित हैं।",
+    badge_dys:"डिस्लेक्सिया",badge_adhd:"ADHD",badge_both:"डिस्लेक्सिया + ADHD",
+    done_title:"सब तैयार है!",done_desc:"शिक्षक ने केस स्वीकार किया। कार्य, खेल और चैट खुल गए।",done_badge:"शिक्षक नियुक्त एवं सक्रिय",
+    teacher_role:"आपके नियुक्त शिक्षक",chat_now:"अभी चैट करें →",
+    wait_title:"शिक्षक नियुक्ति की प्रतीक्षा",wait_desc:"स्क्रीनिंग पूरी! सही विशेषज्ञ खोज रहे हैं। शिक्षक के स्वीकार करने पर सब खुलेगा।",finding:"विशेषज्ञ खोज रहे हैं…",
+    f1t:"खेलें और सीखें",f1d:"8 चिकित्सीय खेल — पढ़ना, याददाश्त, ध्यान और आवेग नियंत्रण।",
+    f2t:"मेरे कार्य",f2d:"शिक्षक आपके लिए व्यक्तिगत कार्य देंगे।",
+    f3t:"गोपनीयता पहले",f3d:"परिणाम केवल आपके शिक्षक के साथ साझा होते हैं।",
+    f4t:"बहुभाषी",f4d:"हिंदी, तमिल, अंग्रेज़ी में स्वतंत्र रूप से बदलें।",
+    play_games:"खेलें →",view_tasks:"कार्य देखें →",locked:"बंद है",
+    tasks_from:"कार्य — शिक्षक:",tasks_word:"कार्य",start_activity:"गतिविधि शुरू करें",completed:"पूर्ण",no_tasks:"अभी कोई कार्य नहीं। शिक्षक जल्द देंगे!",
+    tasks_locked_title:"कार्य बंद हैं",tasks_locked_desc:"शिक्षक के स्वीकार करने पर कार्य यहाँ दिखेंगे।",
+    therapeutic_games:"चिकित्सीय खेल",dyslexia_games:"डिस्लेक्सिया खेल",adhd_games:"ADHD खेल",all_games:"खेल",btn_all:"सभी",btn_dyslexia:"डिस्लेक्सिया",btn_adhd:"ADHD",play_btn:"▶ खेलें",
+    g_word_drag_title:"शब्द खींचें और मिलाएं",g_word_drag_desc:"सही शब्द खींचें। ऑडियो उच्चारण शामिल है।",
+    g_letter_sort_title:"अक्षर पहेली",g_letter_sort_desc:"बिखरे अक्षरों को सुलझाएं। ऑडियो सुराग मिलेंगे।",
+    g_rhyme_title:"तुकबंदी खोजें",g_rhyme_desc:"तुकबंदी वाला शब्द खोजें। ऑडियो हर शब्द पढ़ेगा।",
+    g_fluency_title:"पढ़ाई की दौड़",g_fluency_desc:"जोर से पढ़ें और समझ के सवाल हल करें।",
+    g_ground_title:"5-4-3-2-1 ग्राउंडिंग",g_ground_desc:"ऑडियो-निर्देशित ध्यान व्यायाम।",
+    g_reaction_title:"रिएक्शन टैप",g_reaction_desc:"लक्ष्य को जल्दी टैप करें। ऑडियो हर राउंड बताएगा।",
+    g_stop_title:"स्टॉप सिग्नल",g_stop_desc:"GO टैप करें — STOP पर रुकें! ऑडियो संकेत।",
+    g_memory_title:"याददाश्त पैटर्न",g_memory_desc:"अनुक्रम देखें और दोहराएं। कार्यशील स्मृति मजबूत होगी।",
+    games_locked_title:"खेल बंद हैं",games_locked_desc:"शिक्षक के स्वीकार करने पर चिकित्सीय खेल खुलेंगे।",
+    my_scores:"मेरे खेल अंक",sum_games_played:"खेले गए खेल",sum_best_score:"सर्वश्रेष्ठ अंक",sum_avg_score:"औसत अंक",
+    best_scores_chart:"खेल वार सर्वश्रेष्ठ अंक",progress_time:"समय के साथ प्रगति",disorder_breakdown:"विकार प्रकार अनुसार अंक",
+    improving:"सुधार हो रहा है",first_play:"पहली बार",no_scores:"अभी कोई अंक नहीं। खेलें और देखें!",
+    scores_locked_title:"अंक बंद हैं",scores_locked_desc:"शिक्षक नियुक्त होने पर अंक और चार्ट यहाँ दिखेंगे।",
+    chat_role:"आपके विशेषज्ञ शिक्षक",active:"सक्रिय",no_msgs:"अभी कोई संदेश नहीं। नमस्ते कहें!",chat_placeholder:"संदेश लिखें…",
+    chat_locked_title:"चैट बंद है",chat_locked_desc:"शिक्षक के स्वीकार करने पर यहाँ सीधी चैट होगी।",
+    score_label:"अंक",round_label:"राउंड",time_label:"समय",
+    act_title:"कार्य गतिविधि",act_step:"चरण",act_of:"में से",act_check:"उत्तर जांचें",act_next:"अगला चरण",act_finish:"कार्य पूर्ण करें ✓",act_listen:"🔊 सुनें",act_score:"आपका अंक",act_correct:"सही!",act_wrong:"फिर कोशिश करें",act_well_done:"शाबाश! कार्य पूर्ण!",
+  }
+};
+
+let cl='en',ttsOn=false,synth=window.speechSynthesis;
+
+// ─── LANGUAGE SWITCH ──────────────────────────────────────────────────────────
+function setL(l,btn){
+  cl=l;
+  document.querySelectorAll('.lsw').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('[data-i]').forEach(e=>{
+    const k=e.getAttribute('data-i');
+    if(T[l]&&T[l][k])e.textContent=T[l][k];
+  });
+  document.querySelectorAll('[data-i-ph]').forEach(e=>{
+    const k=e.getAttribute('data-i-ph');
+    if(T[l]&&T[l][k])e.placeholder=T[l][k];
+  });
+}
+
+// ─── TTS ──────────────────────────────────────────────────────────────────────
+function speak(txt,lang){const u=new SpeechSynthesisUtterance(txt);u.lang=lang==='ta'?'ta-IN':lang==='hi'?'hi-IN':'en-US';synth.cancel();synth.speak(u);}
+function toggleTTS(){ttsOn=!ttsOn;const pill=document.getElementById('tts-pill');pill.classList.toggle('on',ttsOn);if(ttsOn){const panel=document.querySelector('.panel.on');if(panel)speak(panel.innerText,cl);}else{synth.cancel();}}
+
+// ─── PANEL NAV ────────────────────────────────────────────────────────────────
+function showP(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.sb-it').forEach(b=>b.classList.remove('on'));
+  document.getElementById('panel-'+id)?.classList.add('on');
+  document.getElementById('sbi-'+id)?.classList.add('on');
+  const titles={home:'nav_home',tasks:'nav_tasks',games:'nav_games',scores:'nav_scores',chat:'nav_chat'};
+  document.getElementById('page-ttl').textContent=T[cl][titles[id]]||id;
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+function showToast(msg){const t=document.createElement('div');t.className='fb-toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);}
+
+// ─── SCORES PANEL ─────────────────────────────────────────────────────────────
+const gameScoresData={{ game_scores|tojson|default('[]') }};
+const allScoreHistory={{ all_score_history|tojson|default('[]') }};
+
+function buildScores(){
+  // summary stats
+  const total=gameScoresData.reduce((a,s)=>a+(s.plays||0),0);
+  const best=gameScoresData.length?Math.max(...gameScoresData.map(s=>s.best)):0;
+  const avg=total>0?Math.round(gameScoresData.reduce((a,s)=>a+(s.best||0),0)/gameScoresData.length):0;
+  const sumT=document.getElementById('sum-total');const sumB=document.getElementById('sum-best');const sumA=document.getElementById('sum-avg');
+  if(sumT)sumT.textContent=total;if(sumB)sumB.textContent=best||'—';if(sumA)sumA.textContent=avg||'—';
+
+  // update best scores in tiles
+  gameScoresData.forEach(s=>{const el=document.getElementById('gs-'+s.game_id);if(el)el.textContent='Best: '+s.best;});
+
+  // Chart 1: best scores bar
+  const c1=document.getElementById('score-chart');
+  if(c1&&gameScoresData.length){
+    if(c1._chartInst)c1._chartInst.destroy();
+    c1._chartInst=new Chart(c1,{type:'bar',data:{
+      labels:gameScoresData.map(s=>s.game_id.replace(/_/g,' ')),
+      datasets:[{label:T[cl].sum_best_score||'Best Score',data:gameScoresData.map(s=>s.best),backgroundColor:gameScoresData.map(s=>s.game_id.includes('_')?s.game_id.startsWith('word')||s.game_id.startsWith('letter')||s.game_id.startsWith('rhyme')||s.game_id.startsWith('fluency')?'rgba(232,97,74,.18)':'rgba(42,157,143,.18)':'rgba(123,94,167,.18)'),borderColor:gameScoresData.map(s=>s.game_id.startsWith('word')||s.game_id.startsWith('letter')||s.game_id.startsWith('rhyme')||s.game_id.startsWith('fluency')?'var(--rose)':'var(--teal)'),borderWidth:2,borderRadius:8}]
+    },options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false},ticks:{font:{size:10}}}}}});
+  }
+
+  // Chart 2: progress over time
+  const c2=document.getElementById('progress-chart');
+  if(c2&&allScoreHistory.length){
+    if(c2._chartInst)c2._chartInst.destroy();
+    const sorted=[...allScoreHistory].sort((a,b)=>new Date(a.played_at)-new Date(b.played_at));
+    c2._chartInst=new Chart(c2,{type:'line',data:{
+      labels:sorted.map(s=>new Date(s.played_at).toLocaleDateString()),
+      datasets:[{label:'Score',data:sorted.map(s=>s.score),borderColor:'var(--rose)',backgroundColor:'rgba(232,97,74,.08)',borderWidth:2,pointRadius:4,pointBackgroundColor:'var(--rose)',tension:.4,fill:true}]
+    },options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false},ticks:{font:{size:10}}}}}});
+  }
+
+  // Chart 3: disorder donut
+  const c3=document.getElementById('disorder-chart');
+  if(c3&&gameScoresData.length){
+    if(c3._chartInst)c3._chartInst.destroy();
+    const dysScores=gameScoresData.filter(s=>['word_flash','letter_sort','rhyme_match','fluency'].includes(s.game_id));
+    const adhdScores=gameScoresData.filter(s=>['grounding','reaction','stop_signal','memory_game'].includes(s.game_id));
+    const dysTotal=dysScores.reduce((a,s)=>a+s.best,0);
+    const adhdTotal=adhdScores.reduce((a,s)=>a+s.best,0);
+    c3._chartInst=new Chart(c3,{type:'doughnut',data:{
+      labels:['Dyslexia','ADHD'],
+      datasets:[{data:[dysTotal||0,adhdTotal||0],backgroundColor:['rgba(232,97,74,.25)','rgba(42,157,143,.25)'],borderColor:['var(--rose)','var(--teal)'],borderWidth:2}]
+    },options:{responsive:true,plugins:{legend:{position:'bottom'}}}});
+  }
+}
+
+// ─── TASK ACTIVITIES ──────────────────────────────────────────────────────────
+const TASK_ACTIVITIES={
+  dys_1:{
+    en:{
+      title:"Letter Mirror Practice",
+      steps:[
+        {type:'audio_q',question:"Look at these letters: b, d, p, q. Which letter has its bump facing RIGHT?",options:["b","d","p","q"],correct:"d",audio:"Look at these letters: b, d, p, q. Which letter has its bump facing RIGHT?"},
+        {type:'audio_q',question:"Which letter looks like 'b' flipped left-to-right?",options:["b","d","p","q"],correct:"d",audio:"Which letter looks like b flipped left to right?"},
+        {type:'write',question:"Write the letter 'b' five times in the text box below and describe which direction it faces.",audio:"Write the letter b five times and describe which direction it faces."},
+        {type:'audio_q',question:"In the word 'bed', which letter comes FIRST?",options:["b","e","d","All same"],correct:"b",audio:"In the word bed, which letter comes FIRST?"},
+        {type:'write',question:"Write one sentence using the word 'dog' and one using 'bog'. Notice the difference between d and b.",audio:"Write one sentence using the word dog and one using bog."},
+      ]
+    },
+    ta:{
+      title:"எழுத்து கண்ணாடி பயிற்சி",
+      steps:[
+        {type:'audio_q',question:"'b', 'd', 'p', 'q' எழுத்துக்களில், வலது பக்கம் திரும்பிய முக்கோணம் எது?",options:["b","d","p","q"],correct:"d",audio:"b, d, p, q எழுத்துக்களில், வலது பக்கம் திரும்பிய முக்கோணம் எது?"},
+        {type:'audio_q',question:"'bed' என்ற வார்த்தையில் முதல் எழுத்து எது?",options:["b","e","d","அனைத்தும்"],correct:"b",audio:"bed என்ற வார்த்தையில் முதல் எழுத்து எது?"},
+        {type:'write',question:"'b' எழுத்தை ஐந்து முறை எழுதி, அது எந்த திசையில் திரும்புகிறது என்று விவரிக்கவும்.",audio:"b எழுத்தை ஐந்து முறை எழுதி விவரிக்கவும்."},
+        {type:'audio_q',question:"'dog' என்ற வார்த்தை எந்த எழுத்தில் தொடங்குகிறது?",options:["b","d","p","g"],correct:"d",audio:"dog என்ற வார்த்தை எந்த எழுத்தில் தொடங்குகிறது?"},
+        {type:'write',question:"'dog' மற்றும் 'bog' வார்த்தைகளைப் பயன்படுத்தி ஒரு வாக்கியம் எழுதுங்கள்.",audio:"dog மற்றும் bog வார்த்தைகளைப் பயன்படுத்தி வாக்கியம் எழுதுங்கள்."},
+      ]
+    },
+    hi:{
+      title:"अक्षर दर्पण अभ्यास",
+      steps:[
+        {type:'audio_q',question:"'b', 'd', 'p', 'q' में से कौन सा अक्षर दाईं ओर मुड़ा है?",options:["b","d","p","q"],correct:"d",audio:"b, d, p, q में से कौन सा अक्षर दाईं ओर मुड़ा है?"},
+        {type:'audio_q',question:"'bed' शब्द में पहला अक्षर कौन सा है?",options:["b","e","d","सभी"],correct:"b",audio:"bed शब्द में पहला अक्षर कौन सा है?"},
+        {type:'write',question:"'b' अक्षर पाँच बार लिखें और बताएं यह किस दिशा में मुड़ा है।",audio:"b अक्षर पाँच बार लिखें और बताएं।"},
+        {type:'audio_q',question:"'dog' शब्द किस अक्षर से शुरू होता है?",options:["b","d","p","g"],correct:"d",audio:"dog शब्द किस अक्षर से शुरू होता है?"},
+        {type:'write',question:"'dog' और 'bog' शब्दों का उपयोग करके एक-एक वाक्य लिखें।",audio:"dog और bog शब्दों का उपयोग करके वाक्य लिखें।"},
+      ]
+    }
+  },
+  dys_2:{
+    en:{title:"Phonics Sound Mapping",steps:[
+      {type:'audio_q',question:"Which word starts with the 'SH' sound?",options:["ship","tip","chip","whip"],correct:"ship",audio:"Which word starts with the SH sound? Ship, tip, chip, or whip?"},
+      {type:'audio_q',question:"What sound does 'TH' make in the word 'THINK'?",options:["t","th","s","f"],correct:"th",audio:"What sound does TH make in the word THINK?"},
+      {type:'write',question:"Write 3 words that start with 'CH' (like chair, cheese…).",audio:"Write 3 words that start with CH."},
+      {type:'audio_q',question:"Which word has the 'WH' sound?",options:["what","cat","bat","that"],correct:"what",audio:"Which word has the WH sound? What, cat, bat, or that?"},
+      {type:'write',question:"Write one sentence using a 'SH' word and one using a 'CH' word.",audio:"Write one sentence using a SH word and one using a CH word."},
+    ]},
+    ta:{title:"ஒலி வரைபடம்",steps:[
+      {type:'audio_q',question:"'SH' ஒலியில் தொடங்கும் வார்த்தை எது?",options:["ship","tip","chip","whip"],correct:"ship",audio:"SH ஒலியில் தொடங்கும் வார்த்தை எது?"},
+      {type:'write',question:"'CH' ஒலியில் தொடங்கும் 3 வார்த்தைகளை எழுதுங்கள்.",audio:"CH ஒலியில் தொடங்கும் 3 வார்த்தைகளை எழுதுங்கள்."},
+      {type:'audio_q',question:"'THINK' வார்த்தையில் 'TH' எப்படி ஒலிக்கிறது?",options:["t","th","s","f"],correct:"th",audio:"THINK வார்த்தையில் TH எப்படி ஒலிக்கிறது?"},
+      {type:'write',question:"'SH' வார்த்தை பயன்படுத்தி ஒரு வாக்கியம் எழுதுங்கள்.",audio:"SH வார்த்தை பயன்படுத்தி வாக்கியம் எழுதுங்கள்."},
+      {type:'audio_q',question:"'WH' ஒலி உள்ள வார்த்தை எது?",options:["what","cat","bat","that"],correct:"what",audio:"WH ஒலி உள்ள வார்த்தை எது?"},
+    ]},
+    hi:{title:"ध्वनि मानचित्र",steps:[
+      {type:'audio_q',question:"कौन सा शब्द 'SH' ध्वनि से शुरू होता है?",options:["ship","tip","chip","whip"],correct:"ship",audio:"कौन सा शब्द SH ध्वनि से शुरू होता है?"},
+      {type:'write',question:"'CH' ध्वनि से शुरू होने वाले 3 शब्द लिखें।",audio:"CH ध्वनि से शुरू होने वाले 3 शब्द लिखें।"},
+      {type:'audio_q',question:"'THINK' शब्द में 'TH' कैसे बोला जाता है?",options:["t","th","s","f"],correct:"th",audio:"THINK शब्द में TH कैसे बोला जाता है?"},
+      {type:'audio_q',question:"'WH' ध्वनि किस शब्द में है?",options:["what","cat","bat","that"],correct:"what",audio:"WH ध्वनि किस शब्द में है?"},
+      {type:'write',question:"'SH' वाले शब्द और 'CH' वाले शब्द से एक-एक वाक्य लिखें।",audio:"SH और CH वाले शब्दों से वाक्य लिखें।"},
+    ]}
+  },
+  dys_3:{
+    en:{title:"Syllable Clapping",steps:[
+      {type:'audio_q',question:"How many syllables in 'BUTTERFLY'?",options:["1","2","3","4"],correct:"3",audio:"How many syllables in the word BUTTERFLY?"},
+      {type:'audio_q',question:"Clap for each syllable. 'ELEPHANT' has how many?",options:["2","3","4","5"],correct:"3",audio:"Clap for each syllable. How many syllables does ELEPHANT have?"},
+      {type:'write',question:"Break these words into syllables: COMPUTER, BEAUTIFUL, UMBRELLA.",audio:"Break these words into syllables: COMPUTER, BEAUTIFUL, UMBRELLA."},
+      {type:'audio_q',question:"Which word has 2 syllables?",options:["cat","happy","beautiful","sun"],correct:"happy",audio:"Which word has 2 syllables? Cat, happy, beautiful, or sun?"},
+      {type:'write',question:"Write 5 two-syllable words and split them with a hyphen (e.g. but-ter).",audio:"Write 5 two-syllable words and split them with a hyphen."},
+    ]},
+    ta:{title:"அசை கரடி",steps:[
+      {type:'audio_q',question:"'BUTTERFLY' வார்த்தையில் எத்தனை அசைகள் உள்ளன?",options:["1","2","3","4"],correct:"3",audio:"BUTTERFLY வார்த்தையில் எத்தனை அசைகள் உள்ளன?"},
+      {type:'write',question:"COMPUTER, BEAUTIFUL, UMBRELLA - இவற்றை அசைகளாக பிரிக்கவும்.",audio:"இந்த வார்த்தைகளை அசைகளாக பிரிக்கவும்."},
+      {type:'audio_q',question:"2 அசைகள் உள்ள வார்த்தை எது?",options:["cat","happy","beautiful","sun"],correct:"happy",audio:"2 அசைகள் உள்ள வார்த்தை எது?"},
+      {type:'write',question:"5 இரண்டு-அசை வார்த்தைகளை எழுதுங்கள்.",audio:"5 இரண்டு-அசை வார்த்தைகளை எழுதுங்கள்."},
+      {type:'audio_q',question:"'ELEPHANT' வார்த்தையில் எத்தனை அசைகள்?",options:["2","3","4","5"],correct:"3",audio:"ELEPHANT வார்த்தையில் எத்தனை அசைகள்?"},
+    ]},
+    hi:{title:"अक्षर ताली",steps:[
+      {type:'audio_q',question:"'BUTTERFLY' में कितने अक्षर-खंड हैं?",options:["1","2","3","4"],correct:"3",audio:"BUTTERFLY में कितने syllables हैं?"},
+      {type:'write',question:"COMPUTER, BEAUTIFUL, UMBRELLA को syllables में तोड़ें।",audio:"इन शब्दों को syllables में तोड़ें।"},
+      {type:'audio_q',question:"2 syllables वाला शब्द कौन सा है?",options:["cat","happy","beautiful","sun"],correct:"happy",audio:"2 syllables वाला शब्द कौन सा है?"},
+      {type:'audio_q',question:"'ELEPHANT' में कितने syllables हैं?",options:["2","3","4","5"],correct:"3",audio:"ELEPHANT में कितने syllables हैं?"},
+      {type:'write',question:"5 दो-syllable वाले शब्द लिखें और हाइफन से अलग करें।",audio:"5 दो-syllable वाले शब्द लिखें।"},
+    ]}
+  },
+  dys_4:{
+    en:{title:"Word Family Builder",steps:[
+      {type:'audio_q',question:"Which word rhymes with 'CAT'?",options:["hat","hit","hot","hut"],correct:"hat",audio:"Which word rhymes with CAT?"},
+      {type:'write',question:"Write 4 words in the 'AT' family (e.g. cat, bat, mat, rat).",audio:"Write 4 words in the AT family."},
+      {type:'audio_q',question:"Which belongs to the '-ING' word family?",options:["sing","sun","sang","song"],correct:"sing",audio:"Which belongs to the ING word family?"},
+      {type:'write',question:"Build a word family for '-AN': write 5 words ending in -AN.",audio:"Build a word family for AN: write 5 words ending in AN."},
+      {type:'audio_q',question:"'RING, KING, SING, WING' — what do they all share?",options:["-ING ending","Same vowel","Same length","Start with R"],correct:"-ING ending",audio:"RING, KING, SING, WING — what do they all share?"},
+    ]},
+    ta:{title:"வார்த்தை குடும்பம்",steps:[
+      {type:'audio_q',question:"'CAT' வார்த்தையுடன் ஒலி ஒற்றுமை உள்ளது எது?",options:["hat","hit","hot","hut"],correct:"hat",audio:"CAT உடன் ஒலி ஒற்றுமை உள்ளது எது?"},
+      {type:'write',question:"'AT' குடும்பத்தில் 4 வார்த்தைகளை எழுதுங்கள்.",audio:"AT குடும்பத்தில் 4 வார்த்தைகளை எழுதுங்கள்."},
+      {type:'audio_q',question:"'-ING' குடும்பத்தில் உள்ளது எது?",options:["sing","sun","sang","song"],correct:"sing",audio:"ING குடும்பத்தில் உள்ளது எது?"},
+      {type:'write',question:"'-AN' குடும்பத்தில் 5 வார்த்தைகளை எழுதுங்கள்.",audio:"AN குடும்பத்தில் 5 வார்த்தைகளை எழுதுங்கள்."},
+      {type:'audio_q',question:"'RING, KING, SING, WING' — அனைத்திலும் பொதுவானது என்ன?",options:["-ING முடிவு","ஒரே உயிரெழுத்து","ஒரே நீளம்","R-ல் தொடங்கும்"],correct:"-ING முடிவு",audio:"RING, KING, SING, WING — அனைத்திலும் பொதுவானது என்ன?"},
+    ]},
+    hi:{title:"शब्द परिवार",steps:[
+      {type:'audio_q',question:"'CAT' के साथ कौन सा शब्द तुकबंदी करता है?",options:["hat","hit","hot","hut"],correct:"hat",audio:"CAT के साथ कौन सा शब्द तुकबंदी करता है?"},
+      {type:'write',question:"'AT' परिवार के 4 शब्द लिखें (जैसे cat, bat, mat, rat)।",audio:"AT परिवार के 4 शब्द लिखें।"},
+      {type:'audio_q',question:"'-ING' परिवार में कौन सा शब्द है?",options:["sing","sun","sang","song"],correct:"sing",audio:"ING परिवार में कौन सा शब्द है?"},
+      {type:'write',question:"'-AN' परिवार के 5 शब्द लिखें।",audio:"AN परिवार के 5 शब्द लिखें।"},
+      {type:'audio_q',question:"'RING, KING, SING, WING' — सभी में क्या समान है?",options:["-ING अंत","समान स्वर","समान लंबाई","R से शुरू"],correct:"-ING अंत",audio:"RING, KING, SING, WING — सभी में क्या समान है?"},
+    ]}
+  },
+  dys_5:{
+    en:{title:"Reading Fluency Sprint",steps:[
+      {type:'audio_q',question:"Read this passage silently, then answer: 'The bright sun rose above the mountains.' What rose above the mountains?",options:["The moon","The bright sun","The birds","The clouds"],correct:"The bright sun",audio:"Read this passage: The bright sun rose above the mountains. What rose above the mountains?"},
+      {type:'write',question:"Read aloud for 60 seconds. Then write 5 words from the passage you found difficult.",audio:"Read aloud for 60 seconds, then write 5 difficult words."},
+      {type:'audio_q',question:"In reading fluency, which is most important?",options:["Speed only","Accuracy only","Speed + Accuracy","Loud voice"],correct:"Speed + Accuracy",audio:"In reading fluency, which is most important?"},
+      {type:'write',question:"Write a 3-sentence summary of what you just read in your own words.",audio:"Write a 3-sentence summary in your own words."},
+      {type:'audio_q',question:"A 'coloured overlay' helps readers with dyslexia by:",options:["Making text bigger","Reducing visual crowding","Adding sound","Changing font"],correct:"Reducing visual crowding",audio:"A coloured overlay helps readers with dyslexia by doing what?"},
+    ]},
+    ta:{title:"வாசிப்பு வேக பயிற்சி",steps:[
+      {type:'audio_q',question:"'The bright sun rose above the mountains.' - மலைகளுக்கு மேல் என்ன எழுந்தது?",options:["நிலவு","பிரகாசமான சூரியன்","பறவைகள்","மேகங்கள்"],correct:"பிரகாசமான சூரியன்",audio:"மலைகளுக்கு மேல் என்ன எழுந்தது?"},
+      {type:'write',question:"60 வினாடி சத்தமாக படித்து, கடினமாக இருந்த 5 வார்த்தைகளை எழுதுங்கள்.",audio:"60 வினாடி படித்து கடினமான வார்த்தைகளை எழுதுங்கள்."},
+      {type:'audio_q',question:"வாசிப்பு வேகத்தில் மிக முக்கியமானது என்ன?",options:["வேகம் மட்டும்","துல்லியம் மட்டும்","வேகம்+துல்லியம்","சத்தமான குரல்"],correct:"வேகம்+துல்லியம்",audio:"வாசிப்பு வேகத்தில் மிக முக்கியமானது என்ன?"},
+      {type:'write',question:"படித்ததை சொந்த வார்த்தைகளில் 3 வாக்கியங்களில் சுருக்கி எழுதுங்கள்.",audio:"படித்ததை சொந்த வார்த்தைகளில் எழுதுங்கள்."},
+      {type:'audio_q',question:"டிஸ்லெக்சியா உள்ளவர்களுக்கு வண்ண overlay எப்படி உதவுகிறது?",options:["எழுத்தை பெரிதாக்கும்","காட்சி நெரிசலை குறைக்கும்","ஒலி சேர்க்கும்","எழுத்துரு மாற்றும்"],correct:"காட்சி நெரிசலை குறைக்கும்",audio:"வண்ண overlay எப்படி உதவுகிறது?"},
+    ]},
+    hi:{title:"पढ़ाई की रफ्तार",steps:[
+      {type:'audio_q',question:"'The bright sun rose above the mountains.' — पहाड़ों के ऊपर क्या उठा?",options:["चाँद","चमकता सूरज","पक्षी","बादल"],correct:"चमकता सूरज",audio:"पहाड़ों के ऊपर क्या उठा?"},
+      {type:'write',question:"60 सेकंड जोर से पढ़ें। फिर 5 कठिन शब्द लिखें।",audio:"60 सेकंड पढ़ें और कठिन शब्द लिखें।"},
+      {type:'audio_q',question:"पढ़ाई की रफ्तार में सबसे जरूरी क्या है?",options:["केवल गति","केवल सटीकता","गति + सटीकता","तेज आवाज"],correct:"गति + सटीकता",audio:"पढ़ाई की रफ्तार में सबसे जरूरी क्या है?"},
+      {type:'write',question:"जो पढ़ा उसे 3 वाक्यों में अपने शब्दों में लिखें।",audio:"3 वाक्यों में अपने शब्दों में लिखें।"},
+      {type:'audio_q',question:"रंगीन overlay डिस्लेक्सिया में कैसे मदद करती है?",options:["अक्षर बड़े करती है","दृश्य भीड़ कम करती है","आवाज जोड़ती है","फ़ॉन्ट बदलती है"],correct:"दृश्य भीड़ कम करती है",audio:"रंगीन overlay कैसे मदद करती है?"},
+    ]}
+  },
+  adhd_1:{
+    en:{title:"5-4-3-2-1 Grounding",steps:[
+      {type:'write',question:"NAME 5 things you can SEE right now around you. List them here.",audio:"Name 5 things you can see right now around you."},
+      {type:'write',question:"NAME 4 things you can TOUCH right now. List and describe how they feel.",audio:"Name 4 things you can touch right now."},
+      {type:'audio_q',question:"The 5-4-3-2-1 technique helps with:",options:["Maths","Attention regulation","Speed reading","Memory"],correct:"Attention regulation",audio:"The 5-4-3-2-1 technique helps with what?"},
+      {type:'write',question:"NAME 3 sounds you can HEAR right now. Describe each one.",audio:"Name 3 sounds you can hear right now."},
+      {type:'audio_q',question:"How many senses does the 5-4-3-2-1 grounding technique use?",options:["3","4","5","6"],correct:"5",audio:"How many senses does the grounding technique use?"},
+    ]},
+    ta:{title:"5-4-3-2-1 நிலைப்படுத்தல்",steps:[
+      {type:'write',question:"இப்போது உங்களைச் சுற்றி காணக்கூடிய 5 பொருட்களை பட்டியலிடுங்கள்.",audio:"இப்போது காணக்கூடிய 5 பொருட்களை பட்டியலிடுங்கள்."},
+      {type:'write',question:"இப்போது தொட முடியும் 4 பொருட்களை எழுதுங்கள்.",audio:"இப்போது தொட முடியும் 4 பொருட்களை எழுதுங்கள்."},
+      {type:'audio_q',question:"5-4-3-2-1 நுட்பம் எதற்கு உதவுகிறது?",options:["கணிதம்","கவன ஒழுங்கு","வேகமான வாசிப்பு","நினைவு"],correct:"கவன ஒழுங்கு",audio:"5-4-3-2-1 நுட்பம் எதற்கு உதவுகிறது?"},
+      {type:'write',question:"இப்போது கேட்கக்கூடிய 3 ஒலிகளை விவரிக்கவும்.",audio:"கேட்கக்கூடிய 3 ஒலிகளை விவரிக்கவும்."},
+      {type:'audio_q',question:"நிலைப்படுத்தல் நுட்பம் எத்தனை புலன்களை பயன்படுத்துகிறது?",options:["3","4","5","6"],correct:"5",audio:"நிலைப்படுத்தல் நுட்பம் எத்தனை புலன்களை பயன்படுத்துகிறது?"},
+    ]},
+    hi:{title:"5-4-3-2-1 ग्राउंडिंग",steps:[
+      {type:'write',question:"अभी आपके आसपास दिखने वाली 5 चीजें लिखें।",audio:"अभी आपके आसपास दिखने वाली 5 चीजें लिखें।"},
+      {type:'write',question:"अभी छू सकने वाली 4 चीजें और उनका एहसास लिखें।",audio:"छू सकने वाली 4 चीजें लिखें।"},
+      {type:'audio_q',question:"5-4-3-2-1 तकनीक किसमें मदद करती है?",options:["गणित","ध्यान नियंत्रण","तेज पढ़ाई","याददाश्त"],correct:"ध्यान नियंत्रण",audio:"5-4-3-2-1 तकनीक किसमें मदद करती है?"},
+      {type:'write',question:"अभी सुनाई देने वाली 3 आवाजें लिखें।",audio:"अभी सुनाई देने वाली 3 आवाजें लिखें।"},
+      {type:'audio_q',question:"ग्राउंडिंग तकनीक कितनी इंद्रियों का उपयोग करती है?",options:["3","4","5","6"],correct:"5",audio:"ग्राउंडिंग तकनीक कितनी इंद्रियों का उपयोग करती है?"},
+    ]}
+  },
+  adhd_2:{
+    en:{title:"Pomodoro Focus Block",steps:[
+      {type:'audio_q',question:"How long is a standard Pomodoro work block?",options:["10 minutes","15 minutes","25 minutes","45 minutes"],correct:"25 minutes",audio:"How long is a standard Pomodoro work block?"},
+      {type:'write',question:"Write ONE task you will focus on for the next 15 minutes. Be very specific.",audio:"Write one task you will focus on for the next 15 minutes."},
+      {type:'audio_q',question:"During a Pomodoro block, you should:",options:["Check phone","Multi-task","Focus on one task","Take breaks often"],correct:"Focus on one task",audio:"During a Pomodoro block, what should you do?"},
+      {type:'write',question:"After your 15-minute focus block: write what you accomplished and what distracted you.",audio:"Write what you accomplished and what distracted you."},
+      {type:'audio_q',question:"A physical sand timer is recommended over phone timers because:",options:["It looks nice","Less distraction","More accurate","Cheaper"],correct:"Less distraction",audio:"Why is a physical timer recommended over a phone?"},
+    ]},
+    ta:{title:"பொமோடோரோ கவன தொகுதி",steps:[
+      {type:'audio_q',question:"நிலையான பொமோடோரோ வேலை தொகுதி எவ்வளவு நேரம்?",options:["10 நிமிடம்","15 நிமிடம்","25 நிமிடம்","45 நிமிடம்"],correct:"25 நிமிடம்",audio:"நிலையான பொமோடோரோ வேலை தொகுதி எவ்வளவு நேரம்?"},
+      {type:'write',question:"அடுத்த 15 நிமிடத்தில் கவனிக்கும் ஒரு பணியை குறிப்பிட எழுதுங்கள்.",audio:"15 நிமிடத்தில் செய்யும் ஒரு பணியை எழுதுங்கள்."},
+      {type:'audio_q',question:"பொமோடோரோ தொகுதியில் என்ன செய்ய வேண்டும்?",options:["தொலைபேசி பார்","பல பணி","ஒரு பணியில் கவனம்","அடிக்கடி ஓய்வு"],correct:"ஒரு பணியில் கவனம்",audio:"பொமோடோரோ தொகுதியில் என்ன செய்ய வேண்டும்?"},
+      {type:'write',question:"15 நிமிட கவன தொகுதிக்கு பிறகு: என்ன சாதித்தீர்கள், என்ன திசை திருப்பியது என்று எழுதுங்கள்.",audio:"சாதித்தது மற்றும் திசை திருப்பியது எழுதுங்கள்."},
+      {type:'audio_q',question:"மணல் கடிகாரம் தொலைபேசியை விட ஏன் சிறந்தது?",options:["அழகாக இருக்கும்","குறைந்த திசை திருப்பல்","துல்லியமானது","மலிவானது"],correct:"குறைந்த திசை திருப்பல்",audio:"மணல் கடிகாரம் ஏன் சிறந்தது?"},
+    ]},
+    hi:{title:"पोमोडोरो फोकस ब्लॉक",steps:[
+      {type:'audio_q',question:"एक मानक पोमोडोरो कार्य ब्लॉक कितने समय का होता है?",options:["10 मिनट","15 मिनट","25 मिनट","45 मिनट"],correct:"25 मिनट",audio:"एक पोमोडोरो ब्लॉक कितने समय का होता है?"},
+      {type:'write',question:"अगले 15 मिनट में आप जिस एक काम पर ध्यान देंगे, वह लिखें।",audio:"15 मिनट के लिए एक काम लिखें।"},
+      {type:'audio_q',question:"पोमोडोरो ब्लॉक में क्या करना चाहिए?",options:["फोन देखें","एक साथ कई काम","एक काम पर ध्यान","बार-बार ब्रेक"],correct:"एक काम पर ध्यान",audio:"पोमोडोरो ब्लॉक में क्या करना चाहिए?"},
+      {type:'write',question:"15 मिनट बाद: क्या हासिल किया और क्या ध्यान भटकाया, लिखें।",audio:"क्या हासिल किया और क्या भटकाया, लिखें।"},
+      {type:'audio_q',question:"फोन की जगह रेत-घड़ी क्यों बेहतर है?",options:["सुंदर दिखती है","कम ध्यान भटकाव","ज्यादा सटीक","सस्ती"],correct:"कम ध्यान भटकाव",audio:"रेत-घड़ी क्यों बेहतर है?"},
+    ]}
+  },
+  adhd_3:{
+    en:{title:"Task Sequencing Chart",steps:[
+      {type:'write',question:"List your top 5 tasks for tomorrow, numbered by priority (1 = most important).",audio:"List your top 5 tasks for tomorrow, numbered by priority."},
+      {type:'audio_q',question:"Why should you number tasks by priority?",options:["To count them","To do the easiest first","To focus on what matters most","For fun"],correct:"To focus on what matters most",audio:"Why should you number tasks by priority?"},
+      {type:'write',question:"Choose task #1. Break it into 3 small steps you can take today.",audio:"Break your most important task into 3 small steps."},
+      {type:'audio_q',question:"Colour-coding tasks helps by:",options:["Making lists prettier","Quick visual sorting","Using crayons","Nothing"],correct:"Quick visual sorting",audio:"How does colour-coding tasks help?"},
+      {type:'write',question:"After reviewing your list, write which task you're most worried about and why.",audio:"Write which task worries you most and why."},
+    ]},
+    ta:{title:"பணி வரிசை விளக்கப்படம்",steps:[
+      {type:'write',question:"நாளைய உங்கள் முன்னுரிமை வாரியாக 5 பணிகளை பட்டியலிடுங்கள்.",audio:"நாளைய 5 முக்கிய பணிகளை பட்டியலிடுங்கள்."},
+      {type:'audio_q',question:"பணிகளை முன்னுரிமை வாரியாக எண்ணிட ஏன் வேண்டும்?",options:["எண்ண","எளிதானதை முதலில்","மிக முக்கியமானதில் கவனம்","வேடிக்கைக்கு"],correct:"மிக முக்கியமானதில் கவனம்",audio:"பணிகளை முன்னுரிமை வாரியாக எண்ணிட ஏன்?"},
+      {type:'write',question:"#1 பணியை 3 சிறிய படிகளாக பிரிக்கவும்.",audio:"#1 பணியை 3 சிறிய படிகளாக பிரிக்கவும்."},
+      {type:'audio_q',question:"வண்ண குறியீடு எவ்வாறு உதவுகிறது?",options:["அழகாக","விரைவான காட்சி வகைப்பாடு","குளோரி பயன்படுத்த","ஒன்றுமில்லை"],correct:"விரைவான காட்சி வகைப்பாடு",audio:"வண்ண குறியீடு எவ்வாறு உதவுகிறது?"},
+      {type:'write',question:"எந்த பணி மிகவும் கவலை அளிக்கிறது மற்றும் ஏன் என்று எழுதுங்கள்.",audio:"மிகவும் கவலை அளிக்கும் பணி மற்றும் ஏன் என்று எழுதுங்கள்."},
+    ]},
+    hi:{title:"कार्य अनुक्रम चार्ट",steps:[
+      {type:'write',question:"कल के लिए प्राथमिकता के अनुसार 5 कार्यों की सूची बनाएं।",audio:"कल के 5 प्राथमिकता कार्य लिखें।"},
+      {type:'audio_q',question:"कार्यों को प्राथमिकता से क्यों क्रमांकित करें?",options:["गिनने के लिए","आसान पहले","सबसे जरूरी पर ध्यान","मज़े के लिए"],correct:"सबसे जरूरी पर ध्यान",audio:"कार्यों को प्राथमिकता से क्यों क्रमांकित करें?"},
+      {type:'write',question:"कार्य #1 को 3 छोटे चरणों में तोड़ें।",audio:"#1 कार्य को 3 छोटे चरणों में तोड़ें।"},
+      {type:'audio_q',question:"रंग-कोडिंग से क्या फायदा?",options:["सुंदर लगता है","जल्दी दृश्य वर्गीकरण","क्रेयॉन उपयोग","कुछ नहीं"],correct:"जल्दी दृश्य वर्गीकरण",audio:"रंग-कोडिंग से क्या फायदा?"},
+      {type:'write',question:"कौन सा कार्य सबसे ज्यादा चिंता देता है और क्यों, लिखें।",audio:"सबसे चिंताजनक कार्य और कारण लिखें।"},
+    ]}
+  },
+  adhd_4:{
+    en:{title:"Stop Signal Practice",steps:[
+      {type:'audio_q',question:"What does the Stop Signal task train?",options:["Reading","Inhibitory control","Memory","Balance"],correct:"Inhibitory control",audio:"What does the Stop Signal task train?"},
+      {type:'write',question:"Describe a real situation where you had trouble stopping an impulse. What happened?",audio:"Describe a real situation where you had trouble stopping an impulse."},
+      {type:'audio_q',question:"Inhibitory control means:",options:["Running fast","Stopping unwanted actions","Reading quickly","Counting"],correct:"Stopping unwanted actions",audio:"What does inhibitory control mean?"},
+      {type:'write',question:"Write 3 strategies you can use in class when you feel the urge to call out or fidget.",audio:"Write 3 strategies to manage impulses in class."},
+      {type:'audio_q',question:"Practising stop-signal regularly leads to:",options:["Faster reflexes only","Stronger inhibitory brain system","Better vision","Longer focus"],correct:"Stronger inhibitory brain system",audio:"What does regular stop-signal practice lead to?"},
+    ]},
+    ta:{title:"நிறுத்த சமிக்ஞை பயிற்சி",steps:[
+      {type:'audio_q',question:"நிறுத்த சமிக்ஞை பயிற்சி எதை பயிற்றுவிக்கிறது?",options:["வாசிப்பு","தடுப்பு கட்டுப்பாடு","நினைவு","சமநிலை"],correct:"தடுப்பு கட்டுப்பாடு",audio:"நிறுத்த சமிக்ஞை பயிற்சி எதை பயிற்றுவிக்கிறது?"},
+      {type:'write',question:"நீங்கள் ஒரு தூண்டுதலை நிறுத்த முடியாமல் போன உண்மையான சூழ்நிலையை விவரிக்கவும்.",audio:"ஒரு தூண்டுதலை நிறுத்த முடியாமல் போன சூழ்நிலையை விவரிக்கவும்."},
+      {type:'audio_q',question:"தடுப்பு கட்டுப்பாடு என்றால் என்ன?",options:["வேகமாக ஓட","தேவையற்ற செயல்களை நிறுத்து","வேகமாக வாசி","எண்ணு"],correct:"தேவையற்ற செயல்களை நிறுத்து",audio:"தடுப்பு கட்டுப்பாடு என்றால் என்ன?"},
+      {type:'write',question:"வகுப்பில் கூச்சலிட அல்லது அலையும் ஆசை வரும்போது 3 வழிமுறைகளை எழுதுங்கள்.",audio:"வகுப்பில் தூண்டுதலை கட்டுப்படுத்த 3 வழிமுறைகளை எழுதுங்கள்."},
+      {type:'audio_q',question:"தொடர் நிறுத்த சமிக்ஞை பயிற்சி எதற்கு வழிவகுக்கிறது?",options:["வேகமான விளைவுகள் மட்டும்","வலிமையான தடுப்பு மூளை அமைப்பு","சிறந்த பார்வை","நீண்ட கவனம்"],correct:"வலிமையான தடுப்பு மூளை அமைப்பு",audio:"தொடர் பயிற்சி எதற்கு வழிவகுக்கிறது?"},
+    ]},
+    hi:{title:"स्टॉप सिग्नल अभ्यास",steps:[
+      {type:'audio_q',question:"स्टॉप सिग्नल कार्य क्या प्रशिक्षित करता है?",options:["पढ़ना","अवरोधक नियंत्रण","याददाश्त","संतुलन"],correct:"अवरोधक नियंत्रण",audio:"स्टॉप सिग्नल कार्य क्या प्रशिक्षित करता है?"},
+      {type:'write',question:"एक वास्तविक स्थिति लिखें जब आप किसी आवेग को नहीं रोक पाए।",audio:"एक वास्तविक स्थिति लिखें जब आवेग नहीं रोक पाए।"},
+      {type:'audio_q',question:"अवरोधक नियंत्रण का मतलब है:",options:["तेज दौड़ना","अनचाही क्रियाएं रोकना","जल्दी पढ़ना","गिनना"],correct:"अनचाही क्रियाएं रोकना",audio:"अवरोधक नियंत्रण का मतलब क्या है?"},
+      {type:'write',question:"कक्षा में चिल्लाने या बेचैनी होने पर 3 रणनीतियाँ लिखें।",audio:"कक्षा में आवेग रोकने की 3 रणनीतियाँ लिखें।"},
+      {type:'audio_q',question:"नियमित स्टॉप-सिग्नल अभ्यास से क्या होता है?",options:["केवल तेज प्रतिक्रिया","मजबूत अवरोधक मस्तिष्क प्रणाली","बेहतर दृष्टि","लंबा फोकस"],correct:"मजबूत अवरोधक मस्तिष्क प्रणाली",audio:"नियमित अभ्यास से क्या होता है?"},
+    ]}
+  },
+  adhd_5:{
+    en:{title:"Working Memory Journal",steps:[
+      {type:'audio_q',question:"Working memory is used for:",options:["Long-term storage","Holding info briefly while using it","Physical movement","Social skills"],correct:"Holding info briefly while using it",audio:"Working memory is used for what?"},
+      {type:'write',question:"Read this, then close your eyes and write 5 key facts from memory: 'Photosynthesis is the process by which plants use sunlight, water and CO2 to produce food and oxygen.'",audio:"Read the passage, then write 5 key facts from memory."},
+      {type:'audio_q',question:"After reading and recalling, which skill improves most?",options:["Spelling","Working memory","Handwriting","Maths"],correct:"Working memory",audio:"After reading and recalling, which skill improves most?"},
+      {type:'write',question:"Compare what you wrote with the original. Which facts did you miss? List the gaps.",audio:"Compare your notes with the original and list the gaps."},
+      {type:'audio_q',question:"This exercise is especially helpful before:",options:["Sleeping","Eating","Exams","Sports"],correct:"Exams",audio:"This exercise is especially helpful before what?"},
+    ]},
+    ta:{title:"செயல் நினைவு பத்திரிகை",steps:[
+      {type:'audio_q',question:"செயல் நினைவு எதற்கு பயன்படுகிறது?",options:["நீண்ட கால சேமிப்பு","பயன்படுத்தும் போது தகவலை வைத்திருக்க","உடல் இயக்கம்","சமூக திறன்"],correct:"பயன்படுத்தும் போது தகவலை வைத்திருக்க",audio:"செயல் நினைவு எதற்கு பயன்படுகிறது?"},
+      {type:'write',question:"இந்த வாக்கியத்தை படித்து, கண்களை மூடி நினைவிலிருந்து 5 முக்கிய தகவல்களை எழுதுங்கள்: 'ஒளிச்சேர்க்கை என்பது தாவரங்கள் சூரிய ஒளி, நீர் மற்றும் CO2 பயன்படுத்தி உணவையும் ஆக்சிஜனையும் உற்பத்தி செய்யும் செயல்முறை.'",audio:"வாக்கியத்தை படித்து நினைவிலிருந்து 5 தகவல்களை எழுதுங்கள்."},
+      {type:'audio_q',question:"படித்து நினைவுகூர்வதால் எந்த திறன் மேம்படுகிறது?",options:["எழுத்துப்பிழை","செயல் நினைவு","கையெழுத்து","கணிதம்"],correct:"செயல் நினைவு",audio:"படித்து நினைவுகூர்வதால் எந்த திறன் மேம்படுகிறது?"},
+      {type:'write',question:"உங்கள் குறிப்புகளை அசல் வாக்கியத்துடன் ஒப்பிடுங்கள். எந்த தகவல்கள் விடுபட்டன?",audio:"குறிப்புகளை ஒப்பிட்டு விடுபட்ட தகவல்களை எழுதுங்கள்."},
+      {type:'audio_q',question:"இந்த பயிற்சி எதற்கு முன்பு மிகவும் உதவியாக இருக்கும்?",options:["தூங்கும்போது","சாப்பிடும்போது","தேர்வுகள்","விளையாட்டு"],correct:"தேர்வுகள்",audio:"இந்த பயிற்சி எதற்கு முன்பு மிகவும் உதவியாக இருக்கும்?"},
+    ]},
+    hi:{title:"कार्यशील स्मृति पत्रिका",steps:[
+      {type:'audio_q',question:"कार्यशील स्मृति किसके लिए उपयोग होती है?",options:["दीर्घकालिक संग्रह","उपयोग के दौरान जानकारी रखना","शारीरिक गति","सामाजिक कौशल"],correct:"उपयोग के दौरान जानकारी रखना",audio:"कार्यशील स्मृति किसके लिए उपयोग होती है?"},
+      {type:'write',question:"यह पढ़ें, फिर आँखें बंद करके 5 मुख्य तथ्य लिखें: 'प्रकाश संश्लेषण वह प्रक्रिया है जिसमें पौधे सूर्यप्रकाश, पानी और CO2 का उपयोग करके भोजन और ऑक्सीजन बनाते हैं।'",audio:"पढ़ें, फिर याद से 5 तथ्य लिखें।"},
+      {type:'audio_q',question:"पढ़ने और याद करने से कौन सा कौशल सबसे ज्यादा सुधरता है?",options:["वर्तनी","कार्यशील स्मृति","लिखावट","गणित"],correct:"कार्यशील स्मृति",audio:"पढ़ने और याद करने से कौन सा कौशल सबसे ज्यादा सुधरता है?"},
+      {type:'write',question:"अपने नोट्स को मूल से मिलाएं। कौन से तथ्य छूट गए?",audio:"नोट्स मिलाएं और छूटे तथ्य लिखें।"},
+      {type:'audio_q',question:"यह व्यायाम किसके पहले सबसे उपयोगी है?",options:["सोने से पहले","खाने से पहले","परीक्षा से पहले","खेल से पहले"],correct:"परीक्षा से पहले",audio:"यह व्यायाम किसके पहले सबसे उपयोगी है?"},
+    ]}
+  }
+};
+
+let taskActivityState={id:null,taskDbId:null,disorder:null,steps:[],currentStep:0,score:0,answers:[]};
+
+function openTaskActivity(dbId,taskId,disorder,btn){
+  const lang=cl;
+  const activity=TASK_ACTIVITIES[taskId];
+  if(!activity){showToast('Activity loading…');completeTask(dbId,btn);return;}
+  const act=activity[lang]||activity.en;
+  taskActivityState={id:taskId,taskDbId:dbId,disorder,steps:act.steps,currentStep:0,score:0,answers:[],btn};
+  renderTaskStep();
+  document.getElementById('task-modal').classList.add('open');
+}
+
+function renderTaskStep(){
+  const state=taskActivityState;
+  const step=state.steps[state.currentStep];
+  const isLast=state.currentStep===state.steps.length-1;
+  const pct=Math.round((state.currentStep/state.steps.length)*100);
+  const t=T[cl];
+  const content=document.getElementById('ta-content');
+  content.innerHTML=`
+    <div style="margin-bottom:20px">
+      <div style="font-family:var(--fh);font-size:1.15rem;font-weight:700;color:var(--navy);margin-bottom:6px">${t.act_title||'Task Activity'}</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-bottom:10px">${t.act_step||'Step'} ${state.currentStep+1} ${t.act_of||'of'} ${state.steps.length}</div>
+    </div>
+    <div class="ta-progress"><div class="ta-progress-fill" style="width:${pct}%"></div></div>
+    <div class="ta-step">
+      <div class="ta-step-num">${t.act_step||'Step'} ${state.currentStep+1}</div>
+      ${step.audio?`<button class="ta-audio-btn" onclick="speakTA('${step.audio.replace(/'/g,"\\'")}')">🔊 ${t.act_listen||'Listen'}</button>`:''}
+      <div class="ta-step-q">${step.question}</div>
+      ${step.type==='audio_q'?`<div class="ta-opt-grid" id="ta-opts">${step.options.map(o=>`<div class="ta-opt" onclick="selectOption(this,'${o.replace(/'/g,"\\'")}','${step.correct.replace(/'/g,"\\'")}')"> ${o}</div>`).join('')}</div>`:''}
+      ${step.type==='write'?`<textarea class="ta-inp" id="ta-write" placeholder="${t.act_type||'Write your answer here…'}" rows="4"></textarea>`:''}
+    </div>
+    <div id="ta-feedback" style="margin-bottom:14px;min-height:24px"></div>
+    <div style="display:flex;gap:10px">
+      <button class="gm-btn rose" id="ta-action-btn" style="margin-top:0" onclick="taskStepAction()">${isLast?t.act_finish||'Finish Task ✓':t.act_next||'Next Step'}</button>
+    </div>
+    <div style="margin-top:14px;font-size:.75rem;color:var(--muted);text-align:center">${t.act_score||'Score'}: <strong style="color:var(--rose)">${state.score}</strong></div>
+  `;
+}
+
+function speakTA(txt){speak(txt,cl);}
+
+function selectOption(el,chosen,correct){
+  document.querySelectorAll('.ta-opt').forEach(o=>o.style.pointerEvents='none');
+  const t=T[cl];
+  const fb=document.getElementById('ta-feedback');
+  if(chosen===correct){
+    el.classList.add('correct');
+    taskActivityState.score+=20;
+    fb.innerHTML=`<div class="ta-score-badge">✅ ${t.act_correct||'Correct!'} +20</div>`;
+    speak(t.act_correct||'Correct!',cl);
+  }else{
+    el.classList.add('wrong');
+    document.querySelectorAll('.ta-opt').forEach(o=>{if(o.textContent.trim()===correct)o.classList.add('correct');});
+    fb.innerHTML=`<div style="font-size:.78rem;color:var(--rose)">❌ ${t.act_wrong||'Try again'} — ${t.act_correct||'Answer'}: <strong>${correct}</strong></div>`;
+  }
+  taskActivityState.answers.push({q:taskActivityState.currentStep,chosen,correct,ok:chosen===correct});
+}
+
+function taskStepAction(){
+  const state=taskActivityState;
+  const step=state.steps[state.currentStep];
+  const t=T[cl];
+  if(step.type==='write'){
+    const val=(document.getElementById('ta-write')?.value||'').trim();
+    if(!val){document.getElementById('ta-feedback').innerHTML=`<div style="font-size:.78rem;color:var(--rose)">Please write something first!</div>`;return;}
+    state.score+=15;
+    state.answers.push({q:state.currentStep,type:'write',val});
+  }
+  if(state.currentStep>=state.steps.length-1){
+    // Done
+    document.getElementById('ta-content').innerHTML=`
+      <div style="text-align:center;padding:30px 10px">
+        <div style="font-size:3rem;margin-bottom:14px">🏆</div>
+        <div style="font-family:var(--fh);font-size:1.4rem;font-weight:700;color:var(--navy);margin-bottom:8px">${t.act_well_done||'Well done!'}</div>
+        <div style="font-size:.88rem;color:var(--muted);margin-bottom:18px">${t.act_title||'Task'} ${t.completed||'Completed'}</div>
+        <div class="ta-score-badge" style="font-size:.95rem;padding:10px 24px">🎯 ${t.act_score||'Score'}: ${state.score}</div>
+        <button class="complete-btn" style="margin-top:22px;width:100%;padding:13px;font-size:.92rem" onclick="finaliseTask()">${t.act_finish||'Save & Close ✓'}</button>
+      </div>`;
+    showToast((t.act_well_done||'Well done!')+'! +'+state.score);
+    speak(t.act_well_done||'Well done! Task complete!',cl);
+  }else{
+    state.currentStep++;
+    renderTaskStep();
+  }
+}
+
+function finaliseTask(){
+  const state=taskActivityState;
+  fetch('/student/complete_task',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task_id:state.taskDbId,score:state.score})})
+    .then(r=>r.json()).then(()=>{
+      const card=document.getElementById('tc-'+state.taskDbId);
+      if(card){card.classList.remove('pending');card.classList.add('done');const stripe=card.querySelector('.tc-stripe');if(stripe)stripe.style.background='var(--teal)';const btn=card.querySelector('.start-task-btn');if(btn)btn.outerHTML=`<div class="done-tag">✅ ${T[cl].completed||'Completed'}</div>`;}
+      closeTaskModal();
+    });
+}
+
+function closeTaskModal(){document.getElementById('task-modal').classList.remove('open');synth.cancel();}
+
+// ─── GAMES ────────────────────────────────────────────────────────────────────
+let currentGame='',gameScore=0,gameRound=1,gameTotalRounds=5,gameTimer=null,gameTimerVal=0,gameState={};
+const GAMES={
+  word_flash:{icon:'⚡',disorder:'dyslexia',rounds:[
+    {words:['CAT','BAT','HAT','MAT','RAT'],question:'Which word did NOT appear?',options:['CAT','DOG','HAT','RAT'],answer:'DOG',audio:'Watch the words carefully, then answer the question.'},
+    {words:['SHIP','CHIP','TRIP','DRIP','GRIP'],question:'Which word appeared in the sequence?',options:['CLIP','CHIP','SLIP','FLIP'],answer:'CHIP',audio:'Watch each word flash on screen.'},
+    {words:['MOON','SOON','NOON','BOON','SPOON'],question:'How many words were shown?',options:['3','4','5','6'],answer:'5',audio:'Count the words as they appear.'},
+    {words:['BLUE','CLUE','GLUE','TRUE','FLEW'],question:'Which word rhymes with the others?',options:['BROWN','GREW','FLAT','JUMP'],answer:'GREW',audio:'Notice the rhyme pattern.'},
+    {words:['BIG','BAG','BEG','BOG','BUG'],question:'What vowel pattern changed in each word?',options:['Consonants','Vowels','Endings','Beginnings'],answer:'Vowels',audio:'Watch how each word changes.'}
+  ]},
+  letter_sort:{icon:'🔡',disorder:'dyslexia',words:['CHILD','BRAIN','PLANT','CLOUD','STONE'],
+    audios:['Arrange the letters to spell CHILD','Arrange the letters to spell BRAIN','Arrange the letters to spell PLANT','Arrange the letters to spell CLOUD','Arrange the letters to spell STONE']},
+  rhyme_match:{icon:'🎵',disorder:'dyslexia',rounds:[
+    {word:'CAT',options:['HAT','DOG','SUN','BOX'],answer:'HAT',audio:'Which word rhymes with CAT? Hat, Dog, Sun, or Box?'},
+    {word:'RAIN',options:['MOON','TRAIN','BOOK','FISH'],answer:'TRAIN',audio:'Which rhymes with RAIN? Moon, Train, Book, or Fish?'},
+    {word:'LIGHT',options:['DARK','STAR','NIGHT','WIND'],answer:'NIGHT',audio:'Which rhymes with LIGHT? Dark, Star, Night, or Wind?'},
+    {word:'SAND',options:['LAND','TREE','BIRD','CAVE'],answer:'LAND',audio:'Which rhymes with SAND? Land, Tree, Bird, or Cave?'},
+    {word:'BLUE',options:['RED','GLUE','PINK','GOLD'],answer:'GLUE',audio:'Which rhymes with BLUE? Red, Glue, Pink, or Gold?'}
+  ]},
+  fluency:{icon:'📚',disorder:'dyslexia',
+    passage:'The bright sun rose slowly above the tall green mountains. Birds sang sweet songs in the fresh morning air. Children ran outside to play in the warm golden light of the new day.',
+    questions:[
+      {q:'What rose above the mountains?',opts:['The moon','The bright sun','The birds','The clouds'],a:'The bright sun',audio:'What rose above the mountains?'},
+      {q:'What did children do?',opts:['Slept','Studied','Played outside','Ate'],a:'Played outside',audio:'What did children do?'},
+      {q:'What did birds do?',opts:['Flew away','Sang songs','Ate worms','Slept'],a:'Sang songs',audio:'What did birds do?'},
+    ]},
+  grounding:{icon:'🧘',disorder:'adhd',steps:[
+    {text:'👁️ Name 5 things you can SEE',audio:'Look around and name five things you can see.'},
+    {text:'✋ Name 4 things you can TOUCH',audio:'Name four things you can touch nearby.'},
+    {text:'👂 Name 3 things you can HEAR',audio:'Listen carefully. Name three things you can hear.'},
+    {text:'👃 Name 2 things you can SMELL',audio:'What are two things you can smell right now?'},
+    {text:'👅 Name 1 thing you can TASTE',audio:'What is one thing you can taste right now?'}
+  ]},
+  reaction:{icon:'⚡',disorder:'adhd'},
+  stop_signal:{icon:'🚦',disorder:'adhd'},
+  memory_game:{icon:'🧠',disorder:'adhd'}
+};
+
+function getGameTitles(){return{
+  word_flash:{title:T[cl].g_word_flash_title||'Word Flash',sub:T[cl].g_word_flash_desc||'Watch the words — then answer!'},
+  letter_sort:{title:T[cl].g_letter_sort_title||'Letter Puzzle',sub:T[cl].g_letter_sort_desc||'Arrange the letters to form the correct word!'},
+  rhyme_match:{title:T[cl].g_rhyme_title||'Rhyme Finder',sub:T[cl].g_rhyme_desc||'Pick the word that rhymes!'},
+  fluency:{title:T[cl].g_fluency_title||'Reading Sprint',sub:T[cl].g_fluency_desc||'Read aloud, then answer questions!'},
+  grounding:{title:T[cl].g_ground_title||'5-4-3-2-1 Grounding',sub:T[cl].g_ground_desc||'Follow each step to ground yourself.'},
+  reaction:{title:T[cl].g_reaction_title||'Reaction Tap',sub:T[cl].g_reaction_desc||'Tap the target as fast as possible!'},
+  stop_signal:{title:T[cl].g_stop_title||'Stop Signal',sub:T[cl].g_stop_desc||'Tap GO — stop on STOP!'},
+  memory_game:{title:T[cl].g_memory_title||'Memory Pattern',sub:T[cl].g_memory_desc||'Watch and repeat the pattern!'},
+};}
+
+function openGame(id){
+  currentGame=id;gameScore=0;gameRound=1;gameState={};
+  const g=GAMES[id];const titles=getGameTitles()[id];
+  document.getElementById('gm-icon').textContent=g.icon;
+  document.getElementById('gm-title').textContent=titles.title;
+  document.getElementById('gm-sub').textContent=titles.sub;
+  document.getElementById('gm-score').textContent='0';
+  document.getElementById('gm-round').textContent='1 / '+(g.rounds?.length||g.steps?.length||gameTotalRounds);
+  document.getElementById('gm-timer').textContent='—';
+  const ga=document.getElementById('gm-action');
+  ga.textContent='Start Game';ga.style.opacity='';ga.style.pointerEvents='';ga.onclick=gameAction;
+  document.getElementById('gm-area').innerHTML=`<div style="text-align:center;color:var(--muted);font-size:.88rem">${T[cl].press_start||'Press Start to begin!'}</div>`;
+  document.getElementById('game-modal').classList.add('open');
+  clearInterval(gameTimer);
+}
+function closeGame(){document.getElementById('game-modal').classList.remove('open');clearInterval(gameTimer);if(gameScore>0)saveScore();synth.cancel();}
+function gameAction(){const txt=document.getElementById('gm-action').textContent;if(txt.includes('Start')||txt.includes('Next')||txt.includes('शुरू')||txt.includes('தொடங்')||txt.includes('Suivant'))renderGame();else if(txt.includes('Finish')||txt.includes('முடி')||txt.includes('पूर्ण'))closeGame();}
+function nextRound(){
+  gameRound++;
+  const g=GAMES[currentGame];
+  const maxR=g.rounds?.length||g.steps?.length||gameTotalRounds;
+  if(gameRound>maxR)finishGame();
+  else{document.getElementById('gm-round').textContent=gameRound+' / '+maxR;document.getElementById('gm-action').textContent='Next Round';}
+}
+function finishGame(){
+  clearInterval(gameTimer);
+  document.getElementById('gm-area').innerHTML=`<div style="text-align:center"><div style="font-size:2.8rem;margin-bottom:10px">🏆</div><div style="font-family:var(--fh);font-size:1.4rem;font-weight:700;color:var(--navy)">Score: ${gameScore}</div><div style="color:var(--muted);margin-top:6px;font-size:.82rem">Well done! Keep practising!</div></div>`;
+  document.getElementById('gm-action').textContent='Finish & Save';
+  document.getElementById('gm-action').onclick=closeGame;
+  saveScore();
+  speak(`Game over! Your score is ${gameScore}`,cl);
+}
+async function saveScore(){await fetch('/api/save_score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({game_id:currentGame,score:gameScore,disorder:GAMES[currentGame].disorder})});}
+
+function audioBtn(txt){return `<button class="gm-audio-btn" onclick="speak('${txt.replace(/'/g,"\\'")}','${cl}')">🔊 ${T[cl].act_listen||'Listen'}</button>`;}
+
+function renderGame(){
+  clearInterval(gameTimer);
+  const area=document.getElementById('gm-area');area.innerHTML='';
+
+  if(currentGame==='word_flash'){
+    const rd=GAMES.word_flash.rounds[(gameRound-1)%GAMES.word_flash.rounds.length];
+    speak(rd.audio,cl);
+    // Phase 1: show words as animated sequence (like a video)
+    area.innerHTML=`
+      <div style="width:100%;text-align:center">
+        ${audioBtn(rd.audio)}
+        <p style="font-size:.82rem;color:var(--muted);margin-bottom:8px">Watch the word sequence carefully!</p>
+        <div id="wf-stage" style="min-height:120px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--s1) 0%,#fff 100%);border-radius:18px;border:2px solid var(--border);margin-bottom:12px;position:relative;overflow:hidden">
+          <div id="wf-word" style="font-family:var(--fh);font-size:2.8rem;font-weight:900;color:var(--navy);opacity:0;transition:opacity .25s;letter-spacing:3px">—</div>
+        </div>
+        <div id="wf-dots" style="display:flex;gap:6px;justify-content:center;margin-bottom:12px">
+          ${rd.words.map((_,i)=>`<div id="wfd-${i}" style="width:10px;height:10px;border-radius:50%;background:var(--border);transition:background .3s"></div>`).join('')}
+        </div>
+        <div id="wf-status" style="font-size:.82rem;color:var(--muted)">Get ready…</div>
+      </div>`;
+    document.getElementById('gm-action').textContent='Playing…';
+    document.getElementById('gm-action').style.opacity='.5';
+    document.getElementById('gm-action').style.pointerEvents='none';
+    // Animate words one by one
+    let wi=0;
+    const wordEl=document.getElementById('wf-word');
+    const statusEl=document.getElementById('wf-status');
+    function showNextWord(){
+      if(wi>=rd.words.length){
+        // Done showing — now show Q&A
+        statusEl.textContent='Now answer:';
+        setTimeout(showWFQuestion,400);
+        return;
+      }
+      document.getElementById('wfd-'+wi)?.setAttribute('style','width:10px;height:10px;border-radius:50%;background:var(--rose);transition:background .3s');
+      wordEl.style.opacity='0';
+      setTimeout(()=>{
+        wordEl.textContent=rd.words[wi];
+        wordEl.style.opacity='1';
+        speak(rd.words[wi],cl);
+        statusEl.textContent=`Word ${wi+1} of ${rd.words.length}`;
+        setTimeout(()=>{
+          wordEl.style.opacity='0';
+          document.getElementById('wfd-'+wi)?.setAttribute('style','width:10px;height:10px;border-radius:50%;background:var(--teal);transition:background .3s');
+          wi++;
+          setTimeout(showNextWord,350);
+        },900);
+      },280);
+    }
+    setTimeout(showNextWord,600);
+    function showWFQuestion(){
+      speak(rd.question,cl);
+      area.innerHTML=`
+        <div style="width:100%;text-align:center">
+          ${audioBtn(rd.question)}
+          <div style="background:linear-gradient(135deg,rgba(232,97,74,.07) 0%,rgba(123,94,167,.07) 100%);border-radius:14px;padding:14px 12px;margin-bottom:14px;border:1.5px solid var(--border)">
+            <div style="font-size:.7rem;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:6px">Question</div>
+            <div style="font-family:var(--fh);font-size:1.05rem;font-weight:700;color:var(--navy)">${rd.question}</div>
+          </div>
+          <div class="rhyme-options">${rd.options.map(o=>`<div class="rhyme-opt" onclick="checkWF(this,'${o.replace(/'/g,"\\'")}','${rd.answer.replace(/'/g,"\\'")}')"> ${o}</div>`).join('')}</div>
+          <div id="wf-fb" style="height:22px;margin-top:8px"></div>
+        </div>`;
+      window.checkWF=function(el,chosen,ans){
+        document.querySelectorAll('.rhyme-opt').forEach(o=>o.style.pointerEvents='none');
+        if(chosen===ans){
+          el.classList.add('correct');gameScore+=15;
+          document.getElementById('gm-score').textContent=gameScore;
+          speak('Correct! Well done!',cl);showToast('+15');
+          document.getElementById('wf-fb').innerHTML=`<div class="ta-score-badge">✅ Correct! +15</div>`;
+        }else{
+          el.classList.add('wrong');
+          document.querySelectorAll('.rhyme-opt').forEach(o=>{if(o.textContent.trim()===ans)o.classList.add('correct');});
+          speak('The answer is '+ans,cl);
+          document.getElementById('wf-fb').innerHTML=`<div style="font-size:.78rem;color:var(--rose)">❌ Answer: <strong>${ans}</strong></div>`;
+        }
+        setTimeout(nextRound,1400);
+      };
+    }
+    document.getElementById('gm-action').textContent='Skip Round';document.getElementById('gm-action').style.opacity='';document.getElementById('gm-action').style.pointerEvents='';document.getElementById('gm-action').onclick=nextRound;
+
+  }else if(currentGame==='letter_sort'){
+    const word=GAMES.letter_sort.words[(gameRound-1)%GAMES.letter_sort.words.length];
+    const audio=GAMES.letter_sort.audios[(gameRound-1)%GAMES.letter_sort.audios.length];
+    speak(audio,cl);
+    const shuffled=[...word].sort(()=>Math.random()-.5);
+    area.innerHTML=`<div style="width:100%">${audioBtn(audio)}<p style="text-align:center;color:var(--muted);margin-bottom:10px;font-size:.85rem">Form: <strong style="color:var(--navy);font-family:var(--fh)">${'_'.repeat(word.length)}</strong></p><div class="answer-boxes" id="ans-boxes">${Array(word.length).fill('<div class="a-box"></div>').join('')}</div><div class="puzzle-letters">${shuffled.map((l,i)=>`<div class="p-letter" id="pl-${i}" onclick="placeLetter('${l}',${i},'${word}')">${l}</div>`).join('')}</div><div id="sort-msg" style="text-align:center;height:22px;font-weight:700;margin-top:6px"></div></div>`;
+    gameState.placed=[];gameState.word=word;
+    window.placeLetter=function(l,idx,word){if(gameState.placed.length>=word.length)return;gameState.placed.push(l);document.getElementById('pl-'+idx).classList.add('placed');const boxes=document.querySelectorAll('.a-box');boxes[gameState.placed.length-1].textContent=l;boxes[gameState.placed.length-1].classList.add('filled');if(gameState.placed.length===word.length){const formed=gameState.placed.join('');const msg=document.getElementById('sort-msg');if(formed===word){msg.style.color='var(--teal)';msg.textContent='✅ Correct! +15';gameScore+=15;document.getElementById('gm-score').textContent=gameScore;speak('Correct! '+word,cl);showToast('+15');setTimeout(nextRound,1200);}else{msg.style.color='var(--rose)';msg.textContent='❌ Try again!';speak('Try again',cl);setTimeout(()=>{gameState.placed=[];document.querySelectorAll('.a-box').forEach(b=>{b.textContent='';b.classList.remove('filled');});document.querySelectorAll('.p-letter').forEach(p=>p.classList.remove('placed'));msg.textContent='';},1000);}}};
+    document.getElementById('gm-action').textContent='Skip Round';document.getElementById('gm-action').onclick=nextRound;
+
+  }else if(currentGame==='rhyme_match'){
+    const rd=GAMES.rhyme_match.rounds[(gameRound-1)%GAMES.rhyme_match.rounds.length];
+    speak(rd.audio,cl);
+    area.innerHTML=`<div style="width:100%;text-align:center">${audioBtn(rd.audio)}<p style="font-size:.85rem;color:var(--muted);margin-bottom:6px">Which rhymes with</p><div style="font-family:var(--fh);font-size:2.3rem;font-weight:700;color:var(--navy);margin-bottom:18px">${rd.word}</div><div class="rhyme-options">${rd.options.map(o=>`<div class="rhyme-opt" onclick="checkRhyme(this,'${o}','${rd.answer}')">${o}</div>`).join('')}</div></div>`;
+    window.checkRhyme=function(el,chosen,ans){document.querySelectorAll('.rhyme-opt').forEach(o=>o.style.pointerEvents='none');if(chosen===ans){el.classList.add('correct');gameScore+=10;document.getElementById('gm-score').textContent=gameScore;speak('Correct! '+chosen+' rhymes with '+rd.word,cl);showToast('+10');}else{el.classList.add('wrong');document.querySelectorAll('.rhyme-opt').forEach(o=>{if(o.textContent===ans)o.classList.add('correct');});speak('The answer is '+ans,cl);}setTimeout(nextRound,1200);};
+    document.getElementById('gm-action').textContent='Skip Round';document.getElementById('gm-action').onclick=nextRound;
+
+  }else if(currentGame==='fluency'){
+    const g=GAMES.fluency;let elapsed=0,counting=false,qIdx=0,readingDone=false;
+    function showQuestion(){const q=g.questions[qIdx];speak(q.audio,cl);area.innerHTML=`<div style="width:100%;text-align:center">${audioBtn(q.audio)}<div style="font-family:var(--fh);font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:14px">${q.q}</div><div class="rhyme-options">${q.opts.map(o=>`<div class="rhyme-opt" onclick="checkFluency(this,'${o.replace(/'/g,"\\'")}','${q.a.replace(/'/g,"\\'")}')"> ${o}</div>`).join('')}</div></div>`;window.checkFluency=function(el,chosen,ans){document.querySelectorAll('.rhyme-opt').forEach(o=>o.style.pointerEvents='none');if(chosen===ans){el.classList.add('correct');gameScore+=15;document.getElementById('gm-score').textContent=gameScore;speak('Correct!',cl);showToast('+15');}else{el.classList.add('wrong');document.querySelectorAll('.rhyme-opt').forEach(o=>{if(o.textContent.trim()===ans)o.classList.add('correct');});speak('The answer is '+ans,cl);}setTimeout(()=>{qIdx++;if(qIdx<g.questions.length)showQuestion();else{gameScore+=10;finishGame();}},1300);};}
+    area.innerHTML=`<div style="width:100%;text-align:center"><div style="font-size:.9rem;line-height:1.8;color:var(--text);padding:14px;background:var(--s1);border-radius:14px;border:1.5px solid var(--border);text-align:left;margin-bottom:14px">${g.passage}</div><div class="hits-big" id="f-timer">60</div><div class="hits-sub">Seconds remaining</div></div>`;
+    document.getElementById('gm-action').textContent='Start Timer';
+    document.getElementById('gm-action').onclick=function(){if(!counting){counting=true;this.textContent='Reading…';this.style.opacity='.5';this.style.pointerEvents='none';speak('Read aloud now. Timer started.',cl);gameTimer=setInterval(()=>{elapsed++;const rem=60-elapsed;document.getElementById('f-timer').textContent=rem;if(rem<=0){clearInterval(gameTimer);speak('Time is up! Now answer the questions.',cl);document.getElementById('gm-action').textContent='Answer Questions';document.getElementById('gm-action').style.opacity='';document.getElementById('gm-action').style.pointerEvents='';document.getElementById('gm-action').onclick=showQuestion;}},1000);}};
+
+  }else if(currentGame==='grounding'){
+    const steps=GAMES.grounding.steps;let step=0;
+    function showStep(){const s=steps[step];speak(s.audio,cl);area.innerHTML=`<div style="width:100%">${audioBtn(s.audio)}${steps.map((st,i)=>`<div class="grounding-step ${i===step?'active':''}">${st.text}</div>`).join('')}</div>`;const btn=document.getElementById('gm-action');btn.textContent=step<steps.length-1?'Next Step ✓':'Complete! 🧘';btn.onclick=function(){if(step<steps.length-1){step++;gameScore+=10;document.getElementById('gm-score').textContent=gameScore;showStep();}else{gameScore+=10;finishGame();}};}
+    showStep();
+
+  }else if(currentGame==='reaction'){
+    let hits=0;gameTimerVal=15;
+    area.innerHTML=`<div class="click-area" id="ca"><div class="target" id="tgt" onclick="hitTgt()">⚡</div></div><div class="hits-big" id="hit-cnt">0</div><div class="hits-sub">Hits</div>`;
+    speak('Tap the target as fast as you can! 15 seconds — go!',cl);
+    function moveTgt(){const ca=document.getElementById('ca');if(!ca)return;const t=document.getElementById('tgt');if(!t)return;t.style.left=Math.random()*(ca.clientWidth-50)+'px';t.style.top=Math.random()*(ca.clientHeight-50)+'px';}
+    window.hitTgt=function(){hits++;document.getElementById('hit-cnt').textContent=hits;gameScore=hits*5;document.getElementById('gm-score').textContent=gameScore;moveTgt();};
+    moveTgt();
+    gameTimer=setInterval(()=>{gameTimerVal--;document.getElementById('gm-timer').textContent=gameTimerVal+'s';if(gameTimerVal<=0){clearInterval(gameTimer);finishGame();}},1000);
+    document.getElementById('gm-action').textContent='Playing…';document.getElementById('gm-action').style.opacity='.5';document.getElementById('gm-action').style.pointerEvents='none';
+
+  }else if(currentGame==='stop_signal'){
+    let going=true,score=0,missed=0;
+    area.innerHTML=`<div class="stop-signal go" id="ss">GO</div><p style="text-align:center;color:var(--muted);font-size:.83rem;margin-top:7px">Tap when GREEN, stop when RED!</p><div style="display:flex;gap:18px;justify-content:center;margin-top:14px"><div><div class="hits-big" id="ss-score" style="font-size:1.7rem">0</div><div class="hits-sub">Correct</div></div><div><div class="hits-big" id="ss-miss" style="font-size:1.7rem;color:var(--rose)">0</div><div class="hits-sub">Errors</div></div></div>`;
+    speak('Tap the circle when it says GO. Stop when it says STOP!',cl);
+    const el=document.getElementById('ss');
+    const iv2=setInterval(()=>{going=!going;el.className='stop-signal '+(going?'go':'stop');el.textContent=going?'GO':'STOP';if(!going)speak('STOP',cl);else speak('GO',cl);},Math.random()*1500+800);
+    el.onclick=function(){if(going){score++;document.getElementById('ss-score').textContent=score;gameScore=score*8;document.getElementById('gm-score').textContent=gameScore;showToast('✓ +8');}else{missed++;document.getElementById('ss-miss').textContent=missed;speak('No! Stop means stop!',cl);}};
+    gameTimerVal=20;
+    gameTimer=setInterval(()=>{gameTimerVal--;document.getElementById('gm-timer').textContent=gameTimerVal+'s';if(gameTimerVal<=0){clearInterval(gameTimer);clearInterval(iv2);finishGame();}},1000);
+    document.getElementById('gm-action').textContent='Playing…';document.getElementById('gm-action').style.opacity='.5';document.getElementById('gm-action').style.pointerEvents='none';
+
+  }else if(currentGame==='memory_game'){
+    const emojis=['🌟','🎯','🔶','🎪'];let sequence=[],player=[],phase='show',level=0;
+    area.innerHTML=`<div class="mem-grid">${emojis.map((e,i)=>`<div class="mc" id="mc${i}" onclick="tapMem(${i})">${e}</div>`).join('')}</div><div id="mem-msg" style="text-align:center;height:26px;font-weight:700;margin-top:7px"></div>`;
+    function flash(i,cb){const el=document.getElementById('mc'+i);if(!el)return;el.classList.add('lit');setTimeout(()=>{el.classList.remove('lit');cb&&setTimeout(cb,300);},500);}
+    function showSeq(){phase='show';document.getElementById('mem-msg').textContent='Watch…';speak('Watch the pattern.',cl);document.querySelectorAll('.mc').forEach(c=>c.style.pointerEvents='none');let i=0;function next(){if(i<sequence.length)flash(sequence[i++],next);else{phase='input';player=[];document.querySelectorAll('.mc').forEach(c=>c.style.pointerEvents='');document.getElementById('mem-msg').textContent='Your turn!';speak('Your turn! Repeat the pattern.',cl);}}next();}
+    window.tapMem=function(i){if(phase!=='input')return;const el=document.getElementById('mc'+i);el.classList.add('lit');setTimeout(()=>el.classList.remove('lit'),250);player.push(i);if(player[player.length-1]!==sequence[player.length-1]){document.getElementById('mem-msg').textContent='❌ Wrong! Retry.';speak('Wrong, try again.',cl);setTimeout(()=>{player=[];showSeq();},1000);}else if(player.length===sequence.length){gameScore+=level*5;document.getElementById('gm-score').textContent=gameScore;document.getElementById('mem-msg').textContent='✅ +'+level*5;speak('Correct! Level '+(level+1),cl);level++;sequence.push(Math.floor(Math.random()*4));if(level>5)finishGame();else setTimeout(showSeq,1000);}};
+    sequence.push(Math.floor(Math.random()*4));level=1;
+    setTimeout(showSeq,600);
+    document.getElementById('gm-action').textContent='Playing…';document.getElementById('gm-action').style.opacity='.5';document.getElementById('gm-action').style.pointerEvents='none';
+  }
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+function filterGames(type,btn){document.querySelectorAll('#games-grid .game-card').forEach(c=>{c.style.display=(type==='all'||c.dataset.disorder===type)?'':'none';});}
+
+// populate best scores in game cards
+gameScoresData.forEach(s=>{const el=document.getElementById('gs-'+s.game_id);if(el)el.textContent='Best: '+s.best;});
+
+// task badge
+const taskData={{ tasks|tojson|default('[]') }};
+const pendingCount=taskData.filter?.(t=>t.status!=='completed').length||0;
+if(pendingCount>0){const b=document.getElementById('task-badge');if(b){b.textContent=pendingCount;b.style.display='';}}
+const tcl=document.getElementById('task-count-label');if(tcl)tcl.innerHTML=taskData.length+' <span data-i="tasks_word">'+T[cl].tasks_word+'</span>';
+
+// ─── CHAT ─────────────────────────────────────────────────────────────────────
+const TEACHER_ID={{ teacher_id or 'null' }};
+let chatPollInterval=null,lastMsgCount=-1;
+async function initChat(){if(!TEACHER_ID)return;await loadMsgs();if(!chatPollInterval)chatPollInterval=setInterval(loadMsgs,3500);setTimeout(()=>document.getElementById('chat-inp')?.focus(),100);}
+function fmtDate(ts){const d=new Date(ts),now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate()),yest=new Date(today);yest.setDate(yest.getDate()-1);const dm=new Date(d.getFullYear(),d.getMonth(),d.getDate());if(dm>=today)return'Today';if(dm>=yest)return'Yesterday';return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});}
+function fmtTime(ts){const d=new Date(ts);return d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}
+function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+async function loadMsgs(){if(!TEACHER_ID)return;try{const r=await fetch('/api/chat/messages/'+TEACHER_ID);const msgs=await r.json();if(msgs.length===lastMsgCount)return;lastMsgCount=msgs.length;renderMsgs(msgs);}catch(e){}}
+function renderMsgs(msgs){const box=document.getElementById('chat-msgs');if(!box)return;if(msgs.length===0){box.innerHTML=`<div class="chat-empty"><div class="chat-empty-icon">💬</div><div class="chat-empty-text">${T[cl].no_msgs||'No messages yet. Say hello!'}</div></div>`;return;}let html='',lastDate='';msgs.forEach(m=>{const isOut=(m.sender_id!==TEACHER_ID);const ds=fmtDate(m.timestamp);if(ds!==lastDate){html+=`<div class="chat-date-sep"><span>${ds}</span></div>`;lastDate=ds;}html+=`<div class="msg-row ${isOut?'out':'in'}"><div class="msg-bubble">${escH(m.message)}<span class="msg-time">${fmtTime(m.timestamp)}</span></div></div>`;});box.innerHTML=html;box.scrollTop=box.scrollHeight;}
+async function sendMsg(){const inp=document.getElementById('chat-inp'),btn=document.getElementById('chat-send-btn');const msg=inp.value.trim();if(!msg||!TEACHER_ID)return;inp.value='';if(btn)btn.disabled=true;try{await fetch('/api/chat/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({receiver_id:TEACHER_ID,message:msg})});await loadMsgs();}catch(e){}if(btn)btn.disabled=false;inp.focus();}
+
+// Build scores on first load of scores panel
+document.getElementById('sbi-scores')?.addEventListener('click',()=>setTimeout(buildScores,100));
+</script>
+</body>
+</html>
