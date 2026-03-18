@@ -309,19 +309,22 @@ def _btn(label: str, color: str = "#E8614A") -> str:
 # =============================================================================
 def notify_screening_complete(student_id: int, details: dict):
     conn = get_db()
-    row  = conn.execute("SELECT name,email,parent_email FROM users WHERE id=?", (student_id,)).fetchone()
+    row = conn.execute(
+        "SELECT name,email,parent_email FROM users WHERE id=?",
+        (student_id,)
+    ).fetchone()
     conn.close()
+
     if not row:
     return
 
 name = row['name']
 
-# dynamic email (THIS IS THE KEY FIX)
 to_email = row['parent_email'] if row['parent_email'] else row['email']
 
 print("SENDING EMAIL TO:", to_email)
 
-    name, parent_email = row['name'], row['parent_email']
+   
     risk     = details.get('prediction','Unknown')
     disorder = details.get('disorder','unknown')
     ref      = f"SS-SCR-{uuid.uuid4().hex[:6].upper()}"
