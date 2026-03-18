@@ -201,24 +201,28 @@ def create_teacher_requests(conn, student_id, disorder):
 # =============================================================================
 
 def _send_raw(to_email: str, subject: str, html: str) -> bool:
-    """Core SMTP send via Gmail."""
     try:
         msg = MIMEMultipart('alternative')
         msg["Subject"] = subject
         msg["From"]    = f"SmartScreen Alerts <{SENDER_EMAIL}>"
         msg["To"]      = to_email
         msg.attach(MIMEText(html, "html"))
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
+
+        import ssl
+        context = ssl.create_default_context()
+
+        server = smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context)
         server.login(SENDER_EMAIL, SENDER_PASSWORD)
+
         server.sendmail(SENDER_EMAIL, to_email, msg.as_string())
         server.quit()
-        print(f"[EMAIL OK] '{subject}' -> {to_email}")
-        return True
-    except Exception as e:
-        print(f"[EMAIL FAIL] {e}")
-        return False
 
+        print(f"[EMAIL OK] {subject} -> {to_email}")
+        return True
+
+    except Exception as e:
+        print("EMAIL ERROR:", e)
+        return False
 # --- Shared HTML building blocks ---
 
 def _header(h1: str, sub: str = "") -> str:
