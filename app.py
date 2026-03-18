@@ -309,10 +309,17 @@ def _btn(label: str, color: str = "#E8614A") -> str:
 # =============================================================================
 def notify_screening_complete(student_id: int, details: dict):
     conn = get_db()
-    row  = conn.execute("SELECT name,parent_email FROM users WHERE id=?", (student_id,)).fetchone()
+    row  = conn.execute("SELECT name,email,parent_email FROM users WHERE id=?", (student_id,)).fetchone()
     conn.close()
-    if not row or not row['parent_email']:
-        return
+    if not row:
+    return
+
+name = row['name']
+
+# dynamic email (THIS IS THE KEY FIX)
+to_email = row['parent_email'] if row['parent_email'] else row['email']
+
+print("SENDING EMAIL TO:", to_email)
 
     name, parent_email = row['name'], row['parent_email']
     risk     = details.get('prediction','Unknown')
@@ -393,8 +400,7 @@ def notify_screening_complete(student_id: int, details: dict):
       {_footer(year)}
     </div></body></html>"""
 
-    _send_raw(parent_email, f"📋 SmartScreen Assessment Complete — {name}", html)
-
+    _send_raw(to_email, f"📋 SmartScreen Assessment Complete — {name}", html)
 
 # =============================================================================
 # TRIGGER 2 — Teacher Assigned
