@@ -315,16 +315,19 @@ def notify_screening_complete(student_id: int, details: dict):
     ).fetchone()
     conn.close()
 
+    # ✅ correct indentation
     if not row:
-    return
+        return
 
-name = row['name']
+    # ✅ correct variable usage
+    name = row['name']
 
-to_email = row['parent_email'] if row['parent_email'] else row['email']
+    # ✅ dynamic email (mentor demo works)
+    to_email = row['parent_email'] if row['parent_email'] else row['email']
 
-print("SENDING EMAIL TO:", to_email)
+    print("SENDING EMAIL TO:", to_email)
 
-   
+    # rest same
     risk     = details.get('prediction','Unknown')
     disorder = details.get('disorder','unknown')
     ref      = f"SS-SCR-{uuid.uuid4().hex[:6].upper()}"
@@ -334,7 +337,6 @@ print("SENDING EMAIL TO:", to_email)
     dc       = _dis_col(disorder)
     dl       = _dis_label(disorder)
     icon     = "⚠️" if "High" in risk else "🔶" if "Moderate" in risk else "✅"
-
     html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
     <body style="margin:0;padding:0;background:#f5f3ee;">
     <div style="max-width:600px;margin:30px auto;border-radius:16px;overflow:hidden;
@@ -403,7 +405,7 @@ print("SENDING EMAIL TO:", to_email)
       {_footer(year)}
     </div></body></html>"""
 
-    _send_raw(to_email, f"📋 SmartScreen Assessment Complete — {name}", html)
+   _send_raw(to_email, f"📋 SmartScreen Assessment Complete — {name}", html)
 
 # =============================================================================
 # TRIGGER 2 — Teacher Assigned
