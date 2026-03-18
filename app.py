@@ -317,15 +317,13 @@ def notify_screening_complete(student_id: int, details: dict):
 
     # ✅ correct indentation
     if not row:
-        return
+           return
 
-    # ✅ correct variable usage
-    name = row['name']
+name = row['name']
 
-    # ✅ dynamic email (mentor demo works)
-    to_email = row['parent_email'] if row['parent_email'] else row['email']
+to_email = row['parent_email'] if row['parent_email'] else row['email']
 
-    print("SENDING EMAIL TO:", to_email)
+print("SENDING EMAIL TO:", to_email)
 
     # rest same
     risk     = details.get('prediction','Unknown')
